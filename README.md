@@ -10,7 +10,7 @@ Hestia is a microservice to safely communicate with Firebase Auth and Databases 
 
 ## Building
 
-To run Obol simply clone de repository:
+To run Hestia simply clone de repository:
 
 ```
 git clone https://github.com/grupokindynos/hestia 
