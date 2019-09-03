@@ -47,7 +47,17 @@ func GetApp() *gin.Engine {
 func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	api := r.Group("/")
 	{
+		fbDb, err := fbApp.Firestore(context.Background())
+		if err != nil {
+
+		}
 		fbCtrl := controllers.FirebaseController{App: fbApp}
+		_ = controllers.CardsController{DB: fbDb}
+		_ = controllers.DepositsController{DB: fbDb}
+		_ = controllers.OrdersController{DB: fbDb}
+		_ = controllers.ShiftsController{DB: fbDb}
+		_ = controllers.UsersController{DB: fbDb}
+		_ = controllers.VouchersController{DB: fbDb}
 
 		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
 		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })

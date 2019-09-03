@@ -3,6 +3,7 @@ module github.com/grupokindynos/hestia
 go 1.12
 
 require (
+	cloud.google.com/go v0.38.0
 	firebase.google.com/go v3.9.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
