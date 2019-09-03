@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/grupokindynos/hestia/models"
 )
 
 /*
@@ -22,5 +22,5 @@ import (
 type Voucher struct{}
 
 type VouchersController struct {
-	DB *mongo.Database
+	Model *models.VouchersModel
 }

@@ -1,6 +1,8 @@
 package controllers
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"github.com/grupokindynos/hestia/models"
+)
 
 /*
 
@@ -20,5 +22,5 @@ import "go.mongodb.org/mongo-driver/mongo"
 type Deposit struct{}
 
 type DepositsController struct {
-	DB *mongo.Database
+	Model *models.DepositsModel
 }

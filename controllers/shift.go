@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /*
@@ -22,18 +21,22 @@ import (
 */
 
 type ShiftsController struct {
-	DB   *mongo.Database
-	Obol *services.ObolService
+	Obol  *services.ObolService
+	Model *models.ShiftModel
 }
 
 func (sc *ShiftsController) GetShift(shiftid string) (shift models.Shift, err error) {
 	return models.Shift{}, nil
 }
 
+func (sc *ShiftsController) GetUserShiftsIDs(uid string) (shiftsIDs []string, err error) {
+	return nil, nil
+}
+
 func (sc *ShiftsController) GetUserShifts(uid string) (shifts []models.Shift, err error) {
 	return nil, nil
 }
 
-func (sc *ShiftsController) GetUserShiftsIDs(uid string) (shiftsIDs []string, err error) {
-	return nil, nil
+func (sc *ShiftsController) StoreShift(uid string, shift models.Shift) (err error) {
+	return nil
 }

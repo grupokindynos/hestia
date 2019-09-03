@@ -1,6 +1,6 @@
 package controllers
 
-import "go.mongodb.org/mongo-driver/mongo"
+import "github.com/grupokindynos/hestia/models"
 
 /*
 
@@ -24,5 +24,5 @@ import "go.mongodb.org/mongo-driver/mongo"
 type Card struct{}
 
 type CardsController struct {
-	DB *mongo.Database
+	Model *models.CardsModel
 }
