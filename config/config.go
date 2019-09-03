@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net/http"
 	"os"
 	"time"
 )
@@ -16,6 +17,9 @@ var (
 	ErrorDbInitialize     = errors.New("unable to connect to database")
 	ErrorUnableParseJWE   = errors.New("unable to parse web token")
 	ErrorUnableDecryptJWE = errors.New("unable to decrypt web token")
+	HttpClient            = &http.Client{
+		Timeout: time.Second * 10,
+	}
 )
 
 // GlobalResponseError is used to wrap all the errored API responses under the same model.
