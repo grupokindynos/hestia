@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/grupokindynos/hestia/services"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
@@ -35,7 +36,8 @@ type Shift struct {
 }
 
 type ShiftsController struct {
-	DB *mongo.Database
+	DB   *mongo.Database
+	Obol *services.ObolService
 }
 
 func (sc *ShiftsController) GetShift(shiftid string) (shift Shift, err error) {

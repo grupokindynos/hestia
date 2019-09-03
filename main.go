@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/controllers"
+	"github.com/grupokindynos/hestia/services"
 	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
@@ -48,15 +49,21 @@ func GetApp() *gin.Engine {
 func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	api := r.Group("/")
 	{
+		// Init Database
 		db, err := config.ConnectDB()
 		if err != nil {
 			log.Fatal(config.ErrorDbInitialize)
 		}
+
+		// Init Services
+		obol := &services.ObolService{URL: "https://obol-rates.herokuapp.com/complex"}
+
+		// Init Controllers
 		fbCtrl := controllers.FirebaseController{App: fbApp}
 		_ = controllers.CardsController{DB: db}
 		_ = controllers.DepositsController{DB: db}
 		_ = controllers.OrdersController{DB: db}
-		_ = controllers.ShiftsController{DB: db}
+		_ = controllers.ShiftsController{DB: db, Obol: obol}
 		_ = controllers.UsersController{DB: db}
 		_ = controllers.VouchersController{DB: db}
 
