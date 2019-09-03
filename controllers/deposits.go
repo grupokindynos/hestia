@@ -1,6 +1,6 @@
 package controllers
 
-import "cloud.google.com/go/firestore"
+import "go.mongodb.org/mongo-driver/mongo"
 
 /*
 
@@ -20,5 +20,5 @@ import "cloud.google.com/go/firestore"
 type Deposit struct{}
 
 type DepositsController struct {
-	DB *firestore.Client
+	DB *mongo.Database
 }

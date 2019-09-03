@@ -1,6 +1,8 @@
 package controllers
 
-import "cloud.google.com/go/firestore"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 /*
 
@@ -20,5 +22,5 @@ import "cloud.google.com/go/firestore"
 type Voucher struct{}
 
 type VouchersController struct {
-	DB *firestore.Client
+	DB *mongo.Database
 }

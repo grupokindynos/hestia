@@ -6,6 +6,7 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/controllers"
 	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/joho/godotenv"
@@ -47,40 +48,82 @@ func GetApp() *gin.Engine {
 func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	api := r.Group("/")
 	{
-		fbDb, err := fbApp.Firestore(context.Background())
+		db, err := config.ConnectDB()
 		if err != nil {
-
+			log.Fatal(config.ErrorDbInitialize)
 		}
 		fbCtrl := controllers.FirebaseController{App: fbApp}
-		_ = controllers.CardsController{DB: fbDb}
-		_ = controllers.DepositsController{DB: fbDb}
-		_ = controllers.OrdersController{DB: fbDb}
-		_ = controllers.ShiftsController{DB: fbDb}
-		_ = controllers.UsersController{DB: fbDb}
-		_ = controllers.VouchersController{DB: fbDb}
+		_ = controllers.CardsController{DB: db}
+		_ = controllers.DepositsController{DB: db}
+		_ = controllers.OrdersController{DB: db}
+		_ = controllers.ShiftsController{DB: db}
+		_ = controllers.UsersController{DB: db}
+		_ = controllers.VouchersController{DB: db}
 
+		// Shift
+
+		// User
 		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
 		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
-		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.POST("/user/shift/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
 		api.GET("/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 		api.GET("/shift/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+
+		// Vouchers
+
+		// User
+		api.GET("/user/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.POST("/user/voucher/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
 		api.GET("/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 		api.GET("/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+
+		// Cards
+
+		// User
+		api.GET("/user/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
 		api.GET("/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 		api.GET("/cards/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+		api.POST("/cards/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Deposits
+
+		// User
+		api.GET("/user/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.POST("/user/deposits/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
 		api.GET("/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 		api.GET("/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+
+		// Orders
+
+		// User
+		api.GET("/user/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/orders/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
 		api.GET("/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 		api.GET("/orders/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
-		api.GET("/info", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+
+		// User Information
+
+		// User
+		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+		api.GET("/user/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, fbCtrl.Return) })
+
+		// Admin
+		api.GET("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
+		api.POST("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, fbCtrl.ReturnAdmin) })
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")

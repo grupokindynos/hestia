@@ -3,12 +3,18 @@ module github.com/grupokindynos/hestia
 go 1.12
 
 require (
-	cloud.google.com/go v0.38.0
 	firebase.google.com/go v3.9.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
+	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/heroku/x v0.0.1
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0 // indirect
+	github.com/tidwall/pretty v1.0.0 // indirect
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v1.0.0 // indirect
+	go.mongodb.org/mongo-driver v1.1.0
 	google.golang.org/api v0.9.0
+	gopkg.in/square/go-jose.v2 v2.3.1
 )

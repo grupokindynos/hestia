@@ -1,13 +1,21 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"os"
+	"time"
 )
 
 var (
 	ErrorNoAuth           = errors.New("you are not authorized")
 	ErrorFbInitializeAuth = errors.New("unable to initialize auth client")
+	ErrorDbInitialize     = errors.New("unable to connect to database")
+	ErrorUnableParseJWE   = errors.New("unable to parse web token")
+	ErrorUnableDecryptJWE = errors.New("unable to decrypt web token")
 )
 
 // GlobalResponseError is used to wrap all the errored API responses under the same model.
@@ -25,4 +33,18 @@ func GlobalResponseError(result interface{}, err error, c *gin.Context) *gin.Con
 func GlobalResponseNoAuth(c *gin.Context) *gin.Context {
 	c.JSON(401, gin.H{"message": "Error", "error": ErrorNoAuth.Error(), "status": -1})
 	return c
+}
+
+// ConnectDB is the function to return the MongoDB connection.
+func ConnectDB() (*mongo.Database, error) {
+	MongoDB := os.Getenv("MONGOHQ_URL")
+	MongoDBName := os.Getenv("MONGODB_NAME")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDB))
+	if err != nil {
+		return nil, err
+	}
+	db := client.Database(MongoDBName)
+	return db, nil
 }

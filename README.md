@@ -6,7 +6,7 @@
 [![Go Report](https://goreportcard.com/badge/github.com/grupokindynos/hestia)](https://goreportcard.com/report/github.com/grupokindynos/hestia) 
 [![GoDocs](https://godoc.org/github.com/grupokindynos/hestia?status.svg)](http://godoc.org/github.com/grupokindynos/hestia)
 
-Hestia is a microservice to safely communicate with Firebase Auth and Databases using JWE
+Hestia is a microservice to safely communicate with Firebase Auth and MongoDB using JWE
 
 ## Building
 

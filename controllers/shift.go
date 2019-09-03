@@ -1,6 +1,9 @@
 package controllers
 
-import "cloud.google.com/go/firestore"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+	"time"
+)
 
 /*
 
@@ -17,10 +20,22 @@ import "cloud.google.com/go/firestore"
 
 */
 
-type Shift struct{}
+type Shift struct {
+	PaymentAddress string    `bson:"payment_address" json:"payment_address"`
+	PaymentAmount  string    `bson:"payment_amount" json:"payment_amount"`
+	PaymentCoin    string    `bson:"payment_coin" json:"payment_coin"`
+	PaymentTxid    string    `bson:"payment_txid" json:"payment_txid"`
+	Rate           float64   `bson:"rate" json:"rate"`
+	ID             string    `bson:"id" json:"id"`
+	Status         string    `bson:"status" json:"status"`
+	Time           time.Time `bson:"time" json:"time"`
+	ToAddress      string    `bson:"to_address" json:"to_address"`
+	ToAmount       string    `bson:"to_amount" json:"to_amount"`
+	ToCoin         string    `bson:"to_coin" json:"to_coin"`
+}
 
 type ShiftsController struct {
-	DB *firestore.Client
+	DB *mongo.Database
 }
 
 func (sc *ShiftsController) GetShift(shiftid string) (shift Shift, err error) {
