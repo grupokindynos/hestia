@@ -48,7 +48,8 @@ Make sure the port is configured under en enviroment variable `PORT=8080`
 
 
 ## API Reference
-@TODO
+
+Documentation: [API Reference](https://documenter.getpostman.com/view/4345063/SVfUsSTD?version=latest)
 
 ## Testing
 
