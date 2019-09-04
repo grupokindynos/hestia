@@ -51,7 +51,7 @@ func (fb *FirebaseController) CheckAuth(c *gin.Context) {
 			config.GlobalResponseError(nil, err, c)
 			return
 		}*/
-	config.GlobalResponseError(res, nil, c)
+	config.GlobalResponseError(nil, nil, c)
 	return
 }
 

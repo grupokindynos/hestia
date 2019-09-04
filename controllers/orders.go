@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/grupokindynos/hestia/models"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /*
