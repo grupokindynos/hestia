@@ -8,7 +8,31 @@
 
 Hestia is a microservice to safely communicate with Firebase Auth and MongoDB using JWE
 
+## Deploy
+
+#### Heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/grupokindynos/hestia)
+
+#### Docker
+
+To deploy to docker, simply pull the image
+```
+docker pull kindynos/hestia:latest
+```
+Create a new `.env` file with all the necessary environment variables defined on `app.json`
+
+Run the docker image
+```
+docker run -p 8080:8080 --env-file .env kindynos/hestia:latest 
+```
+
 ## Building
+
+To run Hestia from the source code, first you need to install golang, follow this guide:
+```
+https://golang.org/doc/install
+```
 
 To run Hestia simply clone de repository:
 
@@ -16,12 +40,9 @@ To run Hestia simply clone de repository:
 git clone https://github.com/grupokindynos/hestia 
 ```
 
-Build it or Run it:
+Install dependencies
 ```
-go build && ./hestia
-```
-```
-go run main.go
+go mod download
 ```
 
 Make sure the port is configured under en enviroment variable `PORT=8080`

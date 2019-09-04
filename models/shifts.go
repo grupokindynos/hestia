@@ -9,17 +9,11 @@ import (
 )
 
 type Shift struct {
-	PaymentAddress string    `bson:"payment_address" json:"payment_address"`
-	PaymentAmount  string    `bson:"payment_amount" json:"payment_amount"`
-	PaymentCoin    string    `bson:"payment_coin" json:"payment_coin"`
-	PaymentTxid    string    `bson:"payment_txid" json:"payment_txid"`
-	Rate           float64   `bson:"rate" json:"rate"`
-	ID             string    `bson:"id" json:"id"`
-	Status         string    `bson:"status" json:"status"`
-	Time           time.Time `bson:"time" json:"time"`
-	ToAddress      string    `bson:"to_address" json:"to_address"`
-	ToAmount       string    `bson:"to_amount" json:"to_amount"`
-	ToCoin         string    `bson:"to_coin" json:"to_coin"`
+	ID         string  `bson:"id" json:"id"`
+	Status     string  `bson:"status" json:"status"`
+	Timestamp  string  `bson:"timestamp" json:"timestamp"`
+	Payment    Payment `bson:"payment" json:"payment"`
+	Conversion Payment `bson:"conversion" json:"conversion"`
 }
 
 type ShiftModel struct {
@@ -36,7 +30,6 @@ func (m *ShiftModel) GetShift(shiftid string) (shift Shift, err error) {
 }
 
 func (m *ShiftModel) StoreShift(uid string, shift Shift) error {
-
 	// Add ShiftID to /shift/uid/shifts
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

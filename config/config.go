@@ -41,7 +41,7 @@ func GlobalResponseNoAuth(c *gin.Context) *gin.Context {
 
 // ConnectDB is the function to return the MongoDB connection.
 func ConnectDB() (*mongo.Database, error) {
-	MongoDB := os.Getenv("MONGOHQ_URL")
+	MongoDB := os.Getenv("MONGODB_URL")
 	MongoDBName := os.Getenv("MONGODB_NAME")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
