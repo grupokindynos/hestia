@@ -59,4 +59,4 @@ go test ./...
 
 ## Contributing
 
-Pull requests accepted.
+To contribute to this repository, please fork it, create a new branch and submit a pull request.
