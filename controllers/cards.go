@@ -40,14 +40,14 @@ func (cc *CardsController) GetUserSingle(userInfo models.User, c *gin.Context) (
 
 // Admin methods
 
-func (cc *CardsController) GetAll(c *gin.Context) (interface{}, error) {
+func (cc *CardsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (cc *CardsController) GetSingle(c *gin.Context) (interface{}, error) {
+func (cc *CardsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (cc *CardsController) Store(c *gin.Context) (interface{}, error) {
+func (cc *CardsController) Store(userData models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }

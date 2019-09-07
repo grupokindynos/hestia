@@ -19,11 +19,15 @@ var (
 	ErrorUnableToStoreUser = errors.New("unable to store user information")
 	ErrorMissingUID        = errors.New("missing user id param")
 	ErrorUnmarshal         = errors.New("unable to unmarshal object")
-	ErrorReadBody          = errors.New("unable to read object body")
+	ErrorMissingShiftID    = errors.New("missing shift id param")
+	ErrorShiftNotFound     = errors.New("shift information not found")
+	ErrorInfoDontMatchUser = errors.New("information requested doesn't match for this user")
+	ErrorShiftsAllError    = errors.New("something wrong happened, unable to get all shifts records")
+	ErrorCoinDataGet       = errors.New("unable to get coin information")
+	ErrorDecryptJWE        = errors.New("unable to decrypt jwe")
+	ErrorDBStore           = errors.New("unable to store information to database")
 
-	ErrorUnableParseJWE   = errors.New("unable to parse web token")
-	ErrorUnableDecryptJWE = errors.New("unable to decrypt web token")
-	HttpClient            = &http.Client{
+	HttpClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
 )

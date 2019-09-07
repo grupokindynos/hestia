@@ -11,10 +11,6 @@ import (
 	Database Structure:
 
 	deposits/
-		UID/
-          	deposit -> Array of DepositIDs
-
-	depositIndex/
 		DepositID/
 			depositData
 
@@ -40,10 +36,10 @@ func (dc *DepositsController) Store(userInfo models.User, c *gin.Context) (inter
 
 // Admin methods
 
-func (dc *DepositsController) GetAll(c *gin.Context) (interface{}, error) {
+func (dc *DepositsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (dc *DepositsController) GetSingle(c *gin.Context) (interface{}, error) {
+func (dc *DepositsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

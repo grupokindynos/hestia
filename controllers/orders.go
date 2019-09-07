@@ -11,10 +11,6 @@ import (
 	Database Structure:
 
 	orders/
-		UID/
-          	orders -> Array of OrderIDs
-
-	orderIndex/
 		OrderID/
 			orderData
 
@@ -40,10 +36,10 @@ func (oc *OrdersController) Store(userInfo models.User, c *gin.Context) (interfa
 
 // Admin methods
 
-func (oc *OrdersController) GetAll(c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (oc *OrdersController) GetSingle(c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

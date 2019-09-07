@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"github.com/grupokindynos/hestia/utils"
 )
 
 /*
@@ -22,10 +25,32 @@ type CoinsController struct {
 
 // Admin methods
 
-func (cc *CoinsController) GetCoinsAvailability(c *gin.Context) (interface{}, error) {
-	return nil, nil
+func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Context) (interface{}, error) {
+	coins, err := cc.Model.GetCoinsData()
+	if err != nil {
+		return nil, config.ErrorCoinDataGet
+	}
+	return coins, nil
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(c *gin.Context) (interface{}, error) {
-	return nil, nil
+func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.Context) (interface{}, error) {
+	var ReqBody models.BodyReq
+	err := c.BindJSON(&ReqBody)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	if err != nil {
+		return nil, config.ErrorDecryptJWE
+	}
+	var newCoinsData []models.Coin
+	err = json.Unmarshal(rawBytes, &newCoinsData)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	err = cc.Model.UpdateCoinsData(newCoinsData)
+	if err != nil {
+		return nil, config.ErrorDBStore
+	}
+	return true, nil
 }

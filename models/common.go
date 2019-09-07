@@ -7,3 +7,7 @@ type Payment struct {
 	Txid          string `bson:"txid" json:"txid"`
 	Confirmations string `bson:"confirmations" json:"confirmations"`
 }
+
+type BodyReq struct {
+	Payload string `bson:"payload" json:"payload"`
+}

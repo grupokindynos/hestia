@@ -11,10 +11,6 @@ import (
 	Database Structure:
 
 	vouchers/
-		UID/
-          	vouchers -> Array of VouchersIDs
-
-	voucherIndex/
 		VoucherID/
 			voucherData
 
@@ -40,10 +36,10 @@ func (vc *VouchersController) Store(userInfo models.User, c *gin.Context) (inter
 
 // Admin methods
 
-func (vc *VouchersController) GetAll(c *gin.Context) (interface{}, error) {
+func (vc *VouchersController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (vc *VouchersController) GetSingle(c *gin.Context) (interface{}, error) {
+func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
