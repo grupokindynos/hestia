@@ -12,12 +12,13 @@ import (
 )
 
 var (
-	ErrorNoAuth           = errors.New("you are not authorized")
-	ErrorFbInitializeAuth = errors.New("unable to initialize auth client")
-	ErrorDbInitialize     = errors.New("unable to connect to database")
-	ErrorUnableParseJWE   = errors.New("unable to parse web token")
-	ErrorUnableDecryptJWE = errors.New("unable to decrypt web token")
-	HttpClient            = &http.Client{
+	ErrorNoAuth            = errors.New("you are not authorized")
+	ErrorFbInitializeAuth  = errors.New("unable to initialize auth client")
+	ErrorDbInitialize      = errors.New("unable to connect to database")
+	ErrorNoUserInformation = errors.New("unable to get user information")
+	ErrorUnableParseJWE    = errors.New("unable to parse web token")
+	ErrorUnableDecryptJWE  = errors.New("unable to decrypt web token")
+	HttpClient             = &http.Client{
 		Timeout: time.Second * 10,
 	}
 )

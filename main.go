@@ -58,6 +58,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 		// Init Services
 		obol := &services.ObolService{URL: "https://obol-rates.herokuapp.com/complex"}
+		_ = &services.PlutusService{URL: "https://obol-rates.herokuapp.com/complex", AuthUsername: os.Getenv("PLUTUS_AUTH_USERNAME"), AuthPassword: os.Getenv("PLUTUS_AUTH_PASSWORD")}
 
 		// Init DB models
 		shiftsModel := &models.ShiftModel{Db: db}
@@ -66,80 +67,88 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		depositsModel := &models.DepositsModel{Db: db}
 		vouchersModel := &models.VouchersModel{Db: db}
 		usersModel := &models.UsersModel{Db: db}
+		coinsModel := &models.CoinsModel{Db: db}
 
 		// Init Controllers
 		fbCtrl := controllers.FirebaseController{App: fbApp}
-		_ = controllers.CardsController{Model: cardsModel}
-		_ = controllers.DepositsController{Model: depositsModel}
-		_ = controllers.OrdersController{Model: ordersModel}
-		_ = controllers.ShiftsController{Model: shiftsModel, Obol: obol}
-		_ = controllers.UsersController{Model: usersModel}
-		_ = controllers.VouchersController{Model: vouchersModel}
+		cardsCtrl := controllers.CardsController{Model: cardsModel}
+		depositsCtrl := controllers.DepositsController{Model: depositsModel}
+		ordersCtrl := controllers.OrdersController{Model: ordersModel}
+		shiftCtrl := controllers.ShiftsController{Model: shiftsModel, Obol: obol}
+		userCtrl := controllers.UsersController{Model: usersModel}
+		vouchersCtrl := controllers.VouchersController{Model: vouchersModel}
+		coinsCtrl := controllers.CoinsController{Model: coinsModel}
 
 		// Shift
 
 		// User
-		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.POST("/user/shift/new", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetUserSingle) })
+		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetUserAll) })
+		api.POST("/user/shift/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.Store) })
 
 		// Admin
-		api.GET("/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, shiftCtrl.GetSingle) })
+		api.GET("/shift/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, shiftCtrl.GetAll) })
 
 		// Vouchers
 
 		// User
-		api.GET("/user/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.POST("/user/voucher/new", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/user/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetUserSingle) })
+		api.GET("/user/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetUserAll) })
+		api.POST("/user/voucher/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.Store) })
 
 		// Admin
-		api.GET("/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-
-		// Cards
-
-		// User
-		api.GET("/user/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-
-		// Admin
-		api.GET("/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.POST("/cards/new", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, vouchersCtrl.GetSingle) })
+		api.GET("/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, vouchersCtrl.GetAll) })
 
 		// Deposits
 
 		// User
-		api.GET("/user/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.POST("/user/deposits/new", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/user/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetUserSingle) })
+		api.GET("/user/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetUserAll) })
+		api.POST("/user/deposits/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.Store) })
 
 		// Admin
-		api.GET("/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, depositsCtrl.GetSingle) })
+		api.GET("/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, depositsCtrl.GetAll) })
 
 		// Orders
 
 		// User
-		api.GET("/user/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/orders/new", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/user/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetUserSingle) })
+		api.GET("/user/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetUserAll) })
+		api.POST("/user/orders/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.Store) })
 
 		// Admin
-		api.GET("/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, ordersCtrl.GetSingle) })
+		api.GET("/orders/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, ordersCtrl.GetAll) })
+
+		// Cards
+
+		// User
+		api.GET("/user/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetUserSingle) })
+		api.GET("/user/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetUserAll) })
+
+		// Admin
+		api.GET("/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.GetSingle) })
+		api.GET("/cards/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.GetAll) })
+		api.POST("/cards/new", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.Store) })
 
 		// User Information
 
 		// User
-		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.GET("/user/update", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSelfInfo) })
+		api.GET("/user/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.UpdateSelfInfo) })
 
 		// Admin
-		api.GET("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
-		api.POST("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c) })
+		api.GET("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.GetUserInfo) })
+		api.POST("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.UpdateUserInfo) })
+
+		// Coins Information
+
+		// Admin
+		api.GET("/coins", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, coinsCtrl.GetCoinsAvailability) })
+		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, coinsCtrl.UpdateCoinsAvailability) })
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")

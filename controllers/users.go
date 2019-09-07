@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/models"
 )
 
@@ -15,8 +16,22 @@ import (
 
 */
 
-type User struct{}
-
 type UsersController struct {
 	Model *models.UsersModel
+}
+
+func (uc *UsersController) GetSelfInfo(uid string, params gin.Params) (interface{}, error) {
+	return nil, nil
+}
+
+func (uc *UsersController) UpdateSelfInfo(uid string, params gin.Params) (interface{}, error) {
+	return nil, nil
+}
+
+func (uc *UsersController) GetUserInfo(params gin.Params) (interface{}, error) {
+	return nil, nil
+}
+
+func (uc *UsersController) UpdateUserInfo(params gin.Params) (interface{}, error) {
+	return nil, nil
 }

@@ -16,7 +16,7 @@ type UsersModel struct {
 	Db *mongo.Database
 }
 
-func (m *UsersModel) GetVoucher(uid string) (user User, err error) {
+func (m *UsersModel) GetUserInformation(uid string) (user User, err error) {
 	return user, err
 }
 

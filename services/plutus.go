@@ -1,5 +1,7 @@
 package services
 
 type PlutusService struct {
-	URL string
+	URL          string
+	AuthUsername string
+	AuthPassword string
 }

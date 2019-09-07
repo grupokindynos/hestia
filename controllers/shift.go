@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services"
 )
@@ -25,18 +26,26 @@ type ShiftsController struct {
 	Model *models.ShiftModel
 }
 
-func (sc *ShiftsController) GetShift(shiftid string) (shift models.Shift, err error) {
+// User methods
+
+func (sc *ShiftsController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+	return nil, nil
+}
+
+func (sc *ShiftsController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (sc *ShiftsController) GetUserShiftsIDs(uid string) (shiftsIDs []string, err error) {
+func (sc *ShiftsController) Store(uid string, params gin.Params) (interface{}, error) {
+	return "", nil
+}
+
+// Admin methods
+
+func (sc *ShiftsController) GetAll(params gin.Params) (interface{}, error) {
 	return nil, nil
 }
 
-func (sc *ShiftsController) GetUserShifts(uid string) (shifts []models.Shift, err error) {
-	return nil, nil
-}
-
-func (sc *ShiftsController) StoreShift(uid string, shift models.Shift) (err error) {
-	return nil
+func (sc *ShiftsController) GetSingle(params gin.Params) (interface{}, error) {
+	return models.Shift{}, nil
 }
