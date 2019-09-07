@@ -26,24 +26,24 @@ type DepositsController struct {
 
 // User methods
 
-func (dc *DepositsController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+func (dc *DepositsController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (dc *DepositsController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
+func (dc *DepositsController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (dc *DepositsController) Store(uid string, params gin.Params) (interface{}, error) {
+func (dc *DepositsController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 
 // Admin methods
 
-func (dc *DepositsController) GetAll(params gin.Params) (interface{}, error) {
+func (dc *DepositsController) GetAll(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (dc *DepositsController) GetSingle(params gin.Params) (interface{}, error) {
+func (dc *DepositsController) GetSingle(c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

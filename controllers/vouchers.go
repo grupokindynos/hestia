@@ -26,24 +26,24 @@ type VouchersController struct {
 
 // User methods
 
-func (vc *VouchersController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+func (vc *VouchersController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (vc *VouchersController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
+func (vc *VouchersController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (vc *VouchersController) Store(uid string, params gin.Params) (interface{}, error) {
+func (vc *VouchersController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 
 // Admin methods
 
-func (vc *VouchersController) GetAll(params gin.Params) (interface{}, error) {
+func (vc *VouchersController) GetAll(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (vc *VouchersController) GetSingle(params gin.Params) (interface{}, error) {
+func (vc *VouchersController) GetSingle(c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

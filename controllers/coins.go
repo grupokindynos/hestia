@@ -22,10 +22,10 @@ type CoinsController struct {
 
 // Admin methods
 
-func (cc *CoinsController) GetCoinsAvailability(params gin.Params) (interface{}, error) {
+func (cc *CoinsController) GetCoinsAvailability(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(params gin.Params) (interface{}, error) {
+func (cc *CoinsController) UpdateCoinsAvailability(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }

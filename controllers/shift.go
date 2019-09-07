@@ -28,24 +28,24 @@ type ShiftsController struct {
 
 // User methods
 
-func (sc *ShiftsController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+func (sc *ShiftsController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (sc *ShiftsController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
+func (sc *ShiftsController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (sc *ShiftsController) Store(uid string, params gin.Params) (interface{}, error) {
+func (sc *ShiftsController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 
 // Admin methods
 
-func (sc *ShiftsController) GetAll(params gin.Params) (interface{}, error) {
+func (sc *ShiftsController) GetAll(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (sc *ShiftsController) GetSingle(params gin.Params) (interface{}, error) {
+func (sc *ShiftsController) GetSingle(c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

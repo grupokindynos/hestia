@@ -79,6 +79,16 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		vouchersCtrl := controllers.VouchersController{Model: vouchersModel}
 		coinsCtrl := controllers.CoinsController{Model: coinsModel}
 
+		// User Information
+
+		// User
+		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSelfInfo) })
+		api.GET("/user/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.UpdateSelfInfo) })
+
+		// Admin
+		api.GET("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.GetUserInfo) })
+		api.POST("/info", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.UpdateUserInfo) })
+
 		// Shift
 
 		// User
@@ -133,16 +143,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.GetSingle) })
 		api.GET("/cards/all", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.GetAll) })
 		api.POST("/cards/new", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, cardsCtrl.Store) })
-
-		// User Information
-
-		// User
-		api.GET("/user/info", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSelfInfo) })
-		api.GET("/user/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.UpdateSelfInfo) })
-
-		// Admin
-		api.GET("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.GetUserInfo) })
-		api.POST("/info/:uid", func(c *gin.Context) { fbCtrl.CheckAuthAdmin(c, userCtrl.UpdateUserInfo) })
 
 		// Coins Information
 

@@ -26,24 +26,24 @@ type OrdersController struct {
 
 // User methods
 
-func (oc *OrdersController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+func (oc *OrdersController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (oc *OrdersController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
+func (oc *OrdersController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (oc *OrdersController) Store(uid string, params gin.Params) (interface{}, error) {
+func (oc *OrdersController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 
 // Admin methods
 
-func (oc *OrdersController) GetAll(params gin.Params) (interface{}, error) {
+func (oc *OrdersController) GetAll(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (oc *OrdersController) GetSingle(params gin.Params) (interface{}, error) {
+func (oc *OrdersController) GetSingle(c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }

@@ -13,7 +13,7 @@ type FirebaseController struct {
 	UsersModel *models.UsersModel
 }
 
-func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(uid string, params gin.Params) (res interface{}, err error)) {
+func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData models.User, context *gin.Context) (res interface{}, err error)) {
 	token := c.GetHeader("token")
 	// If there is no token on the header, return non-authed
 	if token == "" {
@@ -32,7 +32,31 @@ func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(uid string, 
 		return
 	}
 	uid := tk.UID
-	res, err := method(uid, c.Params)
+user:
+	userData, err := fb.UsersModel.GetUserInformation(uid)
+	if err != nil {
+		fbUserData, err := fbAuth.GetUser(context.Background(), uid)
+		if err != nil {
+			config.GlobalResponseError(nil, config.ErrorNoUserInformation, c)
+			return
+		}
+		newUserData := models.User{
+			Email:    fbUserData.Email,
+			KYCData:  models.KYCInformation{},
+			Role:     "user",
+			Shifts:   []string{},
+			Vouchers: []string{},
+			Deposits: []string{},
+			Cards:    []string{},
+		}
+		err = fb.UsersModel.UpdateUser(newUserData)
+		if err != nil {
+			config.GlobalResponseError(nil, config.ErrorUnableToStoreUser, c)
+			return
+		}
+		goto user
+	}
+	res, err := method(userData, c)
 	if err != nil {
 		config.GlobalResponseError(nil, err, c)
 		return
@@ -41,7 +65,7 @@ func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(uid string, 
 	return
 }
 
-func (fb *FirebaseController) CheckAuthAdmin(c *gin.Context, method func(params gin.Params) (res interface{}, err error)) {
+func (fb *FirebaseController) CheckAuthAdmin(c *gin.Context, method func(context *gin.Context) (res interface{}, err error)) {
 	token := c.GetHeader("token")
 	// If there is no token on the header, return non-authed
 	if token == "" {
@@ -69,7 +93,7 @@ func (fb *FirebaseController) CheckAuthAdmin(c *gin.Context, method func(params 
 		config.GlobalResponseError(nil, config.ErrorNoAuth, c)
 		return
 	}
-	res, err := method(c.Params)
+	res, err := method(c)
 	if err != nil {
 		config.GlobalResponseError(nil, err, c)
 		return

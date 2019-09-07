@@ -30,24 +30,24 @@ type CardsController struct {
 
 // User methods
 
-func (cc *CardsController) GetUserAll(uid string, params gin.Params) (interface{}, error) {
+func (cc *CardsController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (cc *CardsController) GetUserSingle(uid string, params gin.Params) (interface{}, error) {
+func (cc *CardsController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
 // Admin methods
 
-func (cc *CardsController) GetAll(params gin.Params) (interface{}, error) {
+func (cc *CardsController) GetAll(c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (cc *CardsController) GetSingle(params gin.Params) (interface{}, error) {
+func (cc *CardsController) GetSingle(c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (cc *CardsController) Store(params gin.Params) (interface{}, error) {
+func (cc *CardsController) Store(c *gin.Context) (interface{}, error) {
 	return "", nil
 }

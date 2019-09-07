@@ -16,9 +16,14 @@ var (
 	ErrorFbInitializeAuth  = errors.New("unable to initialize auth client")
 	ErrorDbInitialize      = errors.New("unable to connect to database")
 	ErrorNoUserInformation = errors.New("unable to get user information")
-	ErrorUnableParseJWE    = errors.New("unable to parse web token")
-	ErrorUnableDecryptJWE  = errors.New("unable to decrypt web token")
-	HttpClient             = &http.Client{
+	ErrorUnableToStoreUser = errors.New("unable to store user information")
+	ErrorMissingUID        = errors.New("missing user id param")
+	ErrorUnmarshal         = errors.New("unable to unmarshal object")
+	ErrorReadBody          = errors.New("unable to read object body")
+
+	ErrorUnableParseJWE   = errors.New("unable to parse web token")
+	ErrorUnableDecryptJWE = errors.New("unable to decrypt web token")
+	HttpClient            = &http.Client{
 		Timeout: time.Second * 10,
 	}
 )
