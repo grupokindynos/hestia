@@ -17,20 +17,21 @@ import (
 */
 
 type OrdersController struct {
-	Model *models.OrdersModel
+	Model     *models.OrdersModel
+	UserModel *models.UsersModel
 }
 
 // User methods
 
-func (oc *OrdersController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (oc *OrdersController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (oc *OrdersController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 

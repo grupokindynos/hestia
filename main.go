@@ -61,22 +61,22 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		_ = &services.PlutusService{URL: "https://obol-rates.herokuapp.com/complex", AuthUsername: os.Getenv("PLUTUS_AUTH_USERNAME"), AuthPassword: os.Getenv("PLUTUS_AUTH_PASSWORD")}
 
 		// Init DB models
-		shiftsModel := &models.ShiftModel{Db: db}
-		cardsModel := &models.CardsModel{Db: db}
-		ordersModel := &models.OrdersModel{Db: db}
-		depositsModel := &models.DepositsModel{Db: db}
-		vouchersModel := &models.VouchersModel{Db: db}
-		usersModel := &models.UsersModel{Db: db}
-		coinsModel := &models.CoinsModel{Db: db}
+		shiftsModel := &models.ShiftModel{Db: db, Collection: "shifts"}
+		cardsModel := &models.CardsModel{Db: db, Collection: "cards"}
+		ordersModel := &models.OrdersModel{Db: db, Collection: "orders"}
+		depositsModel := &models.DepositsModel{Db: db, Collection: "deposits"}
+		vouchersModel := &models.VouchersModel{Db: db, Collection: "vouchers"}
+		usersModel := &models.UsersModel{Db: db, Collection: "users"}
+		coinsModel := &models.CoinsModel{Db: db, Collection: "coins"}
 
 		// Init Controllers
 		fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
-		cardsCtrl := controllers.CardsController{Model: cardsModel}
-		depositsCtrl := controllers.DepositsController{Model: depositsModel}
-		ordersCtrl := controllers.OrdersController{Model: ordersModel}
+		cardsCtrl := controllers.CardsController{Model: cardsModel, UserModel: usersModel}
+		depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
+		ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 		shiftCtrl := controllers.ShiftsController{Model: shiftsModel, Obol: obol, UserModel: usersModel}
 		userCtrl := controllers.UsersController{Model: usersModel}
-		vouchersCtrl := controllers.VouchersController{Model: vouchersModel}
+		vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel}
 		coinsCtrl := controllers.CoinsController{Model: coinsModel}
 
 		// Coins Information

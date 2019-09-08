@@ -22,14 +22,15 @@ type User struct {
 type KYCInformation struct{}
 
 type UsersModel struct {
-	Db *mongo.Database
+	Db         *mongo.Database
+	Collection string
 }
 
 // GetUserInformation will return the user information stored on MongoDB
 func (m *UsersModel) GetUserInformation(uid string) (user User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	collection := m.Db.Collection("users")
+	collection := m.Db.Collection(m.Collection)
 	filter := bson.M{"_id": uid}
 	err = collection.FindOne(ctx, filter).Decode(&user)
 	return user, err
@@ -39,7 +40,7 @@ func (m *UsersModel) GetUserInformation(uid string) (user User, err error) {
 func (m *UsersModel) UpdateUser(user User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection("users")
+	shiftsColl := m.Db.Collection(m.Collection)
 	uidFilter := bson.M{"_id": user.ID}
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$set", Value: user}}, &options.UpdateOptions{Upsert: &upsert})
@@ -50,7 +51,7 @@ func (m *UsersModel) UpdateUser(user User) error {
 func (m *UsersModel) AddShift(uid string, shiftID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection("users")
+	shiftsColl := m.Db.Collection(m.Collection)
 	uidFilter := bson.M{"_id": uid}
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"shifts": shiftID}}}, &options.UpdateOptions{Upsert: &upsert})
@@ -61,7 +62,7 @@ func (m *UsersModel) AddShift(uid string, shiftID string) error {
 func (m *UsersModel) AddCard(uid string, cardCode string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection("users")
+	shiftsColl := m.Db.Collection(m.Collection)
 	uidFilter := bson.M{"_id": uid}
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"cards": cardCode}}}, &options.UpdateOptions{Upsert: &upsert})
@@ -72,7 +73,7 @@ func (m *UsersModel) AddCard(uid string, cardCode string) error {
 func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection("users")
+	shiftsColl := m.Db.Collection(m.Collection)
 	uidFilter := bson.M{"_id": uid}
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"vouchers": voucherID}}}, &options.UpdateOptions{Upsert: &upsert})
@@ -83,7 +84,7 @@ func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection("users")
+	shiftsColl := m.Db.Collection(m.Collection)
 	uidFilter := bson.M{"_id": uid}
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"deposits": depositID}}}, &options.UpdateOptions{Upsert: &upsert})

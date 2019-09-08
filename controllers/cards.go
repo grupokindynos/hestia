@@ -25,16 +25,17 @@ import (
 */
 
 type CardsController struct {
-	Model *models.CardsModel
+	Model     *models.CardsModel
+	UserModel *models.UsersModel
 }
 
 // User methods
 
-func (cc *CardsController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (cc *CardsController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (cc *CardsController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (cc *CardsController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 

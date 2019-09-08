@@ -59,7 +59,7 @@ user:
 		}
 		err = fb.UsersModel.UpdateUser(newUserData)
 		if err != nil {
-			config.GlobalResponseError(nil, config.ErrorUnableToStoreUser, c)
+			config.GlobalResponseError(nil, config.ErrorDBStore, c)
 			return
 		}
 		goto user

@@ -25,33 +25,34 @@ type Pin struct {
 }
 
 type CardsModel struct {
-	Db *mongo.Database
+	Db         *mongo.Database
+	Collection string
 }
 
-func (m *CardsModel) GetCard(cardCode string) (card Card, err error) {
+func (m *CardsModel) Get(id string) (card Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	collection := m.Db.Collection("cards")
-	filter := bson.M{"_id": cardCode}
-	err = collection.FindOne(ctx, filter).Decode(&card)
+	col := m.Db.Collection(m.Collection)
+	filter := bson.M{"_id": id}
+	err = col.FindOne(ctx, filter).Decode(&card)
 	return card, err
 }
 
-func (m *CardsModel) UpdateCard(cardCode string, card Card) error {
+func (m *CardsModel) Update(id string, card Card) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftIndexColl := m.Db.Collection("cards")
-	shiftIDFilter := bson.M{"_id": cardCode}
+	col := m.Db.Collection(m.Collection)
+	filter := bson.M{"_id": id}
 	upsert := true
-	_, err := shiftIndexColl.UpdateOne(ctx, shiftIDFilter, bson.D{{Key: "$set", Value: card}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: card}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
 }
 
 func (m *CardsModel) GetAll() (cards []Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	collection := m.Db.Collection("cards")
-	curr, err := collection.Find(ctx, nil)
+	col := m.Db.Collection(m.Collection)
+	curr, err := col.Find(ctx, nil)
 	if err != nil {
 		return cards, err
 	}

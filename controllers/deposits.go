@@ -17,20 +17,21 @@ import (
 */
 
 type DepositsController struct {
-	Model *models.DepositsModel
+	Model     *models.DepositsModel
+	UserModel *models.UsersModel
 }
 
 // User methods
 
-func (dc *DepositsController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (dc *DepositsController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (dc *DepositsController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (dc *DepositsController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (dc *DepositsController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (dc *DepositsController) Store(userData models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 

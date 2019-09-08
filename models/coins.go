@@ -9,23 +9,30 @@ import (
 )
 
 type Coin struct {
-	Ticker            string `bson:"ticker" json:"ticker"`
-	ShiftAvailable    bool   `bson:"shift_available" json:"shift_available"`
-	DepositAvailable  bool   `bson:"deposit_available" json:"deposit_available"`
-	VouchersAvailable bool   `bson:"vouchers_available" json:"vouchers_available"`
-	OrdersAvailable   bool   `bson:"orders_available" json:"orders_available"`
+	Ticker            string   `bson:"ticker" json:"ticker"`
+	ShiftAvailable    bool     `bson:"shift_available" json:"shift_available"`
+	DepositAvailable  bool     `bson:"deposit_available" json:"deposit_available"`
+	VouchersAvailable bool     `bson:"vouchers_available" json:"vouchers_available"`
+	OrdersAvailable   bool     `bson:"orders_available" json:"orders_available"`
+	Balances          Balances `bson:"balances" json:"balances"`
+}
+
+type Balances struct {
+	HotWallet float64 `bson:"hot_wallet" json:"hot_wallet"`
+	Exchanges float64 `bson:"exchanges" json:"exchanges"`
 }
 
 type CoinsModel struct {
-	Db *mongo.Database
+	Db         *mongo.Database
+	Collection string
 }
 
 func (m *CoinsModel) GetCoinsData() ([]Coin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	collection := m.Db.Collection("coins")
+	col := m.Db.Collection(m.Collection)
 	var CoinData []Coin
-	cursor, err := collection.Find(ctx, nil)
+	cursor, err := col.Find(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +50,11 @@ func (m *CoinsModel) GetCoinsData() ([]Coin, error) {
 func (m *CoinsModel) UpdateCoinsData(Coins []Coin) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftIndexColl := m.Db.Collection("coins")
+	col := m.Db.Collection(m.Collection)
 	for _, coin := range Coins {
-		coinTickerFilter := bson.M{"_id": coin.Ticker}
+		filter := bson.M{"_id": coin.Ticker}
 		upsert := true
-		_, err := shiftIndexColl.UpdateOne(ctx, coinTickerFilter, bson.D{{Key: "$set", Value: coin}}, &options.UpdateOptions{Upsert: &upsert})
+		_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: coin}}, &options.UpdateOptions{Upsert: &upsert})
 		if err != nil {
 			return err
 		}

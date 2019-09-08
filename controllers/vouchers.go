@@ -17,20 +17,21 @@ import (
 */
 
 type VouchersController struct {
-	Model *models.VouchersModel
+	Model     *models.VouchersModel
+	UserModel *models.UsersModel
 }
 
 // User methods
 
-func (vc *VouchersController) GetUserAll(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (vc *VouchersController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-func (vc *VouchersController) GetUserSingle(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (vc *VouchersController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
 	return models.Shift{}, nil
 }
 
-func (vc *VouchersController) Store(userInfo models.User, c *gin.Context) (interface{}, error) {
+func (vc *VouchersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
 

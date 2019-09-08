@@ -1,7 +1,11 @@
 package models
 
 import (
+	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 type Voucher struct {
@@ -20,5 +24,44 @@ type Voucher struct {
 }
 
 type VouchersModel struct {
-	Db *mongo.Database
+	Db         *mongo.Database
+	Collection string
+}
+
+func (m *VouchersModel) Get(id string) (voucher Voucher, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	col := m.Db.Collection(m.Collection)
+	filter := bson.M{"_id": id}
+	err = col.FindOne(ctx, filter).Decode(&voucher)
+	return voucher, err
+}
+
+func (m *VouchersModel) Update(id string, voucher Voucher) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	col := m.Db.Collection(m.Collection)
+	filter := bson.M{"_id": id}
+	upsert := true
+	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: voucher}}, &options.UpdateOptions{Upsert: &upsert})
+	return err
+}
+
+func (m *VouchersModel) GetAll() (vouchers []Voucher, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	col := m.Db.Collection(m.Collection)
+	curr, err := col.Find(ctx, nil)
+	if err != nil {
+		return vouchers, err
+	}
+	for curr.Next(ctx) {
+		var voucher Voucher
+		err := curr.Decode(&voucher)
+		if err != nil {
+			return vouchers, err
+		}
+		vouchers = append(vouchers, voucher)
+	}
+	return vouchers, err
 }
