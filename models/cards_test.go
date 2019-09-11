@@ -6,17 +6,6 @@ import (
 	"testing"
 )
 
-var TestCard = Card{
-	Address:    "TEST-ADDRRESS",
-	CardCode:   "TEST-CARDCODE",
-	CardNumber: "123456778",
-	City:       "TEST-CITY",
-	Email:      "TEST@TEST.COM",
-	FirstName:  "TEST",
-	LastName:   "CARD",
-	UID:        "XYZ12345678910",
-}
-
 func TestCardsModel_Update(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)

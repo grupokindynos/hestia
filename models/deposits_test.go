@@ -6,22 +6,6 @@ import (
 	"testing"
 )
 
-var TestDeposit = Deposit{
-	ID:  "TEST-DEPOSIT",
-	UID: "XYZ12345678910",
-	Payment: Payment{
-		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
-		Coin:          "POLIS",
-		Txid:          "FAKE-TXID",
-		Confirmations: "0",
-	},
-	AmountInPeso: "100",
-	CardCode:     "TEST-CARDCODE",
-	Status:       "COMPLETED",
-	Timestamp:    "000000000000",
-}
-
 func TestDepositsModel_Update(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)

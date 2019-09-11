@@ -7,18 +7,6 @@ import (
 	"testing"
 )
 
-var TestUser = User{
-	ID:       "XYZ12345678910",
-	Email:    "TEST@TEST.COM",
-	KYCData:  KYCInformation{},
-	Role:     "",
-	Shifts:   []string{},
-	Vouchers: []string{},
-	Deposits: []string{},
-	Cards:    []string{},
-	Orders:   []string{},
-}
-
 func TestUsersModel_UpdateUser(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)
