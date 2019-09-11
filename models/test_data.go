@@ -71,6 +71,27 @@ var TestOrder = Order{
 	},
 }
 
+var TestShift = Shift{
+	ID:        "TEST-SHIFT",
+	Status:    "COMPLETED",
+	Timestamp: "000000000000",
+	UID:       "XYZ12345678910",
+	Payment: Payment{
+		Address:       "FAKE-ADDR",
+		Amount:        "123123123",
+		Coin:          "POLIS",
+		Txid:          "FAKE-TXID",
+		Confirmations: "0",
+	},
+	Conversion: Payment{
+		Address:       "FAKE-ADDR",
+		Amount:        "123123123",
+		Coin:          "POLIS",
+		Txid:          "FAKE-TXID",
+		Confirmations: "0",
+	},
+}
+
 var TestUser = User{
 	ID:       "XYZ12345678910",
 	Email:    "TEST@TEST.COM",

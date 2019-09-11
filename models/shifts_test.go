@@ -6,26 +6,7 @@ import (
 	"testing"
 )
 
-var TestShift = Shift{
-	ID:        "TEST-SHIFT",
-	Status:    "COMPLETED",
-	Timestamp: "000000000000",
-	UID:       "XYZ12345678910",
-	Payment: Payment{
-		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
-		Coin:          "POLIS",
-		Txid:          "FAKE-TXID",
-		Confirmations: "0",
-	},
-	Conversion: Payment{
-		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
-		Coin:          "POLIS",
-		Txid:          "FAKE-TXID",
-		Confirmations: "0",
-	},
-}
+
 
 func TestShiftsModel_Update(t *testing.T) {
 	db, err := config.ConnectDB()
