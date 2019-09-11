@@ -96,13 +96,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// User
 		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetUserSingle, false) })
 		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetUserAll, false) })
-		// TODO post body JWE decryption
 		api.POST("/user/shift/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.Store, false) })
 
 		// Admin
 		api.GET("/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetSingle, true) })
 		api.GET("/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetAll, true) })
-		// TODO post body JWE decryption
 		api.POST("/shift/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.Update, true) })
 
 		// Vouchers

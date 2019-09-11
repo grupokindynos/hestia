@@ -36,30 +36,30 @@ func (sc *ShiftsController) GetUserAll(userData models.User, c *gin.Context) (in
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var ShiftsArray []models.Shift
-	for _, shiftID := range userInfo.Shifts {
-		shift, err := sc.Model.Get(shiftID)
+	var Array []models.Shift
+	for _, id := range userInfo.Shifts {
+		obj, err := sc.Model.Get(id)
 		if err != nil {
-			return nil, config.ErrorShiftNotFound
+			return nil, config.ErrorNotFound
 		}
-		ShiftsArray = append(ShiftsArray, shift)
+		Array = append(Array, obj)
 	}
-	return ShiftsArray, nil
+	return Array, nil
 }
 
 func (sc *ShiftsController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
-	shiftID, ok := c.Params.Get("shiftid")
+	id, ok := c.Params.Get("shiftid")
 	if !ok {
-		return nil, config.ErrorMissingShiftID
+		return nil, config.ErrorMissingID
 	}
 	userInfo, err := sc.UserModel.GetUserInformation(userData.ID)
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	if !utils.Contains(userInfo.Shifts, shiftID) {
+	if !utils.Contains(userInfo.Shifts, id) {
 		return nil, config.ErrorInfoDontMatchUser
 	}
-	return sc.Model.Get(shiftID)
+	return sc.Model.Get(id)
 }
 
 func (sc *ShiftsController) Store(userData models.User, c *gin.Context) (interface{}, error) {
@@ -129,11 +129,11 @@ func (sc *ShiftsController) GetAll(userData models.User, c *gin.Context) (interf
 }
 
 func (sc *ShiftsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
-	shiftID, ok := c.Params.Get("shiftid")
+	id, ok := c.Params.Get("shiftid")
 	if !ok {
-		return nil, config.ErrorMissingShiftID
+		return nil, config.ErrorMissingID
 	}
-	return sc.Model.Get(shiftID)
+	return sc.Model.Get(id)
 }
 
 func (sc *ShiftsController) Update(userData models.User, c *gin.Context) (interface{}, error) {

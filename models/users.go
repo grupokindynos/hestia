@@ -17,6 +17,7 @@ type User struct {
 	Vouchers []string       `bson:"vouchers" json:"vouchers"`
 	Deposits []string       `bson:"deposits" json:"deposits"`
 	Cards    []string       `bson:"cards" json:"cards"`
+	Orders   []string       `bson:"orders" json:"orders"`
 }
 
 type KYCInformation struct{}
