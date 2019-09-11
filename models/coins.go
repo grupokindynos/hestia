@@ -32,7 +32,7 @@ func (m *CoinsModel) GetCoinsData() ([]Coin, error) {
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
 	var CoinData []Coin
-	cursor, err := col.Find(ctx, nil)
+	cursor, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (m *CoinsModel) UpdateCoinsData(Coins []Coin) error {
 	for _, coin := range Coins {
 		filter := bson.M{"_id": coin.Ticker}
 		upsert := true
-		_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: coin}}, &options.UpdateOptions{Upsert: &upsert})
+		_, err := col.UpdateMany(ctx, filter, bson.D{{Key: "$set", Value: coin}}, &options.UpdateOptions{Upsert: &upsert})
 		if err != nil {
 			return err
 		}

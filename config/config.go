@@ -27,8 +27,7 @@ var (
 	ErrorAllError          = errors.New("something wrong happened, unable to get all records")
 	ErrorAlreadyExists     = errors.New("object already exists")
 	ErrorObol              = errors.New("unable to get obol rates")
-
-	HttpClient = &http.Client{
+	HttpClient             = &http.Client{
 		Timeout: time.Second * 10,
 	}
 )

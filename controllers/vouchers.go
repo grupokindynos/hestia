@@ -89,7 +89,7 @@ func (vc *VouchersController) Store(userData models.User, c *gin.Context) (inter
 		return nil, config.ErrorAlreadyExists
 	}
 	voucherData.Status = "PENDING"
-	err = vc.Model.Update(userData.ID, voucherData)
+	err = vc.Model.Update(voucherData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
@@ -141,7 +141,7 @@ func (vc *VouchersController) Update(userData models.User, c *gin.Context) (inte
 	// If this already exists, doesn't matter since it is deterministic
 	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
 	// Store order data to process
-	err = vc.Model.Update(userData.ID, voucherData)
+	err = vc.Model.Update(voucherData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}

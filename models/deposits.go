@@ -32,11 +32,11 @@ func (m *DepositsModel) Get(id string) (deposit Deposit, err error) {
 	return deposit, err
 }
 
-func (m *DepositsModel) Update(id string, deposit Deposit) error {
+func (m *DepositsModel) Update(deposit Deposit) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": deposit.ID}
 	upsert := true
 	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: deposit}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
@@ -46,7 +46,7 @@ func (m *DepositsModel) GetAll() (deposits []Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, nil)
+	curr, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return deposits, err
 	}

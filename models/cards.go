@@ -38,11 +38,11 @@ func (m *CardsModel) Get(id string) (card Card, err error) {
 	return card, err
 }
 
-func (m *CardsModel) Update(id string, card Card) error {
+func (m *CardsModel) Update(card Card) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": card.CardCode}
 	upsert := true
 	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: card}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
@@ -52,7 +52,7 @@ func (m *CardsModel) GetAll() (cards []Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, nil)
+	curr, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return cards, err
 	}

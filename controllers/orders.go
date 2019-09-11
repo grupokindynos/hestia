@@ -89,7 +89,7 @@ func (oc *OrdersController) Store(userData models.User, c *gin.Context) (interfa
 		return nil, config.ErrorAlreadyExists
 	}
 	orderData.Status = "PENDING"
-	err = oc.Model.Update(userData.ID, orderData)
+	err = oc.Model.Update(orderData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
@@ -141,7 +141,7 @@ func (oc *OrdersController) Update(userData models.User, c *gin.Context) (interf
 	// If this already exists, doesn't matter since it is deterministic
 	orderData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(orderData.PaymentInfo.Txid)))
 	// Store order data to process
-	err = oc.Model.Update(userData.ID, orderData)
+	err = oc.Model.Update(orderData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}

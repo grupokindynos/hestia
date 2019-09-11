@@ -10,6 +10,7 @@ import (
 
 type Shift struct {
 	ID         string  `bson:"id" json:"id"`
+	UID        string  `bson:"uid" json:"uid"`
 	Status     string  `bson:"status" json:"status"`
 	Timestamp  string  `bson:"timestamp" json:"timestamp"`
 	Payment    Payment `bson:"payment" json:"payment"`
@@ -30,11 +31,11 @@ func (m *ShiftModel) Get(id string) (shift Shift, err error) {
 	return shift, err
 }
 
-func (m *ShiftModel) Update(id string, shift Shift) error {
+func (m *ShiftModel) Update(shift Shift) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": shift.ID}
 	upsert := true
 	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: shift}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
@@ -44,7 +45,7 @@ func (m *ShiftModel) GetAll() (shifts []Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, nil)
+	curr, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return shifts, err
 	}

@@ -15,15 +15,9 @@ func Contains(a []string, x string) bool {
 }
 
 func EncryptJWE(key string, payload interface{}) (string, error) {
-	encrypter, err := jose.NewEncrypter(jose.A128GCM, jose.Recipient{Algorithm: jose.PBES2_HS256_A128KW, Key: key}, nil)
-	if err != nil {
-		panic(err)
-	}
+	encrypter, _ := jose.NewEncrypter(jose.A128GCM, jose.Recipient{Algorithm: jose.PBES2_HS256_A128KW, Key: key}, nil)
 	payloadBytes, _ := json.Marshal(payload)
-	object, err := encrypter.Encrypt(payloadBytes)
-	if err != nil {
-		panic(err)
-	}
+	object, _ := encrypter.Encrypt(payloadBytes)
 	return object.CompactSerialize()
 }
 

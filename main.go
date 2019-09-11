@@ -58,7 +58,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 		// Init Services
 		obol := &services.ObolService{URL: "https://obol-rates.herokuapp.com/complex"}
-		_ = &services.PlutusService{URL: "https://obol-rates.herokuapp.com/complex", AuthUsername: os.Getenv("PLUTUS_AUTH_USERNAME"), AuthPassword: os.Getenv("PLUTUS_AUTH_PASSWORD")}
 
 		// Init DB models
 		shiftsModel := &models.ShiftModel{Db: db, Collection: "shifts"}
@@ -72,7 +71,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Init Controllers
 		fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
 		cardsCtrl := controllers.CardsController{Model: cardsModel, UserModel: usersModel}
-		depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
+		depositsCtrl := controllers.DepositsController{Model: depositsModel, Obol: obol, UserModel: usersModel}
 		ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 		shiftCtrl := controllers.ShiftsController{Model: shiftsModel, Obol: obol, UserModel: usersModel}
 		userCtrl := controllers.UsersController{Model: usersModel}

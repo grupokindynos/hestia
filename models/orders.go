@@ -62,11 +62,11 @@ func (m *OrdersModel) Get(id string) (order Order, err error) {
 	return order, err
 }
 
-func (m *OrdersModel) Update(id string, order Order) error {
+func (m *OrdersModel) Update(order Order) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": order.ID}
 	upsert := true
 	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: order}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
@@ -76,7 +76,7 @@ func (m *OrdersModel) GetAll() (orders []Order, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, nil)
+	curr, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return orders, err
 	}

@@ -107,7 +107,7 @@ func (sc *ShiftsController) Store(userData models.User, c *gin.Context) (interfa
 	}
 	shiftData.Status = "PENDING"
 	// Store shift data to process
-	err = sc.Model.Update(userData.ID, shiftData)
+	err = sc.Model.Update(shiftData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
@@ -159,7 +159,7 @@ func (sc *ShiftsController) Update(userData models.User, c *gin.Context) (interf
 	// If this already exists, doesn't matter since it is deterministic
 	shiftData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(shiftData.Payment.Txid)))
 	// Store shift data to process
-	err = sc.Model.Update(userData.ID, shiftData)
+	err = sc.Model.Update(shiftData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}

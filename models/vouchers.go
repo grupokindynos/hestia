@@ -20,7 +20,6 @@ type Voucher struct {
 	RedeemCode        string  `bson:"redeem_code" json:"redeem_code"`
 	Status            string  `bson:"status" json:"status"`
 	Timestamp         string  `bson:"timestamp" json:"timestamp"`
-	TxnID             string  `bson:"txn_id" json:"txn_id"`
 }
 
 type VouchersModel struct {
@@ -37,11 +36,11 @@ func (m *VouchersModel) Get(id string) (voucher Voucher, err error) {
 	return voucher, err
 }
 
-func (m *VouchersModel) Update(id string, voucher Voucher) error {
+func (m *VouchersModel) Update(voucher Voucher) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": voucher.ID}
 	upsert := true
 	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: voucher}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
@@ -51,7 +50,7 @@ func (m *VouchersModel) GetAll() (vouchers []Voucher, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, nil)
+	curr, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		return vouchers, err
 	}

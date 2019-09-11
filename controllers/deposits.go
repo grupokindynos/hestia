@@ -96,7 +96,7 @@ func (dc *DepositsController) Store(userData models.User, c *gin.Context) (inter
 	}
 	depositData.AmountInPeso = fmt.Sprintf("%f", rate)
 	depositData.Status = "PENDING"
-	err = dc.Model.Update(userData.ID, depositData)
+	err = dc.Model.Update(depositData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
@@ -148,7 +148,7 @@ func (dc *DepositsController) Update(userData models.User, c *gin.Context) (inte
 	// If this already exists, doesn't matter since it is deterministic
 	depositData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(depositData.Payment.Txid)))
 	// Store deposit data to process
-	err = dc.Model.Update(userData.ID, depositData)
+	err = dc.Model.Update(depositData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
