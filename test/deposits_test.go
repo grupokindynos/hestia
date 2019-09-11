@@ -3,7 +3,6 @@ package test
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
@@ -11,13 +10,7 @@ import (
 )
 
 func TestDepositsModel_Update(t *testing.T) {
-	db, err := config.ConnectDB()
-	assert.Nil(t, err)
-	model := models.DepositsModel{
-		Db:         db,
-		Collection: "deposits",
-	}
-	err = model.Update(TestDeposit)
+	err := depositsCtrl.Model.Update(TestDeposit)
 	assert.Nil(t, err)
 }
 
