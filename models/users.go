@@ -91,3 +91,14 @@ func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"deposits": depositID}}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
 }
+
+// AddOrder will add a order id into the user orders array.
+func (m *UsersModel) AddOrder(uid string, orderID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	shiftsColl := m.Db.Collection(m.Collection)
+	uidFilter := bson.M{"_id": uid}
+	upsert := true
+	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"orders": orderID}}}, &options.UpdateOptions{Upsert: &upsert})
+	return err
+}

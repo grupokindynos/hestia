@@ -12,13 +12,13 @@ func init() {
 }
 
 var TestCoinData = []Coin{
-	{"BTC", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"LTC", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"DASH", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"POLIS", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"GRS", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"DGB", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
-	{"COLX", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1,}},
+	{"BTC", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"LTC", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"DASH", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"POLIS", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"GRS", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"DGB", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"COLX", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
 }
 
 func TestCoinsModel_UpdateCoinsData(t *testing.T) {
@@ -46,4 +46,3 @@ func TestCoinsModel_GetCoinsData(t *testing.T) {
 	assert.IsType(t, []Coin{}, coinsData)
 	assert.Equal(t, TestCoinData, coinsData)
 }
-
