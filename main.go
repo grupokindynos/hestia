@@ -10,7 +10,6 @@ import (
 	"github.com/grupokindynos/hestia/controllers"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services"
-	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 	"log"

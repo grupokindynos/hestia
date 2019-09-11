@@ -1,6 +1,6 @@
 module github.com/grupokindynos/hestia
 
-go 1.12
+go 1.13
 
 require (
 	firebase.google.com/go v3.9.0+incompatible
@@ -8,7 +8,6 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/heroku/x v0.0.8
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0
 	github.com/tidwall/pretty v1.0.0 // indirect
