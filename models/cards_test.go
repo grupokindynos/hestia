@@ -2,9 +2,14 @@ package models
 
 import (
 	"github.com/grupokindynos/hestia/config"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+func init() {
+	_ = godotenv.Load("../.env")
+}
 
 func TestCardsModel_Get(t *testing.T) {
 	db, err := config.ConnectDB()

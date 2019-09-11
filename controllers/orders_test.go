@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
 	"testing"
@@ -14,7 +13,6 @@ import (
 var orderCtrl OrdersController
 
 func init() {
-	_ = godotenv.Load("../.env")
 	db, err := config.ConnectDB()
 	if err != nil {
 		panic(err)

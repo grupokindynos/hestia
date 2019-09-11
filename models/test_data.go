@@ -19,6 +19,10 @@ var TestCoinData = []Coin{
 	{"GRS", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
 	{"DGB", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
 	{"COLX", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"ONION", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"XSG", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"XZC", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
+	{"MNP", false, false, false, false, Balances{HotWallet: 1, Exchanges: 1}},
 }
 
 var TestOrder = Order{

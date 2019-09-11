@@ -7,7 +7,6 @@ import (
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/utils"
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -17,7 +16,6 @@ import (
 var coinsCtrl CoinsController
 
 func init() {
-	_ = godotenv.Load("../.env")
 	db, err := config.ConnectDB()
 	if err != nil {
 		panic(err)

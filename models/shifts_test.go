@@ -7,7 +7,6 @@ import (
 )
 
 
-
 func TestShiftsModel_Get(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)

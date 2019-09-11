@@ -4,9 +4,14 @@ import (
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/utils"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+func init() {
+	_ = godotenv.Load()
+}
 
 func TestCardsModel_Update(t *testing.T) {
 	db, err := config.ConnectDB()
