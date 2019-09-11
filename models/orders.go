@@ -76,17 +76,11 @@ func (m *OrdersModel) GetAll() (orders []Order, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		return orders, err
-	}
+	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
 		var order Order
-		err := curr.Decode(&order)
-		if err != nil {
-			return orders, err
-		}
+		_ = curr.Decode(&order)
 		orders = append(orders, order)
 	}
-	return orders, err
+	return orders, nil
 }

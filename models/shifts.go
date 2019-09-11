@@ -45,17 +45,11 @@ func (m *ShiftModel) GetAll() (shifts []Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		return shifts, err
-	}
+	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
 		var shift Shift
-		err := curr.Decode(&shift)
-		if err != nil {
-			return shifts, err
-		}
+		_ = curr.Decode(&shift)
 		shifts = append(shifts, shift)
 	}
-	return shifts, err
+	return shifts, nil
 }

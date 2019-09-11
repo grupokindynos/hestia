@@ -52,17 +52,11 @@ func (m *CardsModel) GetAll() (cards []Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		return cards, err
-	}
+	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
 		var card Card
-		err := curr.Decode(&card)
-		if err != nil {
-			return cards, err
-		}
+		_ = curr.Decode(&card)
 		cards = append(cards, card)
 	}
-	return cards, err
+	return cards, nil
 }

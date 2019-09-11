@@ -46,17 +46,11 @@ func (m *DepositsModel) GetAll() (deposits []Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		return deposits, err
-	}
+	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
 		var deposit Deposit
-		err := curr.Decode(&deposit)
-		if err != nil {
-			return deposits, err
-		}
+		_ = curr.Decode(&deposit)
 		deposits = append(deposits, deposit)
 	}
-	return deposits, err
+	return deposits, nil
 }

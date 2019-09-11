@@ -50,17 +50,11 @@ func (m *VouchersModel) GetAll() (vouchers []Voucher, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	curr, err := col.Find(ctx, bson.M{})
-	if err != nil {
-		return vouchers, err
-	}
+	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
 		var voucher Voucher
-		err := curr.Decode(&voucher)
-		if err != nil {
-			return vouchers, err
-		}
+		_ = curr.Decode(&voucher)
 		vouchers = append(vouchers, voucher)
 	}
-	return vouchers, err
+	return vouchers, nil
 }
