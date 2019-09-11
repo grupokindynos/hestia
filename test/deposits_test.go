@@ -1,4 +1,4 @@
-package controllers
+package test
 
 import (
 	"encoding/json"
@@ -10,32 +10,35 @@ import (
 	"testing"
 )
 
-var depositCtrl DepositsController
-
-func init() {
+func TestDepositsModel_Update(t *testing.T) {
 	db, err := config.ConnectDB()
-	if err != nil {
-		panic(err)
-	}
-	model := &models.DepositsModel{
+	assert.Nil(t, err)
+	model := models.DepositsModel{
 		Db:         db,
 		Collection: "deposits",
 	}
-	userModel := &models.UsersModel{
-		Db:         db,
-		Collection: "users",
-	}
-	depositCtrl = DepositsController{
-		Model:     model,
-		UserModel: userModel,
-	}
+	err = model.Update(TestDeposit)
+	assert.Nil(t, err)
+}
+
+func TestDepositsModel_Get(t *testing.T) {
+	newDeposit, err := depositsCtrl.Model.Get(TestDeposit.ID)
+	assert.Nil(t, err)
+	assert.Equal(t, TestDeposit, newDeposit)
+}
+
+func TestDepositsModel_GetAll(t *testing.T) {
+	deposits, err := depositsCtrl.Model.GetAll()
+	assert.Nil(t, err)
+	assert.NotZero(t, len(deposits))
+	assert.IsType(t, []models.Deposit{}, deposits)
 }
 
 func TestDepositsController_GetUserAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	deposits, err := depositCtrl.GetUserAll(models.TestUser, c)
+	deposits, err := depositsCtrl.GetUserAll(TestUser, c)
 	assert.Nil(t, err)
 	var depositsArray []models.Deposit
 	depositsBytes, err := json.Marshal(deposits)
@@ -43,25 +46,25 @@ func TestDepositsController_GetUserAll(t *testing.T) {
 	err = json.Unmarshal(depositsBytes, &depositsArray)
 	assert.Nil(t, err)
 	assert.IsType(t, []models.Deposit{}, deposits)
-	assert.Equal(t, models.TestDeposit, depositsArray[0])
+	assert.Equal(t, TestDeposit, depositsArray[0])
 }
 
 func TestDepositsController_GetUserSingle(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "depositid", Value: models.TestDeposit.ID}}
-	deposit, err := depositCtrl.GetUserSingle(models.TestUser, c)
+	c.Params = gin.Params{gin.Param{Key: "depositid", Value: TestDeposit.ID}}
+	deposit, err := depositsCtrl.GetUserSingle(TestUser, c)
 	assert.Nil(t, err)
 	assert.IsType(t, models.Deposit{}, deposit)
-	assert.Equal(t, models.TestDeposit, deposit)
+	assert.Equal(t, TestDeposit, deposit)
 }
 
 func TestDepositsController_GetAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	deposits, err := depositCtrl.GetAll(models.TestUser, c)
+	deposits, err := depositsCtrl.GetAll(TestUser, c)
 	assert.Nil(t, err)
 	var depositArray []models.Deposit
 	depositBytes, err := json.Marshal(deposits)
@@ -69,16 +72,16 @@ func TestDepositsController_GetAll(t *testing.T) {
 	err = json.Unmarshal(depositBytes, &depositArray)
 	assert.Nil(t, err)
 	assert.IsType(t, []models.Deposit{}, deposits)
-	assert.Equal(t, models.TestDeposit, depositArray[0])
+	assert.Equal(t, TestDeposit, depositArray[0])
 }
 
 func TestDepositsController_GetSingle(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "depositid", Value: models.TestDeposit.ID}}
-	deposit, err := depositCtrl.GetSingle(models.TestUser, c)
+	c.Params = gin.Params{gin.Param{Key: "depositid", Value: TestDeposit.ID}}
+	deposit, err := depositsCtrl.GetSingle(TestUser, c)
 	assert.Nil(t, err)
 	assert.IsType(t, models.Deposit{}, deposit)
-	assert.Equal(t, models.TestDeposit, deposit)
+	assert.Equal(t, TestDeposit, deposit)
 }

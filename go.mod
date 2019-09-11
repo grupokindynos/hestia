@@ -8,13 +8,13 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/heroku/x v0.0.1
+	github.com/heroku/x v0.0.8
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0
 	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.1.0
-	google.golang.org/api v0.9.0
+	go.mongodb.org/mongo-driver v1.1.1
+	google.golang.org/api v0.10.0
 	gopkg.in/square/go-jose.v2 v2.3.1
 )
