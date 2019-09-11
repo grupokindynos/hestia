@@ -30,6 +30,7 @@ var TestOrder = Order{
 		Amount:        "100",
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
+
 		Confirmations: "0",
 	},
 	AddressInfo: AddressInformation{
