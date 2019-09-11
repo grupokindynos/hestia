@@ -5,7 +5,10 @@ jobs:
   build:
     docker:
       - image: circleci/golang
+      - image: circleci/mongo:latest
     environment:
+        MONGODB_URL: mongodb://localhost:27017
+        MONGODB_NAME: testdb
     steps:
       - checkout
       - restore_cache:
