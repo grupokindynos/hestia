@@ -13,12 +13,8 @@ import (
 	Database Structure:
 
 	cards/
-		UID/
-          	cards -> Array of CardCodes
-
-	cardsIndex/
-		CardCode/
-			carddata
+		cardcode/
+          	carddata
 
 	pins/
 		CardCode/
