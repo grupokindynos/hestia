@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -57,7 +60,45 @@ func (vc *VouchersController) GetUserSingle(userData models.User, c *gin.Context
 }
 
 func (vc *VouchersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
-	return "", nil
+	// Catch the request jwe
+	var ReqBody models.BodyReq
+	err := c.BindJSON(&ReqBody)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	// Try to decrypt it
+	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	if err != nil {
+		return nil, config.ErrorDecryptJWE
+	}
+	// Try to unmarshal the information of the payload
+	var voucherData models.Voucher
+	err = json.Unmarshal(rawBytes, &voucherData)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	// Hash the PaymentTxID as the ID
+	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
+	// Check if ID is already known on user data
+	if utils.Contains(userData.Deposits, voucherData.ID) {
+		return nil, config.ErrorAlreadyExists
+	}
+	// Check if ID is already known on data
+	_, err = vc.Model.Get(voucherData.ID)
+	if err == nil {
+		return nil, config.ErrorAlreadyExists
+	}
+	voucherData.Status = "PENDING"
+	err = vc.Model.Update(userData.ID, voucherData)
+	if err != nil {
+		return nil, config.ErrorDBStore
+	}
+	// Store ID on user information
+	err = vc.UserModel.AddVoucher(userData.ID, voucherData.ID)
+	if err != nil {
+		return nil, config.ErrorDBStore
+	}
+	return true, nil
 }
 
 // Admin methods
@@ -79,5 +120,30 @@ func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context) (i
 }
 
 func (vc *VouchersController) Update(userData models.User, c *gin.Context) (interface{}, error) {
-	return nil, nil
+	// Catch the request jwe
+	var ReqBody models.BodyReq
+	err := c.BindJSON(&ReqBody)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	// Try to decrypt it
+	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	if err != nil {
+		return nil, config.ErrorDecryptJWE
+	}
+	// Try to unmarshal the information of the payload
+	var voucherData models.Voucher
+	err = json.Unmarshal(rawBytes, &voucherData)
+	if err != nil {
+		return nil, config.ErrorUnmarshal
+	}
+	// Hash the PaymentTxID as the ID
+	// If this already exists, doesn't matter since it is deterministic
+	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
+	// Store order data to process
+	err = vc.Model.Update(userData.ID, voucherData)
+	if err != nil {
+		return nil, config.ErrorDBStore
+	}
+	return true, nil
 }

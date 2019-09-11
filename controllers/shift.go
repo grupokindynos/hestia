@@ -80,16 +80,16 @@ func (sc *ShiftsController) Store(userData models.User, c *gin.Context) (interfa
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	// Hash the PaymentTxID as the ShiftID
+	// Hash the PaymentTxID as the ID
 	shiftData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(shiftData.Payment.Txid)))
-	// Check if ShiftID is already known on user data
+	// Check if ID is already known on user data
 	if utils.Contains(userData.Shifts, shiftData.ID) {
-		return nil, config.ErrorShiftsAlreadyExists
+		return nil, config.ErrorAlreadyExists
 	}
-	// Check if ShiftID is already known on shift data
+	// Check if iD is already known on data
 	_, err = sc.Model.Get(shiftData.ID)
 	if err == nil {
-		return nil, config.ErrorShiftsAlreadyExists
+		return nil, config.ErrorAlreadyExists
 	}
 
 	conversionRate, err := sc.Obol.GetComplexRate(shiftData.Payment.Coin, shiftData.Conversion.Coin, shiftData.Payment.Amount)
@@ -105,12 +105,13 @@ func (sc *ShiftsController) Store(userData models.User, c *gin.Context) (interfa
 		Txid:          "",
 		Confirmations: "",
 	}
+	shiftData.Status = "PENDING"
 	// Store shift data to process
 	err = sc.Model.Update(userData.ID, shiftData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
-	// Store shiftID on user information
+	// Store ID on user information
 	err = sc.UserModel.AddShift(userData.ID, shiftData.ID)
 	if err != nil {
 		return nil, config.ErrorDBStore
@@ -154,14 +155,9 @@ func (sc *ShiftsController) Update(userData models.User, c *gin.Context) (interf
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	// Hash the PaymentTxID as the ShiftID
+	// Hash the PaymentTxID as the ID
 	// If this already exists, doesn't matter since it is deterministic
 	shiftData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(shiftData.Payment.Txid)))
-	// Check if ShiftID is already known on shift data
-	_, err = sc.Model.Get(shiftData.ID)
-	if err == nil {
-		return nil, config.ErrorShiftsAlreadyExists
-	}
 	// Store shift data to process
 	err = sc.Model.Update(userData.ID, shiftData)
 	if err != nil {

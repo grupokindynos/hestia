@@ -71,7 +71,7 @@ func (o *ObolService) GetSimpleRate(coin string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return rates.Data.BTC, nil
+	return rates.Data.MXN, nil
 }
 
 func (o *ObolService) GetComplexRate(fromcoin string, tocoin string, amount string) (float64, error) {
