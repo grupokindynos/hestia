@@ -63,7 +63,11 @@ func (oc *OrdersController) Store(userData models.User, c *gin.Context) (interfa
 // Admin methods
 
 func (oc *OrdersController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	return nil, nil
+	objs, err := oc.Model.GetAll()
+	if err != nil {
+		return nil, config.ErrorAllError
+	}
+	return objs, nil
 }
 
 func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
@@ -72,4 +76,8 @@ func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context) (int
 		return nil, config.ErrorMissingID
 	}
 	return oc.Model.Get(id)
+}
+
+func (oc *OrdersController) Update(userData models.User, c *gin.Context) (interface{}, error) {
+	return nil, nil
 }

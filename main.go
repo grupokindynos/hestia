@@ -107,31 +107,31 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// User
 		api.GET("/user/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetUserSingle, false) })
 		api.GET("/user/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetUserAll, false) })
-		// TODO post body JWE decryption
 		api.POST("/user/voucher/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.Store, false) })
 		// Admin
 		api.GET("/voucher/single/:voucherid", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetSingle, true) })
 		api.GET("/voucher/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAll, true) })
+		api.POST("/voucher/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.Update, true) })
 
 		// Deposits
 		// User
 		api.GET("/user/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetUserSingle, false) })
 		api.GET("/user/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetUserAll, false) })
-		// TODO post body JWE decryption
 		api.POST("/user/deposits/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.Store, false) })
 		// Admin
 		api.GET("/deposits/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetSingle, true) })
 		api.GET("/deposits/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetAll, true) })
+		api.POST("/deposits/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.Update, true) })
 
 		// Orders
 		// User
 		api.GET("/user/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetUserSingle, false) })
 		api.GET("/user/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetUserAll, false) })
-		// TODO post body JWE decryption
 		api.POST("/user/orders/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.Store, false) })
 		// Admin
 		api.GET("/orders/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, true) })
 		api.GET("/orders/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, true) })
+		api.POST("/orders/update", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.Update, true) })
 
 		// Cards
 		// User
@@ -140,7 +140,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Admin
 		api.GET("/cards/single/:cardcode", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetSingle, true) })
 		api.GET("/cards/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetAll, true) })
-		// TODO post body JWE decryption
 		api.POST("/cards/new", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.Store, true) })
 
 	}

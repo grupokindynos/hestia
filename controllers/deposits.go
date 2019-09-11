@@ -63,7 +63,11 @@ func (dc *DepositsController) Store(userData models.User, c *gin.Context) (inter
 // Admin methods
 
 func (dc *DepositsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	return nil, nil
+	objs, err := dc.Model.GetAll()
+	if err != nil {
+		return nil, config.ErrorAllError
+	}
+	return objs, nil
 }
 
 func (dc *DepositsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
@@ -72,4 +76,8 @@ func (dc *DepositsController) GetSingle(userData models.User, c *gin.Context) (i
 		return nil, config.ErrorMissingID
 	}
 	return dc.Model.Get(id)
+}
+
+func (dc *DepositsController) Update(userData models.User, c *gin.Context) (interface{}, error) {
+	return nil, nil
 }

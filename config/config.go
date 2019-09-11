@@ -24,7 +24,7 @@ var (
 	ErrorDecryptJWE          = errors.New("unable to decrypt jwe")
 	ErrorDBStore             = errors.New("unable to store information to database")
 	ErrorNotFound            = errors.New("information not found")
-	ErrorShiftsAllError      = errors.New("something wrong happened, unable to get all shifts records")
+	ErrorAllError            = errors.New("something wrong happened, unable to get all records")
 	ErrorShiftsAlreadyExists = errors.New("shift already exists")
 	ErrorObol                = errors.New("unable to get obol rates")
 

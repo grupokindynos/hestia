@@ -67,7 +67,11 @@ func (cc *CardsController) GetUserSingle(userData models.User, c *gin.Context) (
 // Admin methods
 
 func (cc *CardsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	return nil, nil
+	objs, err := cc.Model.GetAll()
+	if err != nil {
+		return nil, config.ErrorAllError
+	}
+	return objs, nil
 }
 
 func (cc *CardsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {

@@ -63,7 +63,11 @@ func (vc *VouchersController) Store(userData models.User, c *gin.Context) (inter
 // Admin methods
 
 func (vc *VouchersController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	return nil, nil
+	objs, err := vc.Model.GetAll()
+	if err != nil {
+		return nil, config.ErrorAllError
+	}
+	return objs, nil
 }
 
 func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
@@ -72,4 +76,8 @@ func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context) (i
 		return nil, config.ErrorMissingID
 	}
 	return vc.Model.Get(id)
+}
+
+func (vc *VouchersController) Update(userData models.User, c *gin.Context) (interface{}, error) {
+	return nil, nil
 }

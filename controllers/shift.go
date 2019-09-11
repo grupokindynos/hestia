@@ -121,11 +121,11 @@ func (sc *ShiftsController) Store(userData models.User, c *gin.Context) (interfa
 // Admin methods
 
 func (sc *ShiftsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	shifts, err := sc.Model.GetAll()
+	objs, err := sc.Model.GetAll()
 	if err != nil {
-		return nil, config.ErrorShiftsAllError
+		return nil, config.ErrorAllError
 	}
-	return shifts, nil
+	return objs, nil
 }
 
 func (sc *ShiftsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
