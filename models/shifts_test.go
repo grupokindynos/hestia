@@ -8,17 +8,6 @@ import (
 
 
 
-func TestShiftsModel_Update(t *testing.T) {
-	db, err := config.ConnectDB()
-	assert.Nil(t, err)
-	model := ShiftModel{
-		Db:         db,
-		Collection: "shifts",
-	}
-	err = model.Update(TestShift)
-	assert.Nil(t, err)
-}
-
 func TestShiftsModel_Get(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)

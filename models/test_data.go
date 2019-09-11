@@ -96,7 +96,7 @@ var TestUser = User{
 	ID:       "XYZ12345678910",
 	Email:    "TEST@TEST.COM",
 	KYCData:  KYCInformation{},
-	Role:     "",
+	Role:     "admin",
 	Shifts:   []string{},
 	Vouchers: []string{},
 	Deposits: []string{},

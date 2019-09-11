@@ -7,23 +7,17 @@ import (
 	"testing"
 )
 
-var model CoinsModel
 
 func init() {
 	_ = godotenv.Load("../.env")
-	db, _ := config.ConnectDB()
-	model = CoinsModel{
-		Db:         db,
-		Collection: "coins",
-	}
-}
-
-func TestCoinsModel_UpdateCoinsData(t *testing.T) {
-	err := model.UpdateCoinsData(TestCoinData)
-	assert.Nil(t, err)
 }
 
 func TestCoinsModel_GetCoinsData(t *testing.T) {
+	db, _ := config.ConnectDB()
+	model := CoinsModel{
+		Db:         db,
+		Collection: "coins",
+	}
 	coinsData, err := model.GetCoinsData()
 	assert.Nil(t, err)
 	assert.NotZero(t, len(coinsData))

@@ -6,17 +6,6 @@ import (
 	"testing"
 )
 
-func TestCardsModel_Update(t *testing.T) {
-	db, err := config.ConnectDB()
-	assert.Nil(t, err)
-	model := CardsModel{
-		Db:         db,
-		Collection: "cards",
-	}
-	err = model.Update(TestCard)
-	assert.Nil(t, err)
-}
-
 func TestCardsModel_Get(t *testing.T) {
 	db, err := config.ConnectDB()
 	assert.Nil(t, err)

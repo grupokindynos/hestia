@@ -7,16 +7,6 @@ import (
 	"testing"
 )
 
-func TestUsersModel_UpdateUser(t *testing.T) {
-	db, err := config.ConnectDB()
-	assert.Nil(t, err)
-	model := UsersModel{
-		Db:         db,
-		Collection: "users",
-	}
-	err = model.UpdateUser(TestUser)
-	assert.Nil(t, err)
-}
 
 func TestUsersModel_GetUserInformation(t *testing.T) {
 	db, err := config.ConnectDB()
@@ -27,7 +17,7 @@ func TestUsersModel_GetUserInformation(t *testing.T) {
 	}
 	userData, err := model.GetUserInformation(TestUser.ID)
 	assert.Nil(t, err)
-	assert.Equal(t, TestUser, userData)
+	assert.IsType(t, User{}, userData)
 }
 
 func TestUsersModel_AddCard(t *testing.T) {
