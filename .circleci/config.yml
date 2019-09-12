@@ -22,9 +22,9 @@ jobs:
       - run: go test ./models -coverprofile=models/coverage.txt -covermode=atomic
       - run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
       - run: |
-          - sed '1d' ./utils/coverage.txt >> ./coverage.txt
-          - sed '1d' ./config/coverage.txt >> ./coverage.txt
-          - sed '1d' ./models/coverage.txt >> ./coverage.txt
+          - sed '1d' ./utils/coverage.txt >> ./coverage.txt &&
+          - sed '1d' ./config/coverage.txt >> ./coverage.txt &&
+          - sed '1d' ./models/coverage.txt >> ./coverage.txt &&
           - sed '1d' ./controllers/coverage.txt >> ./coverage.txt
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}
