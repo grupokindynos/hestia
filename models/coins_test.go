@@ -17,5 +17,3 @@ func TestCoinsModel_GetCoinsData(t *testing.T) {
 	assert.IsType(t, []Coin{}, coinsData)
 	assert.Equal(t, TestCoinData, coinsData)
 }
-
-

@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	shiftsModel    *ShiftModel
-	cardsModel *CardsModel
+	shiftsModel   *ShiftModel
+	cardsModel    *CardsModel
 	depositsModel *DepositsModel
 	ordersModel   *OrdersModel
 	vouchersModel *VouchersModel
 	coinsModel    *CoinsModel
-	usersModel *UsersModel
+	usersModel    *UsersModel
 )
 
 func init() {

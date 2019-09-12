@@ -22,4 +22,3 @@ func TestShiftsModel_GetAll(t *testing.T) {
 	assert.NotZero(t, len(shifts))
 	assert.IsType(t, []Shift{}, shifts)
 }
-

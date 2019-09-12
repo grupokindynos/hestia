@@ -22,4 +22,3 @@ func TestDepositsModel_GetAll(t *testing.T) {
 	assert.NotZero(t, len(deposits))
 	assert.IsType(t, []Deposit{}, deposits)
 }
-

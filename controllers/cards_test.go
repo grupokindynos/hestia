@@ -60,4 +60,3 @@ func TestCardsController_GetSingle(t *testing.T) {
 	assert.IsType(t, models.Card{}, card)
 	assert.Equal(t, models.TestCard, card)
 }
-
