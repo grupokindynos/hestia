@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 )
 
 type FirebaseController struct {
@@ -52,6 +51,7 @@ user:
 			Email:    fbUserData.Email,
 			KYCData:  models.KYCInformation{},
 			Role:     "user",
+			Orders:   []string{},
 			Shifts:   []string{},
 			Vouchers: []string{},
 			Deposits: []string{},
@@ -74,9 +74,11 @@ user:
 		config.GlobalResponseError(res, err, c)
 		return
 	default:
-		jwe, err := utils.EncryptJWE(uid, res)
-		config.GlobalResponseError(jwe, err, c)
+		config.GlobalResponseError(res, err, c)
 		return
+/*		jwe, err := utils.EncryptJWE(uid, res)
+		config.GlobalResponseError(jwe, err, c)
+		return*/
 	}
 
 }
