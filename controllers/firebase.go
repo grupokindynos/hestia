@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"github.com/grupokindynos/hestia/utils"
 )
 
 type FirebaseController struct {
@@ -74,11 +75,9 @@ user:
 		config.GlobalResponseError(res, err, c)
 		return
 	default:
-		config.GlobalResponseError(res, err, c)
-		return
-/*		jwe, err := utils.EncryptJWE(uid, res)
+		jwe, err := utils.EncryptJWE(uid, res)
 		config.GlobalResponseError(jwe, err, c)
-		return*/
+		return
 	}
 
 }
