@@ -16,7 +16,11 @@ jobs:
             - go-mod-v1-{{ checksum "go.sum" }}
       - run: go build
       - run: go vet ./...
-      - run: go test ./... -coverprofile=coverage.txt -covermode=atomic
+      - run: go test ./ -coverprofile=coverage.txt -covermode=atomic
+      - run: go test ./utils -coverprofile=utils/coverage.txt -covermode=atomic
+      - run: go test ./config -coverprofile=config/coverage.txt -covermode=atomic
+      - run: go test ./models -coverprofile=models/coverage.txt -covermode=atomic
+      - run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}
           paths:

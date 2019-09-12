@@ -1,4 +1,4 @@
-package test
+package controllers
 
 import (
 	"bytes"
@@ -12,37 +12,24 @@ import (
 	"testing"
 )
 
-func TestCoinsModel_UpdateCoinsData(t *testing.T) {
-	err := coinsCtrl.Model.UpdateCoinsData(TestCoinData)
-	assert.Nil(t, err)
-}
-
-func TestCoinsModel_GetCoinsData(t *testing.T) {
-	coinsData, err := coinsCtrl.Model.GetCoinsData()
-	assert.Nil(t, err)
-	assert.NotZero(t, len(coinsData))
-	assert.IsType(t, []models.Coin{}, coinsData)
-	assert.Equal(t, TestCoinData, coinsData)
-}
-
 func TestCoinsController_GetCoinsAvailability(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	coins, err := coinsCtrl.GetCoinsAvailability(TestUser, c)
+	coins, err := coinsCtrl.GetCoinsAvailability(models.TestUser, c)
 	assert.Nil(t, err)
 	var coinsArray []models.Coin
 	coinsBytes, err := json.Marshal(coins)
 	assert.Nil(t, err)
 	err = json.Unmarshal(coinsBytes, &coinsArray)
-	assert.Equal(t, TestCoinData, coinsArray)
+	assert.Equal(t, models.TestCoinData, coinsArray)
 }
 
 func TestCoinsController_UpdateCoinsAvailability(t *testing.T) {
 	buf := new(bytes.Buffer)
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
-	token, err := utils.EncryptJWE(TestUser.ID, TestCoinData)
+	token, err := utils.EncryptJWE(models.TestUser.ID, models.TestCoinData)
 	assert.Nil(t, err)
 	reqBody := models.BodyReq{
 		Payload: token,
@@ -53,7 +40,7 @@ func TestCoinsController_UpdateCoinsAvailability(t *testing.T) {
 	_, err = resp.Write(reqBytes)
 	c, _ := gin.CreateTestContext(resp)
 	c.Request, _ = http.NewRequest("POST", "/", buf)
-	res, err := coinsCtrl.UpdateCoinsAvailability(TestUser, c)
+	res, err := coinsCtrl.UpdateCoinsAvailability(models.TestUser, c)
 	assert.Nil(t, err)
 	assert.Equal(t, true, res)
 }

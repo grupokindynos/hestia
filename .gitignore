@@ -15,7 +15,10 @@
 .idea
 
 # Production
-config/firebaseConfig.json
 .env
 hestia
 coverage.txt
+models/coverage.txt
+controllers/coverage.txt
+config/coverage.txt
+utils/coverage.txt

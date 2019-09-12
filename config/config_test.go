@@ -1,10 +1,9 @@
-package test
+package config
 
 import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,7 +20,7 @@ func TestGlobalResponseError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	newErr := errors.New("test error")
-	_ = config.GlobalResponseError(nil, newErr, c)
+	_ = GlobalResponseError(nil, newErr, c)
 	var response map[string]interface{}
 	err := json.Unmarshal(resp.Body.Bytes(), &response)
 	assert.Nil(t, err)
@@ -36,7 +35,7 @@ func TestGlobalResponseError2(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	newErr := "test success"
-	_ = config.GlobalResponseError(newErr, nil, c)
+	_ = GlobalResponseError(newErr, nil, c)
 	var response map[string]interface{}
 	err := json.Unmarshal(resp.Body.Bytes(), &response)
 	assert.Nil(t, err)
@@ -50,18 +49,18 @@ func TestGlobalResponseNoAuth(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	_ = config.GlobalResponseNoAuth(c)
+	_ = GlobalResponseNoAuth(c)
 	var response map[string]interface{}
 	err := json.Unmarshal(resp.Body.Bytes(), &response)
 	assert.Nil(t, err)
 	assert.Equal(t, 401, resp.Code)
 	assert.Nil(t, response["data"])
-	assert.Equal(t, config.ErrorNoAuth.Error(), response["error"])
+	assert.Equal(t, ErrorNoAuth.Error(), response["error"])
 	assert.Equal(t, float64(-1), response["status"])
 }
 
 func TestConnectDB(t *testing.T) {
-	db, err := config.ConnectDB()
+	db, err := ConnectDB()
 	assert.Nil(t, err)
 	assert.NotNil(t, db)
 	assert.IsType(t, &mongo.Database{}, db)
@@ -70,7 +69,7 @@ func TestConnectDB(t *testing.T) {
 func TestConnectDBError(t *testing.T) {
 	err := os.Setenv("MONGODB_URL", "")
 	assert.Nil(t, err)
-	db, err := config.ConnectDB()
+	db, err := ConnectDB()
 	assert.Nil(t, db)
 	assert.NotNil(t, err)
 }
