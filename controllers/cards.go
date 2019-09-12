@@ -27,8 +27,6 @@ type CardsController struct {
 	UserModel *models.UsersModel
 }
 
-// User methods
-
 func (cc *CardsController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
 	userInfo, err := cc.UserModel.GetUserInformation(userData.ID)
 	if err != nil {
@@ -60,8 +58,6 @@ func (cc *CardsController) GetUserSingle(userData models.User, c *gin.Context) (
 	return cc.Model.Get(id)
 }
 
-// Admin methods
-
 func (cc *CardsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
 	objs, err := cc.Model.GetAll()
 	if err != nil {
@@ -79,5 +75,9 @@ func (cc *CardsController) GetSingle(userData models.User, c *gin.Context) (inte
 }
 
 func (cc *CardsController) Store(userData models.User, c *gin.Context) (interface{}, error) {
+	return "", nil
+}
+
+func (cc *CardsController) Update(userData models.User, c *gin.Context) (interface{}, error) {
 	return "", nil
 }
