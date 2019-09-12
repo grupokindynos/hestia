@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/controllers"
@@ -30,6 +31,7 @@ func main() {
 
 func GetApp() *gin.Engine {
 	App := gin.Default()
+	App.Use(cors.Default())
 	fbCredStr := os.Getenv("FIREBASE_CRED")
 	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
 	if err != nil {
