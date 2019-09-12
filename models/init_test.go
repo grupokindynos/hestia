@@ -12,6 +12,7 @@ var (
 	ordersModel   *OrdersModel
 	vouchersModel *VouchersModel
 	coinsModel    *CoinsModel
+	usersModel *UsersModel
 )
 
 func init() {
@@ -27,4 +28,5 @@ func init() {
 	depositsModel = &DepositsModel{Db: db, Collection: "deposits"}
 	vouchersModel = &VouchersModel{Db: db, Collection: "vouchers"}
 	coinsModel = &CoinsModel{Db: db, Collection: "coins"}
+	usersModel = &UsersModel{Db: db, Collection: "users"}
 }
