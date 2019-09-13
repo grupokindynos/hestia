@@ -27,8 +27,8 @@ type UsersModel struct {
 	Collection string
 }
 
-// GetUserInformation will return the user information stored on MongoDB
-func (m *UsersModel) GetUserInformation(uid string) (user User, err error) {
+// Get will return the user information stored on MongoDB
+func (m *UsersModel) Get(uid string) (user User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	collection := m.Db.Collection(m.Collection)
@@ -37,8 +37,8 @@ func (m *UsersModel) GetUserInformation(uid string) (user User, err error) {
 	return user, err
 }
 
-// UpdateUser will update the user information on the MongoDB
-func (m *UsersModel) UpdateUser(user User) error {
+// Update will update the user information on the MongoDB
+func (m *UsersModel) Update(user User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	shiftsColl := m.Db.Collection(m.Collection)
@@ -46,6 +46,19 @@ func (m *UsersModel) UpdateUser(user User) error {
 	upsert := true
 	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$set", Value: user}}, &options.UpdateOptions{Upsert: &upsert})
 	return err
+}
+
+func (m *UsersModel) GetAll() (users []User, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	col := m.Db.Collection(m.Collection)
+	curr, _ := col.Find(ctx, bson.M{})
+	for curr.Next(ctx) {
+		var user User
+		_ = curr.Decode(&user)
+		users = append(users, user)
+	}
+	return users, nil
 }
 
 // AddShift will add a shift id into the user shifts array.

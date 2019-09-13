@@ -23,9 +23,7 @@ type CoinsController struct {
 	Model *models.CoinsModel
 }
 
-// Admin methods
-
-func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Context) (interface{}, error) {
+func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
@@ -33,7 +31,7 @@ func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Con
 	return coins, nil
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.Context) (interface{}, error) {
+func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {

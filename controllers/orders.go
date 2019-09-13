@@ -26,10 +26,11 @@ type OrdersController struct {
 	UserModel *models.UsersModel
 }
 
-// User methods
-
-func (oc *OrdersController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
-	userInfo, err := oc.UserModel.GetUserInformation(userData.ID)
+func (oc *OrdersController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+	if admin {
+		return oc.Model.GetAll()
+	}
+	userInfo, err := oc.UserModel.Get(userData.ID)
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
@@ -44,12 +45,15 @@ func (oc *OrdersController) GetUserAll(userData models.User, c *gin.Context) (in
 	return Array, nil
 }
 
-func (oc *OrdersController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("orderid")
 	if !ok {
 		return nil, config.ErrorMissingID
 	}
-	userInfo, err := oc.UserModel.GetUserInformation(userData.ID)
+	if admin {
+		return oc.Model.Get(id)
+	}
+	userInfo, err := oc.UserModel.Get(userData.ID)
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
@@ -59,7 +63,7 @@ func (oc *OrdersController) GetUserSingle(userData models.User, c *gin.Context) 
 	return oc.Model.Get(id)
 }
 
-func (oc *OrdersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
+func (oc *OrdersController) Store(c *gin.Context) {
 	// Catch the request jwe
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
@@ -95,53 +99,6 @@ func (oc *OrdersController) Store(userData models.User, c *gin.Context) (interfa
 	}
 	// Store ID on user information
 	err = oc.UserModel.AddVoucher(userData.ID, orderData.ID)
-	if err != nil {
-		return nil, config.ErrorDBStore
-	}
-	return true, nil
-}
-
-// Admin methods
-
-func (oc *OrdersController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	objs, err := oc.Model.GetAll()
-	if err != nil {
-		return nil, config.ErrorAllError
-	}
-	return objs, nil
-}
-
-func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
-	id, ok := c.Params.Get("orderid")
-	if !ok {
-		return nil, config.ErrorMissingID
-	}
-	return oc.Model.Get(id)
-}
-
-func (oc *OrdersController) Update(userData models.User, c *gin.Context) (interface{}, error) {
-	// Catch the request jwe
-	var ReqBody models.BodyReq
-	err := c.BindJSON(&ReqBody)
-	if err != nil {
-		return nil, config.ErrorUnmarshal
-	}
-	// Try to decrypt it
-	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
-	if err != nil {
-		return nil, config.ErrorDecryptJWE
-	}
-	// Try to unmarshal the information of the payload
-	var orderData models.Order
-	err = json.Unmarshal(rawBytes, &orderData)
-	if err != nil {
-		return nil, config.ErrorUnmarshal
-	}
-	// Hash the PaymentTxID as the ID
-	// If this already exists, doesn't matter since it is deterministic
-	orderData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(orderData.PaymentInfo.Txid)))
-	// Store order data to process
-	err = oc.Model.Update(orderData)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}

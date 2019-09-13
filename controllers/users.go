@@ -23,33 +23,29 @@ type UsersController struct {
 	Model *models.UsersModel
 }
 
-// GetSelfInfo is a protected function to help the user get their own information
-func (uc *UsersController) GetSelfInfo(userInfo models.User, c *gin.Context) (interface{}, error) {
-	user, err := uc.Model.GetUserInformation(userInfo.ID)
+func (uc *UsersController) GetAll(userInfo models.User, c *gin.Context, admin bool) (interface{}, error) {
+	if admin {
+		return uc.Model.GetAll()
+	}
+	return nil, config.ErrorNoAuth
+}
+
+func (uc *UsersController) GetSingle(userInfo models.User, c *gin.Context, admin bool) (interface{}, error) {
+	if admin {
+		id, ok := c.Params.Get("uid")
+		if !ok {
+			return nil, config.ErrorMissingID
+		}
+		return uc.Model.Get(id)
+	}
+	user, err := uc.Model.Get(userInfo.ID)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-// GetUserInfo is a protected function to help any admin to get the information of any user.
-func (uc *UsersController) GetUserInfo(userData models.User, c *gin.Context) (interface{}, error) {
-	uid, ok := c.Params.Get("uid")
-	if !ok {
-		return nil, config.ErrorMissingUID
-	}
-	user, err := uc.Model.GetUserInformation(uid)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-// UpdateUserInfo is a protected function to update role and kyc information for any user.
-// This function will only work with already registered users, if the user is not registered, it will return error.
-// Shift, Vouchers, Deposits and Card information should be handled on other controllers.
-// ID and Email must never be changed.
-func (uc *UsersController) UpdateUserInfo(userData models.User, c *gin.Context) (interface{}, error) {
+func (uc *UsersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
@@ -64,7 +60,7 @@ func (uc *UsersController) UpdateUserInfo(userData models.User, c *gin.Context) 
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	oldUserData, err := uc.Model.GetUserInformation(newUserData.ID)
+	oldUserData, err := uc.Model.Get(newUserData.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +74,7 @@ func (uc *UsersController) UpdateUserInfo(userData models.User, c *gin.Context) 
 		Deposits: oldUserData.Deposits,
 		Cards:    oldUserData.Cards,
 	}
-	err = uc.Model.UpdateUser(updateUserData)
+	err = uc.Model.Update(updateUserData)
 	if err != nil {
 		return nil, err
 	}

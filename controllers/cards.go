@@ -27,8 +27,11 @@ type CardsController struct {
 	UserModel *models.UsersModel
 }
 
-func (cc *CardsController) GetUserAll(userData models.User, c *gin.Context) (interface{}, error) {
-	userInfo, err := cc.UserModel.GetUserInformation(userData.ID)
+func (cc *CardsController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+	if admin {
+		return cc.Model.GetAll()
+	}
+	userInfo, err := cc.UserModel.Get(userData.ID)
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
@@ -43,12 +46,15 @@ func (cc *CardsController) GetUserAll(userData models.User, c *gin.Context) (int
 	return Array, nil
 }
 
-func (cc *CardsController) GetUserSingle(userData models.User, c *gin.Context) (interface{}, error) {
+func (cc *CardsController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("cardcode")
 	if !ok {
 		return nil, config.ErrorMissingID
 	}
-	userInfo, err := cc.UserModel.GetUserInformation(userData.ID)
+	if admin {
+		return cc.Model.Get(id)
+	}
+	userInfo, err := cc.UserModel.Get(userData.ID)
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
@@ -58,26 +64,6 @@ func (cc *CardsController) GetUserSingle(userData models.User, c *gin.Context) (
 	return cc.Model.Get(id)
 }
 
-func (cc *CardsController) GetAll(userData models.User, c *gin.Context) (interface{}, error) {
-	objs, err := cc.Model.GetAll()
-	if err != nil {
-		return nil, config.ErrorAllError
-	}
-	return objs, nil
-}
-
-func (cc *CardsController) GetSingle(userData models.User, c *gin.Context) (interface{}, error) {
-	id, ok := c.Params.Get("cardcode")
-	if !ok {
-		return nil, config.ErrorMissingID
-	}
-	return cc.Model.Get(id)
-}
-
-func (cc *CardsController) Store(userData models.User, c *gin.Context) (interface{}, error) {
-	return "", nil
-}
-
-func (cc *CardsController) Update(userData models.User, c *gin.Context) (interface{}, error) {
-	return "", nil
+func (cc *CardsController) Store(c *gin.Context) {
+	return
 }

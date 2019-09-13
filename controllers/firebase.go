@@ -14,7 +14,7 @@ type FirebaseController struct {
 	UsersModel *models.UsersModel
 }
 
-func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData models.User, context *gin.Context) (res interface{}, err error), admin bool) {
+func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData models.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
 	token := c.GetHeader("token")
 	// If there is no token on the header, return non-authed
 	if token == "" {
@@ -34,7 +34,7 @@ func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData mod
 	}
 	uid := tk.UID
 user:
-	userData, err := fb.UsersModel.GetUserInformation(uid)
+	userData, err := fb.UsersModel.Get(uid)
 	if admin {
 		if userData.Role != "admin" {
 			config.GlobalResponseError(nil, config.ErrorNoAuth, c)
@@ -58,14 +58,14 @@ user:
 			Deposits: []string{},
 			Cards:    []string{},
 		}
-		err = fb.UsersModel.UpdateUser(newUserData)
+		err = fb.UsersModel.Update(newUserData)
 		if err != nil {
 			config.GlobalResponseError(nil, config.ErrorDBStore, c)
 			return
 		}
 		goto user
 	}
-	res, err := method(userData, c)
+	res, err := method(userData, c, admin)
 	if err != nil {
 		config.GlobalResponseError(nil, err, c)
 		return
