@@ -8,6 +8,7 @@ import (
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/utils"
+	"os"
 )
 
 /*
@@ -68,39 +69,43 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
 	// Try to decrypt it
-	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	rawBytes, err := utils.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
 	if err != nil {
-		return nil, config.ErrorDecryptJWE
+		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		return
 	}
 	// Try to unmarshal the information of the payload
 	var shiftData models.Shift
 	err = json.Unmarshal(rawBytes, &shiftData)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
 	// Hash the PaymentTxID as the ID
 	shiftData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(shiftData.Payment.Txid)))
-	// Check if ID is already known on user data
-	if utils.Contains(userData.Shifts, shiftData.ID) {
-		return nil, config.ErrorAlreadyExists
-	}
 	// Check if ID is already known on data
 	_, err = sc.Model.Get(shiftData.ID)
 	if err == nil {
-		return nil, config.ErrorAlreadyExists
+		config.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		return
 	}
 	// Store shift data to process
 	err = sc.Model.Update(shiftData)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		return
 	}
 	// Store ID on user information
-	err = sc.UserModel.AddShift(userData.ID, shiftData.ID)
+	err = sc.UserModel.AddShift(shiftData.UID, shiftData.ID)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		return
 	}
-	return true, nil
+	response, err := utils.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseError(response, err, c)
+	return
 }

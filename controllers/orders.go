@@ -83,10 +83,6 @@ func (oc *OrdersController) Store(c *gin.Context) {
 	}
 	// Hash the PaymentTxID as the ID
 	orderData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(orderData.PaymentInfo.Txid)))
-	// Check if ID is already known on user data
-	if utils.Contains(userData.Deposits, orderData.ID) {
-		return nil, config.ErrorAlreadyExists
-	}
 	// Check if ID is already known on data
 	_, err = oc.Model.Get(orderData.ID)
 	if err == nil {
@@ -98,7 +94,7 @@ func (oc *OrdersController) Store(c *gin.Context) {
 		return nil, config.ErrorDBStore
 	}
 	// Store ID on user information
-	err = oc.UserModel.AddVoucher(userData.ID, orderData.ID)
+	err = oc.UserModel.AddVoucher(orderData.UID, orderData.ID)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}

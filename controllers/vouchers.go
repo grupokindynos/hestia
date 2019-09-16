@@ -83,10 +83,6 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	}
 	// Hash the PaymentTxID as the ID
 	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
-	// Check if ID is already known on user data
-	if utils.Contains(userData.Deposits, voucherData.ID) {
-		return nil, config.ErrorAlreadyExists
-	}
 	// Check if ID is already known on data
 	_, err = vc.Model.Get(voucherData.ID)
 	if err == nil {
@@ -98,7 +94,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		return nil, config.ErrorDBStore
 	}
 	// Store ID on user information
-	err = vc.UserModel.AddVoucher(userData.ID, voucherData.ID)
+	err = vc.UserModel.AddVoucher(voucherData.UID, voucherData.ID)
 	if err != nil {
 		return nil, config.ErrorDBStore
 	}
