@@ -1,9 +1,9 @@
-name: Go
+name: Hestia
 on: [push]
 jobs:
 
   build:
-    name: Obol
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
 
