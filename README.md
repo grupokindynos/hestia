@@ -1,7 +1,7 @@
 # Hestia
 > Goddess of the hearth, home, domesticity, family, and the state
 
-[![CircleCI](https://circleci.com/gh/grupokindynos/hestia.svg?style=svg)](https://circleci.com/gh/grupokindynos/hestia)
+![Actions](https://github.com/grupokindynos/hestia/workflows/Hestia/badge.svg)
 [![codecov](https://codecov.io/gh/grupokindynos/hestia/branch/master/graph/badge.svg)](https://codecov.io/gh/grupokindynos/hestia)
 [![Go Report](https://goreportcard.com/badge/github.com/grupokindynos/hestia)](https://goreportcard.com/report/github.com/grupokindynos/hestia) 
 [![GoDocs](https://godoc.org/github.com/grupokindynos/hestia?status.svg)](http://godoc.org/github.com/grupokindynos/hestia)
