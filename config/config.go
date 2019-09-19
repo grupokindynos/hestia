@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"net/http"
 	"os"
 	"time"
 )
@@ -16,7 +15,6 @@ var (
 	ErrorFbInitializeAuth  = errors.New("unable to initialize auth client")
 	ErrorDbInitialize      = errors.New("unable to connect to database")
 	ErrorNoUserInformation = errors.New("unable to get user information")
-	ErrorMissingUID        = errors.New("missing user id param")
 	ErrorUnmarshal         = errors.New("unable to unmarshal object")
 	ErrorMissingID         = errors.New("missing id param")
 	ErrorInfoDontMatchUser = errors.New("information requested doesn't match for this user")
@@ -24,12 +22,7 @@ var (
 	ErrorDecryptJWE        = errors.New("unable to decrypt jwe")
 	ErrorDBStore           = errors.New("unable to store information to database")
 	ErrorNotFound          = errors.New("information not found")
-	ErrorAllError          = errors.New("something wrong happened, unable to get all records")
 	ErrorAlreadyExists     = errors.New("object already exists")
-	ErrorObol              = errors.New("unable to get obol rates")
-	HttpClient             = &http.Client{
-		Timeout: time.Second * 10,
-	}
 )
 
 // GlobalResponseError is used to wrap all the errored API responses under the same model.

@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 )
 
 /*
@@ -71,7 +72,7 @@ func (dc *DepositsController) Store(c *gin.Context) {
 		return nil, config.ErrorUnmarshal
 	}
 	// Try to decrypt it
-	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}

@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 	"os"
 )
 
@@ -73,7 +74,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		return
 	}
 	// Try to decrypt it
-	rawBytes, err := utils.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
+	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return

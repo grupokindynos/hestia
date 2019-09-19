@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 )
 
 /*
@@ -37,7 +37,7 @@ func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}

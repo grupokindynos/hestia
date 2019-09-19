@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 )
 
 /*
@@ -51,7 +51,7 @@ func (uc *UsersController) Store(userData models.User, c *gin.Context) (interfac
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	rawBytes, err := utils.DecryptJWE(userData.ID, ReqBody.Payload)
+	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}

@@ -4,9 +4,10 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
 )
 
 type FirebaseController struct {
@@ -75,7 +76,7 @@ user:
 		config.GlobalResponseError(res, err, c)
 		return
 	default:
-		jwe, err := utils.EncryptJWE(uid, res)
+		jwe, err := jws.EncryptJWE(uid, res)
 		config.GlobalResponseError(jwe, err, c)
 		return
 	}
