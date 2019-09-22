@@ -22,8 +22,24 @@ jobs:
     - name: Build
       run: go build -v .
 
-    - name: Test
-      run: go test ./... -coverprofile=coverage.txt -covermode=atomic
+    - name: Test Main
+      run: go test ./ -coverprofile=coverage.txt -covermode=atomic
+    
+    - name: Test Config
+      run: go test ./utils -coverprofile=utils/coverage.txt -covermode=atomic
+    
+    - name: Test Models
+      run: go test ./models -coverprofile=models/coverage.txt -covermode=atomic
+    
+    - name: Test Controllers
+      run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
+    
+    - name: Merge Coverage Profiles
+      run: |
+        sed '1d' ./utils/coverage.txt >> ./coverage.txt &&
+        sed '1d' ./config/coverage.txt >> ./coverage.txt &&
+        sed '1d' ./models/coverage.txt >> ./coverage.txt &&
+        sed '1d' ./controllers/coverage.txt >> ./coverage.txt
 
     - uses: codecov/codecov-action@v1.0.2
       with:
