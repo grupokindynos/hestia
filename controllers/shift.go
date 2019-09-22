@@ -73,7 +73,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	// Try to decrypt it
+	// Verify Signature
 	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
@@ -106,7 +106,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := utils.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	response, err := jws.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
 	config.GlobalResponseError(response, err, c)
 	return
 }

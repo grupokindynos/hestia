@@ -19,6 +19,7 @@ var (
 	ErrorMissingID         = errors.New("missing id param")
 	ErrorInfoDontMatchUser = errors.New("information requested doesn't match for this user")
 	ErrorCoinDataGet       = errors.New("unable to get coin information")
+	ErrorConfigDataGet     = errors.New("unable to get config information")
 	ErrorDecryptJWE        = errors.New("unable to decrypt jwe")
 	ErrorDBStore           = errors.New("unable to store information to database")
 	ErrorNotFound          = errors.New("information not found")

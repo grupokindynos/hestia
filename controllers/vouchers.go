@@ -9,6 +9,7 @@ import (
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"os"
 )
 
 /*
@@ -69,35 +70,44 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
-	// Try to decrypt it
-	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
+	// Verify Signature
+	// TODO here we need to use Vouchers Microservice signature
+	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
-		return nil, config.ErrorDecryptJWE
+		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		return
 	}
 	// Try to unmarshal the information of the payload
 	var voucherData models.Voucher
 	err = json.Unmarshal(rawBytes, &voucherData)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
 	// Hash the PaymentTxID as the ID
 	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
 	// Check if ID is already known on data
 	_, err = vc.Model.Get(voucherData.ID)
 	if err == nil {
-		return nil, config.ErrorAlreadyExists
+		config.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		return
 	}
 	voucherData.Status = "PENDING"
 	err = vc.Model.Update(voucherData)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		return
 	}
 	// Store ID on user information
 	err = vc.UserModel.AddVoucher(voucherData.UID, voucherData.ID)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		return
 	}
-	return true, nil
+	response, err := jws.EncodeJWS(voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseError(response, err, c)
+	return
 }

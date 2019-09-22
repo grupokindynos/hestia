@@ -9,6 +9,7 @@ import (
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"os"
 )
 
 /*
@@ -69,18 +70,22 @@ func (dc *DepositsController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
-	// Try to decrypt it
-	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
+	// Verify Signature
+	// TODO here we need to use Deposits Microservice signature
+	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
-		return nil, config.ErrorDecryptJWE
+		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		return
 	}
 	// Try to unmarshal the information of the payload
 	var depositData models.Deposit
 	err = json.Unmarshal(rawBytes, &depositData)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
 	}
 	// Hash the PaymentTxID as the ID
 	// If this already exists, doesn't matter since it is deterministic
@@ -88,7 +93,10 @@ func (dc *DepositsController) Store(c *gin.Context) {
 	// Store deposit data to process
 	err = dc.Model.Update(depositData)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		return
 	}
-	return true, nil
+	response, err := jws.EncodeJWS(depositData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseError(response, err, c)
+	return
 }

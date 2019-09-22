@@ -13,7 +13,7 @@ func TestCardsController_GetUserAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	cards, err := cardsCtrl.GetUserAll(models.TestUser, c)
+	cards, err := cardsCtrl.GetAll(models.TestUser, c, false)
 	assert.Nil(t, err)
 	var cardsArray []models.Card
 	cardBytes, err := json.Marshal(cards)
@@ -29,7 +29,7 @@ func TestCardsController_GetUserSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "cardcode", Value: models.TestCard.CardCode}}
-	card, err := cardsCtrl.GetUserSingle(models.TestUser, c)
+	card, err := cardsCtrl.GetSingle(models.TestUser, c, false)
 	assert.Nil(t, err)
 	assert.IsType(t, models.Card{}, card)
 	assert.Equal(t, models.TestCard, card)
@@ -39,7 +39,7 @@ func TestCardsController_GetAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	cards, err := cardsCtrl.GetAll(models.TestUser, c)
+	cards, err := cardsCtrl.GetAll(models.TestUser, c, true)
 	assert.Nil(t, err)
 	var cardsArray []models.Card
 	cardBytes, err := json.Marshal(cards)
@@ -55,7 +55,7 @@ func TestCardsController_GetSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "cardcode", Value: models.TestCard.CardCode}}
-	card, err := cardsCtrl.GetSingle(models.TestUser, c)
+	card, err := cardsCtrl.GetSingle(models.TestUser, c, true)
 	assert.Nil(t, err)
 	assert.IsType(t, models.Card{}, card)
 	assert.Equal(t, models.TestCard, card)

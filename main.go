@@ -62,6 +62,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		vouchersModel := &models.VouchersModel{Db: db, Collection: "vouchers"}
 		usersModel := &models.UsersModel{Db: db, Collection: "users"}
 		coinsModel := &models.CoinsModel{Db: db, Collection: "coins"}
+		globalConfigModel := &models.GlobalConfigModel{Db: db, Collection: "config"}
 
 		// Init Controllers
 		fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -72,9 +73,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		userCtrl := controllers.UsersController{Model: usersModel}
 		vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel}
 		coinsCtrl := controllers.CoinsController{Model: coinsModel}
+		globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 
 		// Routes available for users
 		api.GET("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinsAvailability, false) })
+		api.GET("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.GetConfig, false) })
 		api.GET("/user/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, false) })
 		api.GET("/user/shift/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetSingle, false) })
 		api.GET("/user/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrl.GetAll, false) })
@@ -87,25 +90,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 
-		// Routes available for another service
-
-		// Shift Service
-		api.POST("/shift", shiftCtrl.Store)
-
-		// Voucher Service
-		api.POST("/voucher", vouchersCtrl.Store)
-
-		// Deposit Service
-		api.POST("/deposit", depositsCtrl.Store)
-
-		// Order Service
-		api.POST("/order", ordersCtrl.Store)
-
-		// Cards Service
-		api.POST("/card", cardsCtrl.Store)
-
 		// Routes available for admin users
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
+		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
 
 		api.GET("/deposit/single/:depositid", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetSingle, true) })
 		api.GET("/deposit/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, depositsCtrl.GetAll, true) })
@@ -125,6 +112,22 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, true) })
 		api.GET("/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, true) })
 
+		// Routes available for another service
+
+		// Shift Service
+		api.POST("/shift", shiftCtrl.Store)
+
+		// Voucher Service
+		api.POST("/voucher", vouchersCtrl.Store)
+
+		// Deposit Service
+		api.POST("/deposit", depositsCtrl.Store)
+
+		// Order Service
+		api.POST("/order", ordersCtrl.Store)
+
+		// Cards Service
+		api.POST("/card", cardsCtrl.Store)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
