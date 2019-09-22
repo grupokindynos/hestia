@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"os"
 	"strings"
 )
 
@@ -88,4 +90,50 @@ user:
 		return
 	}
 
+}
+
+func (fb *FirebaseController) CheckToken(c *gin.Context) {
+	// Get the microservice name from header
+	whois := c.GetHeader("service")
+	var pubKey string
+	switch whois {
+	case "ladon":
+		pubKey = os.Getenv("LADON_PUBLIC_KEY")
+	case "tyche":
+		pubKey = os.Getenv("TYCHE_PUBLIC_KEY")
+	default:
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	var ReqBody models.BodyReq
+	err := c.BindJSON(&ReqBody)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	// Verify Signature
+	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, pubKey)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		return
+	}
+	var token string
+	err = json.Unmarshal(rawBytes, &token)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	// Verify token and get user information
+	fbAuth, err := fb.App.Auth(context.Background())
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
+		return
+	}
+	_, err = fbAuth.VerifyIDToken(context.Background(), token)
+	if err != nil {
+		config.GlobalResponseError(false, nil, c)
+		return
+	}
+	config.GlobalResponseError(true, nil, c)
+	return
 }

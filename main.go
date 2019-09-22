@@ -128,6 +128,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 		// Cards Service
 		api.POST("/card", cardsCtrl.Store)
+
+		// For all microservices
+		api.POST("/validate/token", fbCtrl.CheckToken)
+
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")

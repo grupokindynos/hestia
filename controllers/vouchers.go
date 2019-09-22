@@ -75,8 +75,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		return
 	}
 	// Verify Signature
-	// TODO here we need to use Vouchers Microservice signature
-	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv(""))
+	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv("LADON_PUBLIC_KEY"))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return
