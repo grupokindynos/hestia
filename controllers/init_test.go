@@ -12,6 +12,8 @@ var (
 	ordersCtrl   OrdersController
 	shiftCtrl    ShiftsController
 	coinsCtrl    CoinsController
+	globalCtrl   GlobalConfigController
+	vouchersCtrl   VouchersController
 )
 
 func init() {
@@ -28,6 +30,8 @@ func init() {
 	depositsModel := &models.DepositsModel{Db: db, Collection: "deposits"}
 	usersModel := &models.UsersModel{Db: db, Collection: "users"}
 	coinsModel := &models.CoinsModel{Db: db, Collection: "coins"}
+	globalModel := &models.GlobalConfigModel{Db: db, Collection: "config"}
+	vouchersModel := &models.VouchersModel{Db: db, Collection: "vouchers"}
 
 	// Init Controllers
 	cardsCtrl = CardsController{Model: cardsModel, UserModel: usersModel}
@@ -35,4 +39,7 @@ func init() {
 	ordersCtrl = OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl = ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	coinsCtrl = CoinsController{Model: coinsModel}
+	globalCtrl = GlobalConfigController{Model: globalModel}
+	vouchersCtrl = VouchersController{Model: vouchersModel}
+
 }

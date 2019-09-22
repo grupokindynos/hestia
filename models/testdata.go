@@ -25,6 +25,25 @@ var TestCoinData = []Coin{
 	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
 }
 
+var TestConfigData = Config{
+	Shift: Properties{
+		FeePercentage: 1,
+		Available:     true,
+	},	
+	Deposits: Properties{
+		FeePercentage: 1,
+		Available:     true,
+	},
+	Orders:Properties{
+		FeePercentage: 0,
+		Available:     true,
+	},
+	Vouchers:Properties{
+		FeePercentage: 1,
+		Available:     false,
+	},
+}
+
 var TestOrder = Order{
 	ID:     "TEST-ORDER",
 	UID:    "XYZ12345678910",
