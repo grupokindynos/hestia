@@ -59,7 +59,7 @@ func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context, ad
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	if !utils.Contains(userInfo.Orders, id) {
+	if !utils.Contains(userInfo.Vouchers, id) {
 		return nil, config.ErrorInfoDontMatchUser
 	}
 	return vc.Model.Get(id)

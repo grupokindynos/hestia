@@ -7,6 +7,7 @@ import (
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"strings"
 )
 
 type FirebaseController struct {
@@ -15,7 +16,13 @@ type FirebaseController struct {
 }
 
 func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData models.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
-	token := c.GetHeader("token")
+	reqToken, ok := c.Request.Header["Authorization"]
+	if !ok {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	splitToken := strings.Split(reqToken[0], "Bearer ")
+	token := splitToken[1]
 	// If there is no token on the header, return non-authed
 	if token == "" {
 		config.GlobalResponseNoAuth(c)

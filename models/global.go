@@ -62,10 +62,31 @@ func (m *GlobalConfigModel) getPropData(id string) (props Properties, err error)
 }
 
 func (m *GlobalConfigModel) UpdateConfigData(config Config) error {
+	err := m.storePropData("shifts", config.Shift)
+	if err != nil {
+		return err
+	}
+	err = m.storePropData("deposits", config.Deposits)
+	if err != nil {
+		return err
+	}
+	err = m.storePropData("vouchers", config.Vouchers)
+	if err != nil {
+		return err
+	}
+	err = m.storePropData("orders", config.Orders)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *GlobalConfigModel) storePropData(id string, props Properties) (error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
+	filter := bson.M{"_id": id}
 	upsert := true
-	_, _ = col.UpdateOne(ctx, bson.M{}, bson.D{{Key: "$set", Value: config}}, &options.UpdateOptions{Upsert: &upsert})
-	return nil
+	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: props}}, &options.UpdateOptions{Upsert: &upsert})
+	return err
 }
