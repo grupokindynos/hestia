@@ -1,6 +1,8 @@
 package models
 
-var TestCard = Card{
+import "github.com/grupokindynos/common/hestia"
+
+var TestCard = hestia.Card{
 	Address:    "TEST-ADDRRESS",
 	CardCode:   "TEST-CARDCODE",
 	CardNumber: "123456778",
@@ -11,44 +13,44 @@ var TestCard = Card{
 	UID:        "XYZ12345678910",
 }
 
-var TestCoinData = []Coin{
-	{Ticker: "BTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "LTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DASH", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "POLIS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "GRS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DGB", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "COLX", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "ONION", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "XSG", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "XZC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: Balances{HotWallet: 1, Exchanges: 1}},
+var TestCoinData = []hestia.Coin{
+	{Ticker: "BTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "LTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "DASH", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "POLIS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "GRS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "DGB", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "COLX", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "ONION", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "XSG", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "XZC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 }
 
-var TestConfigData = Config{
-	Shift: Properties{
-		FeePercentage: 1,
-		Available:     true,
-	},	
-	Deposits: Properties{
+var TestConfigData = hestia.Config{
+	Shift: hestia.Properties{
 		FeePercentage: 1,
 		Available:     true,
 	},
-	Orders:Properties{
+	Deposits: hestia.Properties{
+		FeePercentage: 1,
+		Available:     true,
+	},
+	Orders: hestia.Properties{
 		FeePercentage: 0,
 		Available:     true,
 	},
-	Vouchers:Properties{
+	Vouchers: hestia.Properties{
 		FeePercentage: 1,
 		Available:     false,
 	},
 }
 
-var TestOrder = Order{
+var TestOrder = hestia.Order{
 	ID:     "TEST-ORDER",
 	UID:    "XYZ12345678910",
 	Status: "COMPLETED",
-	PaymentInfo: Payment{
+	PaymentInfo: hestia.Payment{
 		Address: "FAKE-ADDRRESS",
 		Amount:  "100",
 		Coin:    "POLIS",
@@ -56,17 +58,17 @@ var TestOrder = Order{
 
 		Confirmations: "0",
 	},
-	AddressInfo: AddressInformation{
+	AddressInfo: hestia.AddressInformation{
 		City:       "FAKE-CITY",
 		Country:    "FAKE-COUNTRY",
 		PostalCode: "00000",
 		Email:      "TEST@TEST.COM",
 		Street:     "FAKE-STREET",
 	},
-	Delivery: DeliveryOption{
+	Delivery: hestia.DeliveryOption{
 		Type:    "DHL",
 		Service: "EXPRESS",
-		DeliveryAddress: AddressInformation{
+		DeliveryAddress: hestia.AddressInformation{
 			City:       "FAKE-CITY",
 			Country:    "FAKE-COUNTRY",
 			PostalCode: "00000",
@@ -74,8 +76,8 @@ var TestOrder = Order{
 			Street:     "FAKE-STREET",
 		},
 	},
-	PersonalizationData: PersonalizationInformation{
-		PersonalData: PersonalInformation{
+	PersonalizationData: hestia.PersonalizationInformation{
+		PersonalData: hestia.PersonalInformation{
 			BirthDate:   "20190211",
 			CivilState:  "MARRIED",
 			FirstName:   "TEST-USER",
@@ -85,7 +87,7 @@ var TestOrder = Order{
 			Nationality: "MEXICAN",
 			PassportID:  "1234567890",
 		},
-		AddressData: AddressInformation{
+		AddressData: hestia.AddressInformation{
 			City:       "FAKE-CITY",
 			Country:    "FAKE-COUNTRY",
 			PostalCode: "00000",
@@ -95,19 +97,19 @@ var TestOrder = Order{
 	},
 }
 
-var TestShift = Shift{
+var TestShift = hestia.Shift{
 	ID:        "TEST-SHIFT",
 	Status:    "COMPLETED",
 	Timestamp: "000000000000",
 	UID:       "XYZ12345678910",
-	Payment: Payment{
+	Payment: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        "123123123",
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
 		Confirmations: "0",
 	},
-	Conversion: Payment{
+	Conversion: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        "123123123",
 		Coin:          "POLIS",
@@ -116,10 +118,10 @@ var TestShift = Shift{
 	},
 }
 
-var TestUser = User{
+var TestUser = hestia.User{
 	ID:       "XYZ12345678910",
 	Email:    "TEST@TEST.COM",
-	KYCData:  KYCInformation{},
+	KYCData:  hestia.KYCInformation{},
 	Role:     "admin",
 	Shifts:   []string{},
 	Vouchers: []string{},
@@ -128,21 +130,21 @@ var TestUser = User{
 	Orders:   []string{},
 }
 
-var TestVoucher = Voucher{
+var TestVoucher = hestia.Voucher{
 	ID:         "TEST-VOUCHER",
 	UID:        "XYZ12345678910",
 	VoucherID:  "FAKE-VOUCHER",
 	VariantID:  "FAKE-VARIANT",
 	FiatAmount: "100",
 	Name:       "TEST-VOUCHER",
-	PaymentData: Payment{
+	PaymentData: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        "123123123",
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
 		Confirmations: "0",
 	},
-	BitcouPaymentData: Payment{
+	BitcouPaymentData: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        "123123123",
 		Coin:          "POLIS",
@@ -154,10 +156,10 @@ var TestVoucher = Voucher{
 	Timestamp:  "00000000000",
 }
 
-var TestDeposit = Deposit{
+var TestDeposit = hestia.Deposit{
 	ID:  "TEST-DEPOSIT",
 	UID: "XYZ12345678910",
-	Payment: Payment{
+	Payment: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        "123123123",
 		Coin:          "POLIS",

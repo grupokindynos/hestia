@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
@@ -28,7 +29,7 @@ type OrdersController struct {
 	UserModel *models.UsersModel
 }
 
-func (oc *OrdersController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (oc *OrdersController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return oc.Model.GetAll()
 	}
@@ -36,7 +37,7 @@ func (oc *OrdersController) GetAll(userData models.User, c *gin.Context, admin b
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var Array []models.Order
+	var Array []hestia.Order
 	for _, id := range userInfo.Orders {
 		obj, err := oc.Model.Get(id)
 		if err != nil {
@@ -47,7 +48,7 @@ func (oc *OrdersController) GetAll(userData models.User, c *gin.Context, admin b
 	return Array, nil
 }
 
-func (oc *OrdersController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (oc *OrdersController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("orderid")
 	if !ok {
 		return nil, config.ErrorMissingID
@@ -81,7 +82,7 @@ func (oc *OrdersController) Store(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
-	var orderData models.Order
+	var orderData hestia.Order
 	err = json.Unmarshal(rawBytes, &orderData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)

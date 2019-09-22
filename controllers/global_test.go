@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestGlobalConfigController_GetConfig(t *testing.T) {
 	c, _ := gin.CreateTestContext(resp)
 	coins, err := globalCtrl.GetConfig(models.TestUser, c, false)
 	assert.Nil(t, err)
-	var coinsArray []models.Coin
+	var coinsArray []hestia.Coin
 	coinsBytes, err := json.Marshal(coins)
 	assert.Nil(t, err)
 	err = json.Unmarshal(coinsBytes, &coinsArray)

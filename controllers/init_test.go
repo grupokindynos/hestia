@@ -13,7 +13,7 @@ var (
 	shiftCtrl    ShiftsController
 	coinsCtrl    CoinsController
 	globalCtrl   GlobalConfigController
-	vouchersCtrl   VouchersController
+	vouchersCtrl VouchersController
 )
 
 func init() {

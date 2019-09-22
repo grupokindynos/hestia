@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -59,5 +60,5 @@ func TestUsersModel_AddOrder(t *testing.T) {
 func TestUsersModel_GetUserInformation(t *testing.T) {
 	userData, err := usersModel.Get(TestUser.ID)
 	assert.Nil(t, err)
-	assert.IsType(t, User{}, userData)
+	assert.IsType(t, hestia.User{}, userData)
 }

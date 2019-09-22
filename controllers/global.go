@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -25,7 +26,7 @@ type GlobalConfigController struct {
 	Model *models.GlobalConfigModel
 }
 
-func (gc *GlobalConfigController) GetConfig(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (gc *GlobalConfigController) GetConfig(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	coins, err := gc.Model.GetConfigData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
@@ -33,7 +34,7 @@ func (gc *GlobalConfigController) GetConfig(userData models.User, c *gin.Context
 	return coins, nil
 }
 
-func (gc *GlobalConfigController) UpdateConfigData(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
@@ -43,7 +44,7 @@ func (gc *GlobalConfigController) UpdateConfigData(userData models.User, c *gin.
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}
-	var newConfig models.Config
+	var newConfig hestia.Config
 	err = json.Unmarshal(rawBytes, &newConfig)
 	if err != nil {
 		return nil, config.ErrorUnmarshal

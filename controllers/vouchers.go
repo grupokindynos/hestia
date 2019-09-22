@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
@@ -28,7 +29,7 @@ type VouchersController struct {
 	UserModel *models.UsersModel
 }
 
-func (vc *VouchersController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return vc.Model.GetAll()
 	}
@@ -36,7 +37,7 @@ func (vc *VouchersController) GetAll(userData models.User, c *gin.Context, admin
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var Array []models.Voucher
+	var Array []hestia.Voucher
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
@@ -47,7 +48,7 @@ func (vc *VouchersController) GetAll(userData models.User, c *gin.Context, admin
 	return Array, nil
 }
 
-func (vc *VouchersController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (vc *VouchersController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("voucherid")
 	if !ok {
 		return nil, config.ErrorMissingID
@@ -81,7 +82,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
-	var voucherData models.Voucher
+	var voucherData hestia.Voucher
 	err = json.Unmarshal(rawBytes, &voucherData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)

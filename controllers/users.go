@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -23,14 +24,14 @@ type UsersController struct {
 	Model *models.UsersModel
 }
 
-func (uc *UsersController) GetAll(userInfo models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (uc *UsersController) GetAll(userInfo hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return uc.Model.GetAll()
 	}
 	return nil, config.ErrorNoAuth
 }
 
-func (uc *UsersController) GetSingle(userInfo models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (uc *UsersController) GetSingle(userInfo hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		id, ok := c.Params.Get("uid")
 		if !ok {
@@ -45,7 +46,7 @@ func (uc *UsersController) GetSingle(userInfo models.User, c *gin.Context, admin
 	return user, nil
 }
 
-func (uc *UsersController) Store(userData models.User, c *gin.Context) (interface{}, error) {
+func (uc *UsersController) Store(userData hestia.User, c *gin.Context) (interface{}, error) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
@@ -55,7 +56,7 @@ func (uc *UsersController) Store(userData models.User, c *gin.Context) (interfac
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}
-	var newUserData models.User
+	var newUserData hestia.User
 	err = json.Unmarshal(rawBytes, &newUserData)
 	if err != nil {
 		return nil, config.ErrorUnmarshal
@@ -64,7 +65,7 @@ func (uc *UsersController) Store(userData models.User, c *gin.Context) (interfac
 	if err != nil {
 		return nil, err
 	}
-	updateUserData := models.User{
+	updateUserData := hestia.User{
 		ID:       oldUserData.ID,
 		Email:    oldUserData.Email,
 		KYCData:  userData.KYCData,

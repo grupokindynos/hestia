@@ -2,34 +2,19 @@ package models
 
 import (
 	"context"
+	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
-type Card struct {
-	Address    string `bson:"address" json:"address"`
-	CardCode   string `bson:"card_code" json:"card_code"`
-	CardNumber string `bson:"card_number" json:"card_number"`
-	City       string `bson:"city" json:"city"`
-	Email      string `bson:"email" json:"email"`
-	FirstName  string `bson:"firstname" json:"firstname"`
-	LastName   string `bson:"lastname" json:"lastname"`
-	UID        string `bson:"uid" json:"uid"`
-}
-
-type Pin struct {
-	CardCode string `bson:"card_code" json:"card_code"`
-	PinCode  string `bson:"pin_code" json:"pin_code"`
-}
-
 type CardsModel struct {
 	Db         *mongo.Database
 	Collection string
 }
 
-func (m *CardsModel) Get(id string) (card Card, err error) {
+func (m *CardsModel) Get(id string) (card hestia.Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -38,7 +23,7 @@ func (m *CardsModel) Get(id string) (card Card, err error) {
 	return card, err
 }
 
-func (m *CardsModel) Update(card Card) error {
+func (m *CardsModel) Update(card hestia.Card) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -48,13 +33,13 @@ func (m *CardsModel) Update(card Card) error {
 	return err
 }
 
-func (m *CardsModel) GetAll() (cards []Card, err error) {
+func (m *CardsModel) GetAll() (cards []hestia.Card, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
 	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
-		var card Card
+		var card hestia.Card
 		_ = curr.Decode(&card)
 		cards = append(cards, card)
 	}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -23,7 +24,7 @@ type CoinsController struct {
 	Model *models.CoinsModel
 }
 
-func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
@@ -31,7 +32,7 @@ func (cc *CoinsController) GetCoinsAvailability(userData models.User, c *gin.Con
 	return coins, nil
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
@@ -41,7 +42,7 @@ func (cc *CoinsController) UpdateCoinsAvailability(userData models.User, c *gin.
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}
-	var newCoinsData []models.Coin
+	var newCoinsData []hestia.Coin
 	err = json.Unmarshal(rawBytes, &newCoinsData)
 	if err != nil {
 		return nil, config.ErrorUnmarshal

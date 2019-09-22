@@ -4,6 +4,7 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -15,7 +16,7 @@ type FirebaseController struct {
 	UsersModel *models.UsersModel
 }
 
-func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData models.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
+func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
 	reqToken, ok := c.Request.Header["Authorization"]
 	if !ok {
 		config.GlobalResponseNoAuth(c)
@@ -54,10 +55,10 @@ user:
 			config.GlobalResponseError(nil, config.ErrorNoUserInformation, c)
 			return
 		}
-		newUserData := models.User{
+		newUserData := hestia.User{
 			ID:       fbUserData.UID,
 			Email:    fbUserData.Email,
-			KYCData:  models.KYCInformation{},
+			KYCData:  hestia.KYCInformation{},
 			Role:     "user",
 			Orders:   []string{},
 			Shifts:   []string{},

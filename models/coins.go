@@ -2,46 +2,33 @@ package models
 
 import (
 	"context"
+	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
-type Coin struct {
-	Ticker            string   `bson:"ticker" json:"ticker"`
-	ShiftAvailable    bool     `bson:"shift_available" json:"shift_available"`
-	DepositAvailable  bool     `bson:"deposit_available" json:"deposit_available"`
-	VouchersAvailable bool     `bson:"vouchers_available" json:"vouchers_available"`
-	OrdersAvailable   bool     `bson:"orders_available" json:"orders_available"`
-	Balances          Balances `bson:"balances" json:"balances"`
-}
-
-type Balances struct {
-	HotWallet float64 `bson:"hot_wallet" json:"hot_wallet"`
-	Exchanges float64 `bson:"exchanges" json:"exchanges"`
-}
-
 type CoinsModel struct {
 	Db         *mongo.Database
 	Collection string
 }
 
-func (m *CoinsModel) GetCoinsData() ([]Coin, error) {
+func (m *CoinsModel) GetCoinsData() ([]hestia.Coin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
-	var CoinData []Coin
+	var CoinData []hestia.Coin
 	cursor, _ := col.Find(ctx, bson.M{})
 	for cursor.Next(ctx) {
-		var coinProp Coin
+		var coinProp hestia.Coin
 		_ = cursor.Decode(&coinProp)
 		CoinData = append(CoinData, coinProp)
 	}
 	return CoinData, nil
 }
 
-func (m *CoinsModel) UpdateCoinsData(Coins []Coin) error {
+func (m *CoinsModel) UpdateCoinsData(Coins []hestia.Coin) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)

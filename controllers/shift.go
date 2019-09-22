@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
@@ -28,7 +29,7 @@ type ShiftsController struct {
 	UserModel *models.UsersModel
 }
 
-func (sc *ShiftsController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (sc *ShiftsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return sc.Model.GetAll()
 	}
@@ -36,7 +37,7 @@ func (sc *ShiftsController) GetAll(userData models.User, c *gin.Context, admin b
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var Array []models.Shift
+	var Array []hestia.Shift
 	for _, id := range userInfo.Shifts {
 		obj, err := sc.Model.Get(id)
 		if err != nil {
@@ -47,7 +48,7 @@ func (sc *ShiftsController) GetAll(userData models.User, c *gin.Context, admin b
 	return Array, nil
 }
 
-func (sc *ShiftsController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (sc *ShiftsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("shiftid")
 	if !ok {
 		return nil, config.ErrorMissingID
@@ -80,7 +81,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
-	var shiftData models.Shift
+	var shiftData hestia.Shift
 	err = json.Unmarshal(rawBytes, &shiftData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)

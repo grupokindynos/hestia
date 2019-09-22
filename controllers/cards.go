@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
@@ -32,7 +33,7 @@ type CardsController struct {
 	UserModel *models.UsersModel
 }
 
-func (cc *CardsController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CardsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return cc.Model.GetAll()
 	}
@@ -40,7 +41,7 @@ func (cc *CardsController) GetAll(userData models.User, c *gin.Context, admin bo
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var Array []models.Card
+	var Array []hestia.Card
 	for _, id := range userInfo.Cards {
 		obj, err := cc.Model.Get(id)
 		if err != nil {
@@ -51,7 +52,7 @@ func (cc *CardsController) GetAll(userData models.User, c *gin.Context, admin bo
 	return Array, nil
 }
 
-func (cc *CardsController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CardsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("cardcode")
 	if !ok {
 		return nil, config.ErrorMissingID
@@ -85,7 +86,7 @@ func (cc *CardsController) Store(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
-	var cardData models.Card
+	var cardData hestia.Card
 	err = json.Unmarshal(rawBytes, &cardData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)

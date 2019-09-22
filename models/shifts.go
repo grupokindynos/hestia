@@ -2,27 +2,19 @@ package models
 
 import (
 	"context"
+	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
-type Shift struct {
-	ID         string  `bson:"id" json:"id"`
-	UID        string  `bson:"uid" json:"uid"`
-	Status     string  `bson:"status" json:"status"`
-	Timestamp  string  `bson:"timestamp" json:"timestamp"`
-	Payment    Payment `bson:"payment" json:"payment"`
-	Conversion Payment `bson:"conversion" json:"conversion"`
-}
-
 type ShiftModel struct {
 	Db         *mongo.Database
 	Collection string
 }
 
-func (m *ShiftModel) Get(id string) (shift Shift, err error) {
+func (m *ShiftModel) Get(id string) (shift hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -31,7 +23,7 @@ func (m *ShiftModel) Get(id string) (shift Shift, err error) {
 	return shift, err
 }
 
-func (m *ShiftModel) Update(shift Shift) error {
+func (m *ShiftModel) Update(shift hestia.Shift) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -41,13 +33,13 @@ func (m *ShiftModel) Update(shift Shift) error {
 	return err
 }
 
-func (m *ShiftModel) GetAll() (shifts []Shift, err error) {
+func (m *ShiftModel) GetAll() (shifts []hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
 	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
-		var shift Shift
+		var shift hestia.Shift
 		_ = curr.Decode(&shift)
 		shifts = append(shifts, shift)
 	}

@@ -2,28 +2,19 @@ package models
 
 import (
 	"context"
+	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
-type Deposit struct {
-	ID           string  `bson:"id" json:"id"`
-	UID          string  `bson:"uid" json:"uid"`
-	Payment      Payment `bson:"payment" json:"payment"`
-	AmountInPeso string  `bson:"amount_in_peso" json:"amount_in_peso"`
-	CardCode     string  `bson:"card_code" json:"card_code"`
-	Status       string  `bson:"status" json:"status"`
-	Timestamp    string  `bson:"timestamp" json:"timestamp"`
-}
-
 type DepositsModel struct {
 	Db         *mongo.Database
 	Collection string
 }
 
-func (m *DepositsModel) Get(id string) (deposit Deposit, err error) {
+func (m *DepositsModel) Get(id string) (deposit hestia.Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -32,7 +23,7 @@ func (m *DepositsModel) Get(id string) (deposit Deposit, err error) {
 	return deposit, err
 }
 
-func (m *DepositsModel) Update(deposit Deposit) error {
+func (m *DepositsModel) Update(deposit hestia.Deposit) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -42,13 +33,13 @@ func (m *DepositsModel) Update(deposit Deposit) error {
 	return err
 }
 
-func (m *DepositsModel) GetAll() (deposits []Deposit, err error) {
+func (m *DepositsModel) GetAll() (deposits []hestia.Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
 	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
-		var deposit Deposit
+		var deposit hestia.Deposit
 		_ = curr.Decode(&deposit)
 		deposits = append(deposits, deposit)
 	}

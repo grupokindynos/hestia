@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jws"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
@@ -28,7 +29,7 @@ type DepositsController struct {
 	UserModel *models.UsersModel
 }
 
-func (dc *DepositsController) GetAll(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (dc *DepositsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
 		return dc.Model.GetAll()
 	}
@@ -36,7 +37,7 @@ func (dc *DepositsController) GetAll(userData models.User, c *gin.Context, admin
 	if err != nil {
 		return nil, config.ErrorNoUserInformation
 	}
-	var Array []models.Deposit
+	var Array []hestia.Deposit
 	for _, id := range userInfo.Deposits {
 		obj, err := dc.Model.Get(id)
 		if err != nil {
@@ -47,7 +48,7 @@ func (dc *DepositsController) GetAll(userData models.User, c *gin.Context, admin
 	return Array, nil
 }
 
-func (dc *DepositsController) GetSingle(userData models.User, c *gin.Context, admin bool) (interface{}, error) {
+func (dc *DepositsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	id, ok := c.Params.Get("depositid")
 	if !ok {
 		return nil, config.ErrorMissingID
@@ -81,7 +82,7 @@ func (dc *DepositsController) Store(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
-	var depositData models.Deposit
+	var depositData hestia.Deposit
 	err = json.Unmarshal(rawBytes, &depositData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)

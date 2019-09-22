@@ -2,25 +2,12 @@ package models
 
 import (
 	"context"
+	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
-
-type User struct {
-	ID       string         `bons:"id" json:"id"`
-	Email    string         `bson:"email" json:"email"`
-	KYCData  KYCInformation `bson:"kyc_data" json:"kyc_data"`
-	Role     string         `bson:"role" json:"role"`
-	Shifts   []string       `bson:"shifts" json:"shifts"`
-	Vouchers []string       `bson:"vouchers" json:"vouchers"`
-	Deposits []string       `bson:"deposits" json:"deposits"`
-	Cards    []string       `bson:"cards" json:"cards"`
-	Orders   []string       `bson:"orders" json:"orders"`
-}
-
-type KYCInformation struct{}
 
 type UsersModel struct {
 	Db         *mongo.Database
@@ -28,7 +15,7 @@ type UsersModel struct {
 }
 
 // Get will return the user information stored on MongoDB
-func (m *UsersModel) Get(uid string) (user User, err error) {
+func (m *UsersModel) Get(uid string) (user hestia.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	collection := m.Db.Collection(m.Collection)
@@ -38,7 +25,7 @@ func (m *UsersModel) Get(uid string) (user User, err error) {
 }
 
 // Update will update the user information on the MongoDB
-func (m *UsersModel) Update(user User) error {
+func (m *UsersModel) Update(user hestia.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	shiftsColl := m.Db.Collection(m.Collection)
@@ -48,13 +35,13 @@ func (m *UsersModel) Update(user User) error {
 	return err
 }
 
-func (m *UsersModel) GetAll() (users []User, err error) {
+func (m *UsersModel) GetAll() (users []hestia.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
 	curr, _ := col.Find(ctx, bson.M{})
 	for curr.Next(ctx) {
-		var user User
+		var user hestia.User
 		_ = curr.Decode(&user)
 		users = append(users, user)
 	}

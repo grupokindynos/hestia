@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/grupokindynos/common/hestia"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -20,5 +21,5 @@ func TestCardsModel_GetAll(t *testing.T) {
 	cards, err := cardsModel.GetAll()
 	assert.Nil(t, err)
 	assert.NotZero(t, len(cards))
-	assert.IsType(t, []Card{}, cards)
+	assert.IsType(t, []hestia.Card{}, cards)
 }
