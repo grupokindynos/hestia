@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -31,7 +31,7 @@ type ShiftsController struct {
 
 func (sc *ShiftsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
-		return sc.Model.GetAll()
+		return sc.Model.GetAll("all")
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -66,6 +66,82 @@ func (sc *ShiftsController) GetSingle(userData hestia.User, c *gin.Context, admi
 	return sc.Model.Get(id)
 }
 
+func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
+	// Check if the user has an id
+	id, ok := c.Params.Get("shiftid")
+	if !ok {
+		config.GlobalResponseError(nil, config.ErrorMissingID, c)
+		return
+	}
+	// Validate token on header
+	service := c.GetHeader("service")
+	// Decode token
+	tokenBytes, err := jwt.DecodeJWS(service, os.Getenv("TYCHE_PUBLIC_KEY"))
+	if err != nil {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	var serviceStr string
+	err = json.Unmarshal(tokenBytes, &serviceStr)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	if serviceStr != "tyche" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	shift, err := sc.Model.Get(id)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	encodedShift, err := jwt.EncodeJWS(shift, os.Getenv("HESTIA_PRIVATE_KEY"))
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	config.GlobalResponseError(encodedShift, nil, c)
+	return
+}
+
+func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
+	filter := c.Query("filter")
+	if filter == "" {
+		filter = "all"
+	}
+	// Validate token on header
+	service := c.GetHeader("service")
+	// Decode token
+	tokenBytes, err := jwt.DecodeJWS(service, os.Getenv("TYCHE_PUBLIC_KEY"))
+	if err != nil {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	var serviceStr string
+	err = json.Unmarshal(tokenBytes, &serviceStr)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	if serviceStr != "tyche" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	shiftList, err := sc.Model.GetAll(filter)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	encodedList, err := jwt.EncodeJWS(shiftList, os.Getenv("HESTIA_PRIVATE_KEY"))
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	config.GlobalResponseError(encodedList, nil, c)
+	return
+}
+
 func (sc *ShiftsController) Store(c *gin.Context) {
 	// Catch the request jwe
 	var ReqBody models.BodyReq
@@ -75,7 +151,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		return
 	}
 	// Verify Signature
-	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
+	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return
@@ -107,7 +183,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := jws.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	response, err := jwt.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
 	config.GlobalResponseError(response, err, c)
 	return
 }

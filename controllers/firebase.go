@@ -6,10 +6,10 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"os"
+	"github.com/grupokindynos/hestia/utils"
 	"strings"
 )
 
@@ -85,7 +85,7 @@ user:
 		config.GlobalResponseError(res, err, c)
 		return
 	default:
-		jwe, err := jws.EncryptJWE(uid, res)
+		jwe, err := jwt.EncryptJWE(uid, res)
 		config.GlobalResponseError(jwe, err, c)
 		return
 	}
@@ -93,26 +93,19 @@ user:
 }
 
 func (fb *FirebaseController) CheckToken(c *gin.Context) {
-	// Get the microservice name from header
-	whois := c.GetHeader("service")
-	var pubKey string
-	switch whois {
-	case "ladon":
-		pubKey = os.Getenv("LADON_PUBLIC_KEY")
-	case "tyche":
-		pubKey = os.Getenv("TYCHE_PUBLIC_KEY")
-	default:
+	pubKey, err := utils.VerifyHeaderSignature(c)
+	if err != nil {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
 	var ReqBody models.BodyReq
-	err := c.BindJSON(&ReqBody)
+	err = c.BindJSON(&ReqBody)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Verify Signature
-	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, pubKey)
+	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, pubKey)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return

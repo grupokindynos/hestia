@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -80,7 +80,7 @@ func (cc *CardsController) Store(c *gin.Context) {
 	}
 	// Verify Signature
 	// TODO here we need to use Cards Microservice signature
-	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv(""))
+	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return
@@ -111,7 +111,7 @@ func (cc *CardsController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := jws.EncodeJWS(cardData.CardCode, os.Getenv("HESTIA_PRIVATE_KEY"))
+	response, err := jwt.EncodeJWS(cardData.CardCode, os.Getenv("HESTIA_PRIVATE_KEY"))
 	config.GlobalResponseError(response, err, c)
 	return
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 )
@@ -38,7 +38,7 @@ func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.
 	if err != nil {
 		return nil, config.ErrorUnmarshal
 	}
-	rawBytes, err := jws.DecryptJWE(userData.ID, ReqBody.Payload)
+	rawBytes, err := jwt.DecryptJWE(userData.ID, ReqBody.Payload)
 	if err != nil {
 		return nil, config.ErrorDecryptJWE
 	}

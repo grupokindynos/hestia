@@ -8,6 +8,13 @@
     "FIREBASE_CRED": {"description": "Base64 encoded string of the firebase admin json token"},
     "MONGODB_URL": {"description": "MongoDB URI"},
     "MONGODB_NAME": {"description": "MongoDB database name"},
-    "GIN_MODE": {"description": "GIN mode to run on production"}
+    "GIN_MODE": {"description": "GIN mode to run on production"},
+    "HESTIA_AUTH_USERNAME": {"description": "Hestia basic auth username"},
+    "HESTIA_AUTH_PASSWORD": {"description": "Hestia basic auth password"},
+    "HESTIA_PUBLIC_KEY": {"description": "Hestia microservice public key"},
+    "HESTIA_PRIVATE_KEY": {"description": "Hestia microservice private key"},
+    "TYCHE_PUBLIC_KEY": {"description": "Tyche microservice public key"},
+    "LADON_PUBLIC_KEY": {"description": "Ladon microservice public key"},
+    "ADRESTIA_PUBLIC_KEY": {"description": "Adrestia microservice public key"}
   }
 }

@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"strings"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func (m *ShiftModel) Update(shift hestia.Shift) error {
 	return err
 }
 
-func (m *ShiftModel) GetAll() (shifts []hestia.Shift, err error) {
+func (m *ShiftModel) GetAll(filter string) (shifts []hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -41,7 +42,14 @@ func (m *ShiftModel) GetAll() (shifts []hestia.Shift, err error) {
 	for curr.Next(ctx) {
 		var shift hestia.Shift
 		_ = curr.Decode(&shift)
-		shifts = append(shifts, shift)
+		if filter != "all" {
+			if shift.Status == strings.ToUpper(filter) {
+				shifts = append(shifts, shift)
+			}
+		} else {
+			shifts = append(shifts, shift)
+		}
+
 	}
 	return shifts, nil
 }

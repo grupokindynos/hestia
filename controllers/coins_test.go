@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -30,7 +30,7 @@ func TestCoinsController_UpdateCoinsAvailability(t *testing.T) {
 	buf := new(bytes.Buffer)
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
-	token, err := jws.EncryptJWE(models.TestUser.ID, models.TestCoinData)
+	token, err := jwt.EncryptJWE(models.TestUser.ID, models.TestCoinData)
 	assert.Nil(t, err)
 	reqBody := models.BodyReq{
 		Payload: token,

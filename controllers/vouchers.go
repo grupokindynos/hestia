@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jws"
+	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -75,7 +75,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		return
 	}
 	// Verify Signature
-	rawBytes, err := jws.DecodeJWS(ReqBody.Payload, os.Getenv("LADON_PUBLIC_KEY"))
+	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv("LADON_PUBLIC_KEY"))
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return
@@ -107,7 +107,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := jws.EncodeJWS(voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	response, err := jwt.EncodeJWS(voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
 	config.GlobalResponseError(response, err, c)
 	return
 }
