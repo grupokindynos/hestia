@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"strings"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func (m *VouchersModel) Update(voucher hestia.Voucher) error {
 	return err
 }
 
-func (m *VouchersModel) GetAll() (vouchers []hestia.Voucher, err error) {
+func (m *VouchersModel) GetAll(filter string) (vouchers []hestia.Voucher, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	col := m.Db.Collection(m.Collection)
@@ -41,7 +42,13 @@ func (m *VouchersModel) GetAll() (vouchers []hestia.Voucher, err error) {
 	for curr.Next(ctx) {
 		var voucher hestia.Voucher
 		_ = curr.Decode(&voucher)
-		vouchers = append(vouchers, voucher)
+		if filter != "all" {
+			if voucher.Status == strings.ToUpper(filter) {
+				vouchers = append(vouchers, voucher)
+			}
+		} else {
+			vouchers = append(vouchers, voucher)
+		}
 	}
 	return vouchers, nil
 }

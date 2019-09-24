@@ -94,8 +94,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
-		api.GET("/users/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, true) })
-		api.GET("/users/info/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetAll, true) })
+		// @TODO pending routes
+		//api.GET("/users/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, true) })
+		//.GET("/users/info/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetAll, true) })
 	}
 
 	authUser := os.Getenv("HESTIA_AUTH_USERNAME")
@@ -111,29 +112,29 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.POST("/shift", shiftCtrl.Store)
 
 		// Ladon
-		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingle)
-		authApi.GET("/voucher/all", vouchersCtrl.GetAll)
+		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
+		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
 
-		/*		// Deposit Service
-				api.GET("/deposit/single/:depositid", depositsCtrl.GetSingle)
-				api.GET("/deposit/all", depositsCtrl.GetAll)
-				authApi.POST("/deposit", depositsCtrl.Store)
+		// @TODO pending microservices
+		// Deposit Service
+		//api.GET("/deposit/single/:depositid", depositsCtrl.GetSingle)
+		//api.GET("/deposit/all", depositsCtrl.GetAll)
+		//authApi.POST("/deposit", depositsCtrl.Store)
 
-				// Order Service
-				authApi.GET("/order/single/:orderid", ordersCtrl.GetSingle)
-				authApi.GET("/order/all", ordersCtrl.GetAll)
-				authApi.POST("/order", ordersCtrl.Store)
+		// Order Service
+		//authApi.GET("/order/single/:orderid", ordersCtrl.GetSingle)
+		//authApi.GET("/order/all", ordersCtrl.GetAll)
+		//authApi.POST("/order", ordersCtrl.Store)
 
-				// Cards Service
-
-				api.GET("/card/single/:cardcode", cardsCtrl.GetSingle)
-				api.GET("/card/all", cardsCtrl.GetAll)
-				authApi.POST("/card", cardsCtrl.Store)*/
+		// Cards Service
+		//api.GET("/card/single/:cardcode", cardsCtrl.GetSingle)
+		//api.GET("/card/all", cardsCtrl.GetAll)
+		//authApi.POST("/card", cardsCtrl.Store)
 
 		// For all microservices
-		api.GET("/coins", coinsCtrl.GetCoinsAvailability)
-		api.GET("/config", globalConfigCtrl.GetConfig)
+		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
+		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
 	}
 	r.NoRoute(func(c *gin.Context) {

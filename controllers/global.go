@@ -5,8 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/tokens/mrt"
+	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
+	"os"
 )
 
 /*
@@ -27,11 +30,56 @@ type GlobalConfigController struct {
 }
 
 func (gc *GlobalConfigController) GetConfig(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
-	coins, err := gc.Model.GetConfigData()
+	configData, err := gc.Model.GetConfigData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
 	}
-	return coins, nil
+	return configData, nil
+}
+
+func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
+	headerSignature := c.GetHeader("service")
+	if headerSignature == "" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	var serviceStr string
+	err = json.Unmarshal(decodedHeader, &serviceStr)
+	if err != nil {
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	// Check which service the request is announcing
+	var pubKey string
+	switch serviceStr {
+	case "ladon":
+		pubKey = os.Getenv("LADON_PUBLIC_KEY")
+	case "tyche":
+		pubKey = os.Getenv("TYCHE_PUBLIC_KEY")
+	case "adrestia":
+		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
+	default:
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, pubKey, os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	configData, err := gc.Model.GetConfigData()
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), configData, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
+	return
 }
 
 func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {

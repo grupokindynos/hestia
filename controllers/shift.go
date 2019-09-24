@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/tokens/mrt"
+	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -73,21 +74,13 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorMissingID, c)
 		return
 	}
-	// Validate token on header
-	service := c.GetHeader("service")
-	// Decode token
-	tokenBytes, err := jwt.DecodeJWS(service, os.Getenv("TYCHE_PUBLIC_KEY"))
-	if err != nil {
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
-	var serviceStr string
-	err = json.Unmarshal(tokenBytes, &serviceStr)
-	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	if serviceStr != "tyche" {
+	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
@@ -96,12 +89,8 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 		config.GlobalResponseError(nil, err, c)
 		return
 	}
-	encodedShift, err := jwt.EncodeJWS(shift, os.Getenv("HESTIA_PRIVATE_KEY"))
-	if err != nil {
-		config.GlobalResponseError(nil, err, c)
-		return
-	}
-	config.GlobalResponseError(encodedShift, nil, c)
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shift, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
 	return
 }
 
@@ -110,21 +99,13 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	// Validate token on header
-	service := c.GetHeader("service")
-	// Decode token
-	tokenBytes, err := jwt.DecodeJWS(service, os.Getenv("TYCHE_PUBLIC_KEY"))
-	if err != nil {
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
-	var serviceStr string
-	err = json.Unmarshal(tokenBytes, &serviceStr)
-	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	if serviceStr != "tyche" {
+	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
@@ -133,32 +114,37 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 		config.GlobalResponseError(nil, err, c)
 		return
 	}
-	encodedList, err := jwt.EncodeJWS(shiftList, os.Getenv("HESTIA_PRIVATE_KEY"))
-	if err != nil {
-		config.GlobalResponseError(nil, err, c)
-		return
-	}
-	config.GlobalResponseError(encodedList, nil, c)
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shiftList, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
 	return
 }
 
 func (sc *ShiftsController) Store(c *gin.Context) {
-	// Catch the request jwe
+	// Catch the request body
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	// Verify Signature
-	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv("TYCHE_PUBLIC_KEY"))
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	reqBytes, err := json.Marshal(ReqBody.Payload)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBytes, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var shiftData hestia.Shift
-	err = json.Unmarshal(rawBytes, &shiftData)
+	err = json.Unmarshal(payload, &shiftData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
@@ -183,7 +169,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := jwt.EncodeJWS(shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseError(response, err, c)
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
 	return
 }

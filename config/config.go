@@ -43,6 +43,12 @@ func GlobalResponseNoAuth(c *gin.Context) *gin.Context {
 	return c
 }
 
+// GlobalResponseNoAuth is used to wrap all non-auth API responses under the same model.
+func GlobalResponseMRT(header string, body string, c *gin.Context) *gin.Context {
+	c.JSON(401, gin.H{"service": header, "data": body, "status": 1})
+	return c
+}
+
 // ConnectDB is the function to return the MongoDB connection.
 func ConnectDB() (*mongo.Database, error) {
 	MongoDB := os.Getenv("MONGODB_URL")

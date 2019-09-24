@@ -7,10 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/tokens/mrt"
+	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/utils"
-	"strings"
+	"io/ioutil"
+	"os"
 )
 
 type FirebaseController struct {
@@ -19,14 +21,7 @@ type FirebaseController struct {
 }
 
 func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
-	reqToken, ok := c.Request.Header["Authorization"]
-	if !ok {
-		config.GlobalResponseNoAuth(c)
-		return
-	}
-	splitToken := strings.Split(reqToken[0], "Bearer ")
-	token := splitToken[1]
-	// If there is no token on the header, return non-authed
+	token := c.GetHeader("token")
 	if token == "" {
 		config.GlobalResponseNoAuth(c)
 		return
@@ -93,25 +88,47 @@ user:
 }
 
 func (fb *FirebaseController) CheckToken(c *gin.Context) {
-	pubKey, err := utils.VerifyHeaderSignature(c)
+	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	headerSignature := c.GetHeader("service")
+	if headerSignature == "" {
 		config.GlobalResponseNoAuth(c)
 		return
 	}
-	var ReqBody models.BodyReq
-	err = c.BindJSON(&ReqBody)
+	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	var serviceStr string
+	err = json.Unmarshal(decodedHeader, &serviceStr)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	// Verify Signature
-	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, pubKey)
-	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+	// Check which service the request is announcing
+	var pubKey string
+	switch serviceStr {
+	case "ladon":
+		pubKey = os.Getenv("LADON_PUBLIC_KEY")
+	case "tyche":
+		pubKey = os.Getenv("TYCHE_PUBLIC_KEY")
+	case "adrestia":
+		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
+	default:
+		config.GlobalResponseNoAuth(c)
 		return
 	}
-	var token string
-	err = json.Unmarshal(rawBytes, &token)
+	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBody, pubKey, os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	var fbToken string
+	err = json.Unmarshal(payload, &fbToken)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
@@ -122,11 +139,16 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
 		return
 	}
-	_, err = fbAuth.VerifyIDToken(context.Background(), token)
+	user, err := fbAuth.VerifyIDToken(context.Background(), fbToken)
 	if err != nil {
 		config.GlobalResponseError(false, nil, c)
 		return
 	}
-	config.GlobalResponseError(true, nil, c)
+	responsePayload := hestia.TokenVerification{
+		Valid: true,
+		UID:   user.UID,
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), responsePayload, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
 	return
 }

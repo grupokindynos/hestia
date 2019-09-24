@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/tokens/mrt"
+	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -31,7 +32,7 @@ type VouchersController struct {
 
 func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
 	if admin {
-		return vc.Model.GetAll()
+		return vc.Model.GetAll("all")
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -66,6 +67,58 @@ func (vc *VouchersController) GetSingle(userData hestia.User, c *gin.Context, ad
 	return vc.Model.Get(id)
 }
 
+func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
+	// Check if the user has an id
+	id, ok := c.Params.Get("voucherid")
+	if !ok {
+		config.GlobalResponseError(nil, config.ErrorMissingID, c)
+		return
+	}
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	voucher, err := vc.Model.Get(id)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucher, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
+	return
+}
+
+func (vc *VouchersController) GetAllLadon(c *gin.Context) {
+	filter := c.Query("filter")
+	if filter == "" {
+		filter = "all"
+	}
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	vouchersList, err := vc.Model.GetAll(filter)
+	if err != nil {
+		config.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), vouchersList, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
+	return
+}
+
 func (vc *VouchersController) Store(c *gin.Context) {
 	// Catch the request jwe
 	var ReqBody models.BodyReq
@@ -74,15 +127,24 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	// Verify Signature
-	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv("LADON_PUBLIC_KEY"))
+	headerSignature := os.Getenv("service")
+	if headerSignature == "" {
+		config.GlobalResponseNoAuth(c)
+		return
+	}
+	reqBytes, err := json.Marshal(ReqBody.Payload)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBytes, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	if !valid {
+		config.GlobalResponseNoAuth(c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var voucherData hestia.Voucher
-	err = json.Unmarshal(rawBytes, &voucherData)
+	err = json.Unmarshal(payload, &voucherData)
 	if err != nil {
 		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
@@ -107,7 +169,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		config.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
-	response, err := jwt.EncodeJWS(voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseError(response, err, c)
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	config.GlobalResponseMRT(header, body, c)
 	return
 }

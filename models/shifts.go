@@ -49,7 +49,6 @@ func (m *ShiftModel) GetAll(filter string) (shifts []hestia.Shift, err error) {
 		} else {
 			shifts = append(shifts, shift)
 		}
-
 	}
 	return shifts, nil
 }

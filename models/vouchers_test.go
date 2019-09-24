@@ -18,7 +18,7 @@ func TestVouchersModel_Get(t *testing.T) {
 }
 
 func TestVouchersModel_GetAll(t *testing.T) {
-	vouchers, err := vouchersModel.GetAll()
+	vouchers, err := vouchersModel.GetAll("all")
 	assert.Nil(t, err)
 	assert.NotZero(t, len(vouchers))
 	assert.IsType(t, []hestia.Voucher{}, vouchers)
