@@ -40,8 +40,8 @@ github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+Tv3SM=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
-github.com/grupokindynos/common v0.0.0-20190927205411-77f687e85f24 h1:1HqJ5gJxo1tO9U14haxFKgfR41B1EqVsMm8To1BomjY=
-github.com/grupokindynos/common v0.0.0-20190927205411-77f687e85f24/go.mod h1:LWwa+FAKwMTYMlmxqB+BFH2VyKth9j2Lkk0l1mLd6XU=
+github.com/grupokindynos/common v0.0.0-20190927211601-0e0c4f9aefac h1:wrueTKk++OSZlv/sv0hqF/zUZNgG5zXJ1YXAdUTCxOA=
+github.com/grupokindynos/common v0.0.0-20190927211601-0e0c4f9aefac/go.mod h1:LWwa+FAKwMTYMlmxqB+BFH2VyKth9j2Lkk0l1mLd6XU=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
