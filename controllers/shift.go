@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
@@ -71,26 +72,26 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 	// Check if the user has an id
 	id, ok := c.Params.Get("shiftid")
 	if !ok {
-		config.GlobalResponseError(nil, config.ErrorMissingID, c)
+		responses.GlobalResponseError(nil, config.ErrorMissingID, c)
 		return
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	shift, err := sc.Model.Get(id)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shift, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }
 
@@ -101,21 +102,21 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	shiftList, err := sc.Model.GetAll(filter)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shiftList, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }
 
@@ -124,29 +125,29 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	reqBytes, err := json.Marshal(ReqBody.Payload)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBytes, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var shiftData hestia.Shift
 	err = json.Unmarshal(payload, &shiftData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
@@ -154,22 +155,22 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 	// Check if ID is already known on data
 	_, err = sc.Model.Get(shiftData.ID)
 	if err == nil {
-		config.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
 		return
 	}
 	// Store shift data to process
 	err = sc.Model.Update(shiftData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	// Store ID on user information
 	err = sc.UserModel.AddShift(shiftData.UID, shiftData.ID)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shiftData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }

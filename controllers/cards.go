@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
@@ -75,21 +76,21 @@ func (cc *CardsController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Verify Signature
 	// TODO here we need to use Cards Microservice signature
 	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		responses.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var cardData hestia.Card
 	err = json.Unmarshal(rawBytes, &cardData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
@@ -97,21 +98,21 @@ func (cc *CardsController) Store(c *gin.Context) {
 	// Check if ID is already known on data
 	_, err = cc.Model.Get(cardData.CardCode)
 	if err == nil {
-		config.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
 		return
 	}
 	err = cc.Model.Update(cardData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	// Store ID on user information
 	err = cc.UserModel.AddVoucher(cardData.UID, cardData.CardCode)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	response, err := jwt.EncodeJWS(cardData.CardCode, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseError(response, err, c)
+	responses.GlobalResponseError(response, err, c)
 	return
 }

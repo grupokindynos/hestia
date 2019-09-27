@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/config"
@@ -40,18 +41,18 @@ func (gc *GlobalConfigController) GetConfig(userData hestia.User, c *gin.Context
 func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	var serviceStr string
 	err = json.Unmarshal(decodedHeader, &serviceStr)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Check which service the request is announcing
@@ -64,21 +65,21 @@ func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 	case "adrestia":
 		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
 	default:
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, pubKey, os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	configData, err := gc.Model.GetConfigData()
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), configData, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }
 

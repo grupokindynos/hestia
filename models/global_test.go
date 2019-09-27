@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestCoinsModel_UpdateConfigData(t *testing.T) {
+func TestConfigModel_UpdateConfigData(t *testing.T) {
 	err := configModel.UpdateConfigData(TestConfigData)
 	assert.Nil(t, err)
 }
 
-func TestCoinsModel_GetConfigData(t *testing.T) {
+func TestConfigModel_GetConfigData(t *testing.T) {
 	configData, err := configModel.GetConfigData()
 	assert.Nil(t, err)
 	assert.IsType(t, []hestia.Config{}, configData)

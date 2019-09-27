@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	firebase "firebase.google.com/go"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/config"
@@ -23,18 +25,18 @@ type FirebaseController struct {
 func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
 	token := c.GetHeader("token")
 	if token == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	// Verify token and get user information
 	fbAuth, err := fb.App.Auth(context.Background())
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
+		responses.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
 		return
 	}
 	tk, err := fbAuth.VerifyIDToken(context.Background(), token)
 	if err != nil {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	uid := tk.UID
@@ -42,14 +44,14 @@ user:
 	userData, err := fb.UsersModel.Get(uid)
 	if admin {
 		if userData.Role != "admin" {
-			config.GlobalResponseError(nil, config.ErrorNoAuth, c)
+			responses.GlobalResponseError(nil, config.ErrorNoAuth, c)
 			return
 		}
 	}
 	if err != nil {
 		fbUserData, err := fbAuth.GetUser(context.Background(), uid)
 		if err != nil {
-			config.GlobalResponseError(nil, config.ErrorNoUserInformation, c)
+			responses.GlobalResponseError(nil, config.ErrorNoUserInformation, c)
 			return
 		}
 		newUserData := hestia.User{
@@ -65,23 +67,23 @@ user:
 		}
 		err = fb.UsersModel.Update(newUserData)
 		if err != nil {
-			config.GlobalResponseError(nil, config.ErrorDBStore, c)
+			responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 			return
 		}
 		goto user
 	}
 	res, err := method(userData, c, admin)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	switch res.(type) {
 	case bool:
-		config.GlobalResponseError(res, err, c)
+		responses.GlobalResponseError(res, err, c)
 		return
 	default:
 		jwe, err := jwt.EncryptJWE(uid, res)
-		config.GlobalResponseError(jwe, err, c)
+		responses.GlobalResponseError(jwe, err, c)
 		return
 	}
 
@@ -90,23 +92,23 @@ user:
 func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	var serviceStr string
 	err = json.Unmarshal(decodedHeader, &serviceStr)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Check which service the request is announcing
@@ -119,29 +121,32 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	case "adrestia":
 		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
 	default:
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBody, pubKey, os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	var fbToken string
 	err = json.Unmarshal(payload, &fbToken)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		fmt.Println(err)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Verify token and get user information
 	fbAuth, err := fb.App.Auth(context.Background())
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
+		fmt.Println(err)
+		responses.GlobalResponseError(nil, config.ErrorFbInitializeAuth, c)
 		return
 	}
 	user, err := fbAuth.VerifyIDToken(context.Background(), fbToken)
 	if err != nil {
-		config.GlobalResponseError(false, nil, c)
+		fmt.Println(err)
+		responses.GlobalResponseError(false, nil, c)
 		return
 	}
 	responsePayload := hestia.TokenVerification{
@@ -149,6 +154,6 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 		UID:   user.UID,
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), responsePayload, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }

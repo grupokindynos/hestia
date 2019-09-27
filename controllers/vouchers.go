@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
@@ -71,26 +72,26 @@ func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
 	// Check if the user has an id
 	id, ok := c.Params.Get("voucherid")
 	if !ok {
-		config.GlobalResponseError(nil, config.ErrorMissingID, c)
+		responses.GlobalResponseError(nil, config.ErrorMissingID, c)
 		return
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	voucher, err := vc.Model.Get(id)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucher, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }
 
@@ -101,21 +102,21 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	vouchersList, err := vc.Model.GetAll(filter)
 	if err != nil {
-		config.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), vouchersList, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }
 
@@ -124,29 +125,29 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	var ReqBody models.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	headerSignature := os.Getenv("service")
 	if headerSignature == "" {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	reqBytes, err := json.Marshal(ReqBody.Payload)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBytes, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
-		config.GlobalResponseNoAuth(c)
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var voucherData hestia.Voucher
 	err = json.Unmarshal(payload, &voucherData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
@@ -154,22 +155,22 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	// Check if ID is already known on data
 	_, err = vc.Model.Get(voucherData.ID)
 	if err == nil {
-		config.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
 		return
 	}
 	voucherData.Status = "PENDING"
 	err = vc.Model.Update(voucherData)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	// Store ID on user information
 	err = vc.UserModel.AddVoucher(voucherData.UID, voucherData.ID)
 	if err != nil {
-		config.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
-	config.GlobalResponseMRT(header, body, c)
+	responses.GlobalResponseMRT(header, body, c)
 	return
 }

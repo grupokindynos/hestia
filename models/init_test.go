@@ -12,7 +12,7 @@ var (
 	ordersModel   *OrdersModel
 	vouchersModel *VouchersModel
 	coinsModel    *CoinsModel
-	configModel    *GlobalConfigModel
+	configModel   *GlobalConfigModel
 	usersModel    *UsersModel
 )
 

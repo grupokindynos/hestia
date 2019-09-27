@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
@@ -25,29 +24,6 @@ var (
 	ErrorNotFound          = errors.New("information not found")
 	ErrorAlreadyExists     = errors.New("object already exists")
 )
-
-// GlobalResponseError is used to wrap all the errored API responses under the same model.
-// Automatically detect if there is an error and return status and code according
-func GlobalResponseError(result interface{}, err error, c *gin.Context) *gin.Context {
-	if err != nil {
-		c.JSON(500, gin.H{"message": "Error", "error": err.Error(), "status": -1})
-	} else {
-		c.JSON(200, gin.H{"data": result, "status": 1})
-	}
-	return c
-}
-
-// GlobalResponseNoAuth is used to wrap all non-auth API responses under the same model.
-func GlobalResponseNoAuth(c *gin.Context) *gin.Context {
-	c.JSON(401, gin.H{"message": "Error", "error": ErrorNoAuth.Error(), "status": -1})
-	return c
-}
-
-// GlobalResponseNoAuth is used to wrap all non-auth API responses under the same model.
-func GlobalResponseMRT(header string, body string, c *gin.Context) *gin.Context {
-	c.JSON(401, gin.H{"service": header, "data": body, "status": 1})
-	return c
-}
 
 // ConnectDB is the function to return the MongoDB connection.
 func ConnectDB() (*mongo.Database, error) {
