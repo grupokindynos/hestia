@@ -30,7 +30,10 @@ func main() {
 
 func GetApp() *gin.Engine {
 	App := gin.Default()
-	App.Use(cors.Default())
+	corsConf := cors.DefaultConfig()
+	corsConf.AllowAllOrigins = true
+	corsConf.AllowHeaders = []string{"token", "service"}
+	App.Use(cors.New(corsConf))
 	fbCredStr := os.Getenv("FIREBASE_CRED")
 	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
 	if err != nil {

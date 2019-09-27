@@ -12,6 +12,7 @@ var (
 	ordersModel   *OrdersModel
 	vouchersModel *VouchersModel
 	coinsModel    *CoinsModel
+	configModel    *GlobalConfigModel
 	usersModel    *UsersModel
 )
 
@@ -29,4 +30,5 @@ func init() {
 	vouchersModel = &VouchersModel{Db: db, Collection: "vouchers"}
 	coinsModel = &CoinsModel{Db: db, Collection: "coins"}
 	usersModel = &UsersModel{Db: db, Collection: "users"}
+	configModel = &GlobalConfigModel{Db: db, Collection: "config"}
 }
