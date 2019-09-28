@@ -42,7 +42,7 @@ var TestConfigData = hestia.Config{
 	},
 	Vouchers: hestia.Properties{
 		FeePercentage: 1,
-		Available:     false,
+		Available:     true,
 	},
 }
 
