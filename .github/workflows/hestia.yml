@@ -29,7 +29,7 @@ jobs:
       run: go test ./config -coverprofile=config/coverage.txt -covermode=atomic
     
     - name: Test Models
-      run: go test ./models -coverprofile=models/coverage.txt -covermode=atomic
+      run: ${{secrets.FIREBASE_CRED}} go test ./models -coverprofile=models/coverage.txt -covermode=atomic
     
     - name: Test Controllers
       run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
