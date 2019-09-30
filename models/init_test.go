@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 	"log"
@@ -24,10 +23,6 @@ var (
 
 func init() {
 	_ = godotenv.Load("../.env")
-	db, err := config.ConnectDB()
-	if err != nil {
-		panic(err)
-	}
 
 	fbCredStr := os.Getenv("FIREBASE_CRED")
 	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
@@ -54,6 +49,6 @@ func init() {
 	depositsModel = &DepositsModel{Firestore: baseDoc, Collection: "deposits"}
 	vouchersModel = &VouchersModel{Firestore: baseDoc, Collection: "vouchers"}
 	coinsModel = &CoinsModel{Firestore: baseDoc, Collection: "coins"}
-	usersModel = &UsersModel{Db: db, Firestore: baseDoc, Collection: "users"}
+	usersModel = &UsersModel{Firestore: baseDoc, Collection: "users"}
 	configModel = &GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
 }

@@ -1,9 +1,14 @@
 package controllers
 
 import (
-	"github.com/grupokindynos/hestia/config"
+	"context"
+	"encoding/base64"
+	firebase "firebase.google.com/go"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/joho/godotenv"
+	"google.golang.org/api/option"
+	"log"
+	"os"
 )
 
 var (
@@ -18,20 +23,34 @@ var (
 
 func init() {
 	_ = godotenv.Load("../.env")
-	db, err := config.ConnectDB()
+
+	fbCredStr := os.Getenv("FIREBASE_CRED")
+	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
 	if err != nil {
-		panic(err)
+		log.Fatal("unable to decode firebase credential string:")
+	}
+	opt := option.WithCredentialsJSON(fbCred)
+	fbApp, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		log.Fatal("unable to initialize firebase app")
 	}
 
+	// Init Database
+	firestore, err := fbApp.Firestore(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	baseDoc := firestore.Collection("polispay").Doc("hestia_test")
+
 	// Init DB models
-	shiftsModel := &models.ShiftModel{Db: db, Collection: "shifts"}
-	cardsModel := &models.CardsModel{Db: db, Collection: "cards"}
-	ordersModel := &models.OrdersModel{Db: db, Collection: "orders"}
-	depositsModel := &models.DepositsModel{Db: db, Collection: "deposits"}
-	usersModel := &models.UsersModel{Db: db, Collection: "users"}
-	coinsModel := &models.CoinsModel{Db: db, Collection: "coins"}
-	globalModel := &models.GlobalConfigModel{Db: db, Collection: "config"}
-	vouchersModel := &models.VouchersModel{Db: db, Collection: "vouchers"}
+	shiftsModel := &models.ShiftModel{Firestore: baseDoc, Collection: "shifts"}
+	cardsModel := &models.CardsModel{Firestore: baseDoc, Collection: "cards"}
+	ordersModel := &models.OrdersModel{Firestore: baseDoc, Collection: "orders"}
+	depositsModel := &models.DepositsModel{Firestore: baseDoc, Collection: "deposits"}
+	usersModel := &models.UsersModel{Firestore: baseDoc, Collection: "users"}
+	coinsModel := &models.CoinsModel{Firestore: baseDoc, Collection: "coins"}
+	globalModel := &models.GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
+	vouchersModel := &models.VouchersModel{Firestore: baseDoc, Collection: "vouchers"}
 
 	// Init Controllers
 	cardsCtrl = CardsController{Model: cardsModel, UserModel: usersModel}

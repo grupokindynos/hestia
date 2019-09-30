@@ -6,7 +6,6 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/controllers"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/joho/godotenv"
@@ -51,12 +50,6 @@ func GetApp() *gin.Engine {
 func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 	// Init Database
-	db, err := config.ConnectDB()
-	if err != nil {
-		log.Fatal(config.ErrorDbInitialize)
-	}
-
-	// Init Database
 	firestore, err := fbApp.Firestore(context.Background())
 	if err != nil {
 		log.Fatal(err)
@@ -69,7 +62,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
 	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
 	vouchersModel := &models.VouchersModel{Firestore: doc, Collection: "vouchers"}
-	usersModel := &models.UsersModel{Firestore: doc, Db: db, Collection: "users"}
+	usersModel := &models.UsersModel{Firestore: doc, Collection: "users"}
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 

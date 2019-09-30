@@ -77,6 +77,6 @@ func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
 func (m *GlobalConfigModel) storePropData(id string, props hestia.Properties) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(id).Set(ctx, props)
+	_, err := m.Firestore.Collection(m.Collection).Doc(id).Set(ctx, props)
 	return err
 }

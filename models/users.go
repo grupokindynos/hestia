@@ -4,15 +4,11 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type UsersModel struct {
 	Firestore  *firestore.DocumentRef
-	Db         *mongo.Database
 	Collection string
 }
 
@@ -20,7 +16,7 @@ type UsersModel struct {
 func (m *UsersModel) Get(uid string) (user hestia.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	ref := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(uid)
+	ref := m.Firestore.Collection(m.Collection).Doc(uid)
 	doc, err := ref.Get(ctx)
 	if err != nil {
 		return user, err
@@ -36,7 +32,7 @@ func (m *UsersModel) Get(uid string) (user hestia.User, err error) {
 func (m *UsersModel) Update(user hestia.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(user.ID).Set(ctx, user)
+	_, err := m.Firestore.Collection(m.Collection).Doc(user.ID).Set(ctx, user)
 	return err
 }
 
@@ -61,10 +57,7 @@ func (m *UsersModel) GetAll() (users []hestia.User, err error) {
 func (m *UsersModel) AddShift(uid string, shiftID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": uid}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"shifts": shiftID}}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Shifts", Value: firestore.ArrayUnion(shiftID)}})
 	return err
 }
 
@@ -72,10 +65,7 @@ func (m *UsersModel) AddShift(uid string, shiftID string) error {
 func (m *UsersModel) AddCard(uid string, cardCode string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": uid}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"cards": cardCode}}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Cards", Value: firestore.ArrayUnion(cardCode)}})
 	return err
 }
 
@@ -83,10 +73,7 @@ func (m *UsersModel) AddCard(uid string, cardCode string) error {
 func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": uid}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"vouchers": voucherID}}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Vouchers", Value: firestore.ArrayUnion(voucherID)}})
 	return err
 }
 
@@ -94,10 +81,7 @@ func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": uid}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"deposits": depositID}}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Deposits", Value: firestore.ArrayUnion(depositID)}})
 	return err
 }
 
@@ -105,9 +89,6 @@ func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 func (m *UsersModel) AddOrder(uid string, orderID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": uid}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$push", Value: bson.M{"orders": orderID}}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Orders", Value: firestore.ArrayUnion(orderID)}})
 	return err
 }
