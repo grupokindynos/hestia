@@ -1,46 +1,51 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type DepositsModel struct {
-	Db         *mongo.Database
+	Firestore  *firestore.DocumentRef
 	Collection string
 }
 
 func (m *DepositsModel) Get(id string) (deposit hestia.Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
-	err = col.FindOne(ctx, filter).Decode(&deposit)
-	return deposit, err
+	ref := m.Firestore.Collection(m.Collection).Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return deposit, err
+	}
+	err = doc.DataTo(&deposit)
+	if err != nil {
+		return deposit, err
+	}
+	return deposit, nil
 }
 
 func (m *DepositsModel) Update(deposit hestia.Deposit) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": deposit.ID}
-	upsert := true
-	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: deposit}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(deposit.ID).Set(ctx, deposit)
 	return err
 }
 
 func (m *DepositsModel) GetAll() (deposits []hestia.Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	curr, _ := col.Find(ctx, bson.M{})
-	for curr.Next(ctx) {
+	ref := m.Firestore.Collection(m.Collection)
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docSnap {
 		var deposit hestia.Deposit
-		_ = curr.Decode(&deposit)
+		_ = doc.DataTo(&deposit)
 		deposits = append(deposits, deposit)
 	}
 	return deposits, nil

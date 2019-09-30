@@ -56,15 +56,22 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		log.Fatal(config.ErrorDbInitialize)
 	}
 
+	// Init Database
+	firestore, err := fbApp.Firestore(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	doc := firestore.Collection("polispay").Doc("hestia")
+
 	// Init DB models
-	shiftsModel := &models.ShiftModel{Db: db, Collection: "shifts"}
-	cardsModel := &models.CardsModel{Db: db, Collection: "cards"}
-	ordersModel := &models.OrdersModel{Db: db, Collection: "orders"}
-	depositsModel := &models.DepositsModel{Db: db, Collection: "deposits"}
-	vouchersModel := &models.VouchersModel{Db: db, Collection: "vouchers"}
-	usersModel := &models.UsersModel{Db: db, Collection: "users"}
-	coinsModel := &models.CoinsModel{Db: db, Collection: "coins"}
-	globalConfigModel := &models.GlobalConfigModel{Db: db, Collection: "config"}
+	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
+	cardsModel := &models.CardsModel{Firestore: doc, Collection: "cards"}
+	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
+	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
+	vouchersModel := &models.VouchersModel{Firestore: doc, Collection: "vouchers"}
+	usersModel := &models.UsersModel{Firestore: doc, Db: db, Collection: "users"}
+	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
+	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}

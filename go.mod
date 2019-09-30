@@ -3,6 +3,7 @@ module github.com/grupokindynos/hestia
 go 1.13
 
 require (
+	cloud.google.com/go v0.38.0
 	firebase.google.com/go v3.9.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
@@ -16,5 +17,4 @@ require (
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.1.1
 	google.golang.org/api v0.10.0
-	gopkg.in/square/go-jose.v2 v2.3.1
 )

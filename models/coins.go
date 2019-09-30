@@ -1,29 +1,31 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type CoinsModel struct {
-	Db         *mongo.Database
+	Firestore  *firestore.DocumentRef
 	Collection string
 }
 
 func (m *CoinsModel) GetCoinsData() ([]hestia.Coin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
+	ref := m.Firestore.Collection(m.Collection)
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
 	var CoinData []hestia.Coin
-	cursor, _ := col.Find(ctx, bson.M{})
-	for cursor.Next(ctx) {
-		var coinProp hestia.Coin
-		_ = cursor.Decode(&coinProp)
-		CoinData = append(CoinData, coinProp)
+	for _, doc := range docSnap {
+		var coin hestia.Coin
+		_ = doc.DataTo(&coin)
+		CoinData = append(CoinData, coin)
 	}
 	return CoinData, nil
 }
@@ -31,11 +33,10 @@ func (m *CoinsModel) GetCoinsData() ([]hestia.Coin, error) {
 func (m *CoinsModel) UpdateCoinsData(Coins []hestia.Coin) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
+	ref := m.Firestore.Collection(m.Collection)
 	for _, coin := range Coins {
-		filter := bson.M{"_id": coin.Ticker}
-		upsert := true
-		_, _ = col.UpdateMany(ctx, filter, bson.D{{Key: "$set", Value: coin}}, &options.UpdateOptions{Upsert: &upsert})
+		docref := ref.Doc(coin.Ticker)
+		_, _ = docref.Set(ctx, coin)
 	}
 	return nil
 }

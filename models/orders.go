@@ -1,46 +1,51 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type OrdersModel struct {
-	Db         *mongo.Database
+	Firestore  *firestore.DocumentRef
 	Collection string
 }
 
 func (m *OrdersModel) Get(id string) (order hestia.Order, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
-	err = col.FindOne(ctx, filter).Decode(&order)
-	return order, err
+	ref := m.Firestore.Collection(m.Collection).Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return order, err
+	}
+	err = doc.DataTo(&order)
+	if err != nil {
+		return order, err
+	}
+	return order, nil
 }
 
 func (m *OrdersModel) Update(order hestia.Order) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": order.ID}
-	upsert := true
-	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: order}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(order.ID).Set(ctx, order)
 	return err
 }
 
 func (m *OrdersModel) GetAll() (orders []hestia.Order, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	curr, _ := col.Find(ctx, bson.M{})
-	for curr.Next(ctx) {
+	ref := m.Firestore.Collection(m.Collection)
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docSnap {
 		var order hestia.Order
-		_ = curr.Decode(&order)
+		_ = doc.DataTo(&order)
 		orders = append(orders, order)
 	}
 	return orders, nil

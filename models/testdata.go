@@ -15,16 +15,16 @@ var TestCard = hestia.Card{
 
 var TestCoinData = []hestia.Coin{
 	{Ticker: "BTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "LTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DASH", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "POLIS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "GRS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DGB", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 	{Ticker: "COLX", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "DASH", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "DGB", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "GRS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "LTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 	{Ticker: "ONION", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "POLIS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 	{Ticker: "XSG", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 	{Ticker: "XZC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
 }
 
 var TestConfigData = hestia.Config{

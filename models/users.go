@@ -1,6 +1,7 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,6 +11,7 @@ import (
 )
 
 type UsersModel struct {
+	Firestore  *firestore.DocumentRef
 	Db         *mongo.Database
 	Collection string
 }
@@ -18,31 +20,38 @@ type UsersModel struct {
 func (m *UsersModel) Get(uid string) (user hestia.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	collection := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": uid}
-	err = collection.FindOne(ctx, filter).Decode(&user)
-	return user, err
+	ref := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(uid)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return user, err
+	}
+	err = doc.DataTo(&user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
 
 // Update will update the user information on the MongoDB
 func (m *UsersModel) Update(user hestia.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	shiftsColl := m.Db.Collection(m.Collection)
-	uidFilter := bson.M{"_id": user.ID}
-	upsert := true
-	_, err := shiftsColl.UpdateOne(ctx, uidFilter, bson.D{{Key: "$set", Value: user}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(user.ID).Set(ctx, user)
 	return err
 }
 
 func (m *UsersModel) GetAll() (users []hestia.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	curr, _ := col.Find(ctx, bson.M{})
-	for curr.Next(ctx) {
+	ref := m.Firestore.Collection(m.Collection)
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docSnap {
 		var user hestia.User
-		_ = curr.Decode(&user)
+		_ = doc.DataTo(&user)
 		users = append(users, user)
 	}
 	return users, nil

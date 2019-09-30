@@ -21,5 +21,6 @@ func TestCardsModel_GetAll(t *testing.T) {
 	cards, err := cardsModel.GetAll()
 	assert.Nil(t, err)
 	assert.NotZero(t, len(cards))
+	assert.Equal(t, TestCard, cards[0])
 	assert.IsType(t, []hestia.Card{}, cards)
 }

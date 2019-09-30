@@ -21,5 +21,6 @@ func TestDepositsModel_GetAll(t *testing.T) {
 	deposits, err := depositsModel.GetAll()
 	assert.Nil(t, err)
 	assert.NotZero(t, len(deposits))
+	assert.Equal(t, TestDeposit, deposits[0])
 	assert.IsType(t, []hestia.Deposit{}, deposits)
 }

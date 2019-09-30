@@ -1,17 +1,15 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/config"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
 type GlobalConfigModel struct {
-	Db         *mongo.Database
+	Firestore  *firestore.DocumentRef
 	Collection string
 }
 
@@ -44,10 +42,16 @@ func (m *GlobalConfigModel) GetConfigData() (hestia.Config, error) {
 func (m *GlobalConfigModel) getPropData(id string) (props hestia.Properties, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
-	err = col.FindOne(ctx, filter).Decode(&props)
-	return props, err
+	ref := m.Firestore.Collection(m.Collection).Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return props, err
+	}
+	err = doc.DataTo(&props)
+	if err != nil {
+		return props, err
+	}
+	return props, nil
 }
 
 func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
@@ -73,9 +77,6 @@ func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
 func (m *GlobalConfigModel) storePropData(id string, props hestia.Properties) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
-	upsert := true
-	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: props}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection("polispay").Doc("hestia").Collection(m.Collection).Doc(id).Set(ctx, props)
 	return err
 }

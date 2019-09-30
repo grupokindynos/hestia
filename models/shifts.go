@@ -1,54 +1,52 @@
 package models
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"strings"
 	"time"
 )
 
 type ShiftModel struct {
-	Db         *mongo.Database
+	Firestore  *firestore.DocumentRef
 	Collection string
 }
 
 func (m *ShiftModel) Get(id string) (shift hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": id}
-	err = col.FindOne(ctx, filter).Decode(&shift)
-	return shift, err
+	ref := m.Firestore.Collection(m.Collection).Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return shift, err
+	}
+	err = doc.DataTo(&shift)
+	if err != nil {
+		return shift, err
+	}
+	return shift, nil
 }
 
 func (m *ShiftModel) Update(shift hestia.Shift) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	filter := bson.M{"_id": shift.ID}
-	upsert := true
-	_, err := col.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: shift}}, &options.UpdateOptions{Upsert: &upsert})
+	_, err := m.Firestore.Collection(m.Collection).Doc(shift.ID).Set(ctx, shift)
 	return err
 }
 
 func (m *ShiftModel) GetAll(filter string) (shifts []hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	col := m.Db.Collection(m.Collection)
-	curr, _ := col.Find(ctx, bson.M{})
-	for curr.Next(ctx) {
+	ref := m.Firestore.Collection(m.Collection)
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docSnap {
 		var shift hestia.Shift
-		_ = curr.Decode(&shift)
-		if filter != "all" {
-			if shift.Status == strings.ToUpper(filter) {
-				shifts = append(shifts, shift)
-			}
-		} else {
-			shifts = append(shifts, shift)
-		}
+		_ = doc.DataTo(&shift)
+		shifts = append(shifts, shift)
 	}
 	return shifts, nil
 }
