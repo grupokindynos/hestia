@@ -14,6 +14,6 @@ func TestConfigModel_UpdateConfigData(t *testing.T) {
 func TestConfigModel_GetConfigData(t *testing.T) {
 	configData, err := configModel.GetConfigData()
 	assert.Nil(t, err)
-	assert.IsType(t, []hestia.Config{}, configData)
+	assert.IsType(t, hestia.Config{}, configData)
 	assert.Equal(t, TestConfigData, configData)
 }
