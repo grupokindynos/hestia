@@ -25,14 +25,11 @@ jobs:
     - name: Test Main
       run: go test ./ -coverprofile=coverage.txt -covermode=atomic
     
-    - name: Test Config
-      run: go test ./config -coverprofile=config/coverage.txt -covermode=atomic
-    
     - name: Test Models
       run: ${{secrets.FIREBASE_CRED}} go test ./models -coverprofile=models/coverage.txt -covermode=atomic
     
     - name: Test Controllers
-      run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
+      run: ${{secrets.FIREBASE_CRED}} go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
     
     - name: Merge Coverage Profiles
       run: |
