@@ -33,7 +33,7 @@ jobs:
     - name: Test Controllers
       env:
         FIREBASE_CRED: ${{ secrets.FIREBASE_CRED }}
-      run: ${{secrets.FIREBASE_CRED}} go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
+      run: go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
     
     - name: Merge Coverage Profiles
       run: |
