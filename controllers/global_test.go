@@ -19,11 +19,11 @@ func TestGlobalConfigController_GetConfig(t *testing.T) {
 	c, _ := gin.CreateTestContext(resp)
 	coins, err := globalCtrl.GetConfig(models.TestUser, c, false)
 	assert.Nil(t, err)
-	var coinsArray []hestia.Coin
+	var configData hestia.Config
 	coinsBytes, err := json.Marshal(coins)
 	assert.Nil(t, err)
-	err = json.Unmarshal(coinsBytes, &coinsArray)
-	assert.Equal(t, models.TestCoinData, coinsArray)
+	err = json.Unmarshal(coinsBytes, &configData)
+	assert.Equal(t, models.TestConfigData, configData)
 }
 
 func TestGlobalConfigController_UpdateConfigData(t *testing.T) {

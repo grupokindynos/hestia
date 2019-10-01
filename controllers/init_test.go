@@ -59,6 +59,6 @@ func init() {
 	shiftCtrl = ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	coinsCtrl = CoinsController{Model: coinsModel}
 	globalCtrl = GlobalConfigController{Model: globalModel}
-	vouchersCtrl = VouchersController{Model: vouchersModel}
+	vouchersCtrl = VouchersController{Model: vouchersModel, UserModel: usersModel}
 
 }
