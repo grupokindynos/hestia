@@ -158,7 +158,6 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
 		return
 	}
-	voucherData.Status = "PENDING"
 	err = vc.Model.Update(voucherData)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
