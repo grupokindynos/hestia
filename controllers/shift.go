@@ -31,9 +31,9 @@ type ShiftsController struct {
 	UserModel *models.UsersModel
 }
 
-func (sc *ShiftsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (sc *ShiftsController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
-		return sc.Model.GetAll("all")
+		return sc.Model.GetAll(filter)
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -50,7 +50,7 @@ func (sc *ShiftsController) GetAll(userData hestia.User, c *gin.Context, admin b
 	return Array, nil
 }
 
-func (sc *ShiftsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (sc *ShiftsController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	id, ok := c.Params.Get("shiftid")
 	if !ok {
 		return nil, config.ErrorMissingID

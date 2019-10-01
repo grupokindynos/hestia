@@ -22,7 +22,7 @@ type FirebaseController struct {
 	UsersModel *models.UsersModel
 }
 
-func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool) (res interface{}, err error), admin bool) {
+func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool, filter string) (res interface{}, err error), admin bool) {
 	token := c.GetHeader("token")
 	if token == "" {
 		responses.GlobalResponseNoAuth(c)
@@ -72,7 +72,11 @@ user:
 		}
 		goto user
 	}
-	res, err := method(userData, c, admin)
+	filter := c.Query("filter")
+	if filter == "" {
+		filter = "all"
+	}
+	res, err := method(userData, c, admin, filter)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return

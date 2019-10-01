@@ -30,9 +30,9 @@ type OrdersController struct {
 	UserModel *models.UsersModel
 }
 
-func (oc *OrdersController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (oc *OrdersController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
-		return oc.Model.GetAll()
+		return oc.Model.GetAll(filter)
 	}
 	userInfo, err := oc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -49,7 +49,7 @@ func (oc *OrdersController) GetAll(userData hestia.User, c *gin.Context, admin b
 	return Array, nil
 }
 
-func (oc *OrdersController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (oc *OrdersController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	id, ok := c.Params.Get("orderid")
 	if !ok {
 		return nil, config.ErrorMissingID

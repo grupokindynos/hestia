@@ -31,9 +31,9 @@ type VouchersController struct {
 	UserModel *models.UsersModel
 }
 
-func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
-		return vc.Model.GetAll("all")
+		return vc.Model.GetAll(filter)
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -50,7 +50,7 @@ func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin
 	return Array, nil
 }
 
-func (vc *VouchersController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (vc *VouchersController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	id, ok := c.Params.Get("voucherid")
 	if !ok {
 		return nil, config.ErrorMissingID

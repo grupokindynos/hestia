@@ -34,7 +34,7 @@ func (m *DepositsModel) Update(deposit hestia.Deposit) error {
 	return err
 }
 
-func (m *DepositsModel) GetAll() (deposits []hestia.Deposit, err error) {
+func (m *DepositsModel) GetAll(filter string) (deposits []hestia.Deposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
@@ -46,7 +46,13 @@ func (m *DepositsModel) GetAll() (deposits []hestia.Deposit, err error) {
 	for _, doc := range docSnap {
 		var deposit hestia.Deposit
 		_ = doc.DataTo(&deposit)
-		deposits = append(deposits, deposit)
+		if filter == "all" {
+			deposits = append(deposits, deposit)
+		} else {
+			if deposit.Status == filter {
+				deposits = append(deposits, deposit)
+			}
+		}
 	}
 	return deposits, nil
 }

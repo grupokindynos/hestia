@@ -18,7 +18,7 @@ func TestOrdersModel_Get(t *testing.T) {
 }
 
 func TestOrdersModel_GetAll(t *testing.T) {
-	orders, err := ordersModel.GetAll()
+	orders, err := ordersModel.GetAll("all")
 	assert.Nil(t, err)
 	assert.NotZero(t, len(orders))
 	assert.Equal(t, TestOrder, orders[0])

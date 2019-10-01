@@ -17,7 +17,7 @@ func TestGlobalConfigController_GetConfig(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	coins, err := globalCtrl.GetConfig(models.TestUser, c, false)
+	coins, err := globalCtrl.GetConfig(models.TestUser, c, false,  "all")
 	assert.Nil(t, err)
 	var configData hestia.Config
 	coinsBytes, err := json.Marshal(coins)
@@ -41,7 +41,7 @@ func TestGlobalConfigController_UpdateConfigData(t *testing.T) {
 	_, err = resp.Write(reqBytes)
 	c, _ := gin.CreateTestContext(resp)
 	c.Request, _ = http.NewRequest("POST", "/", buf)
-	res, err := globalCtrl.UpdateConfigData(models.TestUser, c, false)
+	res, err := globalCtrl.UpdateConfigData(models.TestUser, c, false,  "all")
 	assert.Nil(t, err)
 	assert.Equal(t, true, res)
 }

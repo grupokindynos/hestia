@@ -30,7 +30,7 @@ type GlobalConfigController struct {
 	Model *models.GlobalConfigModel
 }
 
-func (gc *GlobalConfigController) GetConfig(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (gc *GlobalConfigController) GetConfig(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	configData, err := gc.Model.GetConfigData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
@@ -83,7 +83,7 @@ func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 	return
 }
 
-func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {

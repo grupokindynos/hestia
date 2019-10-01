@@ -46,7 +46,13 @@ func (m *ShiftModel) GetAll(filter string) (shifts []hestia.Shift, err error) {
 	for _, doc := range docSnap {
 		var shift hestia.Shift
 		_ = doc.DataTo(&shift)
-		shifts = append(shifts, shift)
+		if filter == "all" {
+			shifts = append(shifts, shift)
+		} else {
+			if shift.Status == filter {
+				shifts = append(shifts, shift)
+			}
+		}
 	}
 	return shifts, nil
 }

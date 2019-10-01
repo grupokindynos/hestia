@@ -14,7 +14,7 @@ func TestVouchersController_GetUserAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	vouchers, err := vouchersCtrl.GetAll(models.TestUser, c, false)
+	vouchers, err := vouchersCtrl.GetAll(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	var vouchersArray []hestia.Voucher
 	voucherBytes, err := json.Marshal(vouchers)
@@ -30,7 +30,7 @@ func TestVouchersController_GetUserSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "voucherid", Value: models.TestVoucher.ID}}
-	voucher, err := vouchersCtrl.GetSingle(models.TestUser, c, false)
+	voucher, err := vouchersCtrl.GetSingle(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Voucher{}, voucher)
 	assert.Equal(t, models.TestVoucher, voucher)
@@ -40,7 +40,7 @@ func TestVouchersController_GetAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	vouchers, err := vouchersCtrl.GetAll(models.TestUser, c, true)
+	vouchers, err := vouchersCtrl.GetAll(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	var voucherArray []hestia.Voucher
 	voucherBytes, err := json.Marshal(vouchers)
@@ -56,7 +56,7 @@ func TestVouchersController_GetSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "voucherid", Value: models.TestVoucher.ID}}
-	voucher, err := vouchersCtrl.GetSingle(models.TestUser, c, true)
+	voucher, err := vouchersCtrl.GetSingle(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Voucher{}, voucher)
 	assert.Equal(t, models.TestVoucher, voucher)

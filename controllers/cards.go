@@ -34,7 +34,7 @@ type CardsController struct {
 	UserModel *models.UsersModel
 }
 
-func (cc *CardsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CardsController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
 		return cc.Model.GetAll()
 	}
@@ -53,7 +53,7 @@ func (cc *CardsController) GetAll(userData hestia.User, c *gin.Context, admin bo
 	return Array, nil
 }
 
-func (cc *CardsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CardsController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	id, ok := c.Params.Get("cardcode")
 	if !ok {
 		return nil, config.ErrorMissingID

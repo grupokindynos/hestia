@@ -28,7 +28,7 @@ type CoinsController struct {
 	Model *models.CoinsModel
 }
 
-func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
 		return nil, config.ErrorCoinDataGet
@@ -81,7 +81,7 @@ func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
 	return
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {

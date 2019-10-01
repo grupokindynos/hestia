@@ -14,7 +14,7 @@ func TestShiftsController_GetUserAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	shifts, err := shiftCtrl.GetAll(models.TestUser, c, false)
+	shifts, err := shiftCtrl.GetAll(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	var shiftsArray []hestia.Shift
 	shiftBytes, err := json.Marshal(shifts)
@@ -30,7 +30,7 @@ func TestShiftsController_GetUserSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "shiftid", Value: models.TestShift.ID}}
-	shift, err := shiftCtrl.GetSingle(models.TestUser, c, false)
+	shift, err := shiftCtrl.GetSingle(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Shift{}, shift)
 	assert.Equal(t, models.TestShift, shift)
@@ -40,7 +40,7 @@ func TestShiftsController_GetAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	shifts, err := shiftCtrl.GetAll(models.TestUser, c, true)
+	shifts, err := shiftCtrl.GetAll(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	var shiftsArray []hestia.Shift
 	shiftBytes, err := json.Marshal(shifts)
@@ -56,7 +56,7 @@ func TestShiftsController_GetSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "shiftid", Value: models.TestShift.ID}}
-	shift, err := shiftCtrl.GetSingle(models.TestUser, c, true)
+	shift, err := shiftCtrl.GetSingle(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Shift{}, shift)
 	assert.Equal(t, models.TestShift, shift)

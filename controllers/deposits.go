@@ -30,9 +30,9 @@ type DepositsController struct {
 	UserModel *models.UsersModel
 }
 
-func (dc *DepositsController) GetAll(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (dc *DepositsController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
-		return dc.Model.GetAll()
+		return dc.Model.GetAll(filter)
 	}
 	userInfo, err := dc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -49,7 +49,7 @@ func (dc *DepositsController) GetAll(userData hestia.User, c *gin.Context, admin
 	return Array, nil
 }
 
-func (dc *DepositsController) GetSingle(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (dc *DepositsController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	id, ok := c.Params.Get("depositid")
 	if !ok {
 		return nil, config.ErrorMissingID

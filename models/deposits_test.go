@@ -18,7 +18,7 @@ func TestDepositsModel_Get(t *testing.T) {
 }
 
 func TestDepositsModel_GetAll(t *testing.T) {
-	deposits, err := depositsModel.GetAll()
+	deposits, err := depositsModel.GetAll("all")
 	assert.Nil(t, err)
 	assert.NotZero(t, len(deposits))
 	assert.Equal(t, TestDeposit, deposits[0])

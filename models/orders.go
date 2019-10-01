@@ -34,7 +34,7 @@ func (m *OrdersModel) Update(order hestia.Order) error {
 	return err
 }
 
-func (m *OrdersModel) GetAll() (orders []hestia.Order, err error) {
+func (m *OrdersModel) GetAll(filter string) (orders []hestia.Order, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
@@ -46,7 +46,13 @@ func (m *OrdersModel) GetAll() (orders []hestia.Order, err error) {
 	for _, doc := range docSnap {
 		var order hestia.Order
 		_ = doc.DataTo(&order)
-		orders = append(orders, order)
+		if filter == "all" {
+			orders = append(orders, order)
+		} else {
+			if order.Status == filter {
+				orders = append(orders, order)
+			}
+		}
 	}
 	return orders, nil
 }

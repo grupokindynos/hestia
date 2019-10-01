@@ -24,14 +24,14 @@ type UsersController struct {
 	Model *models.UsersModel
 }
 
-func (uc *UsersController) GetAll(userInfo hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (uc *UsersController) GetAll(userInfo hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
 		return uc.Model.GetAll()
 	}
 	return nil, config.ErrorNoAuth
 }
 
-func (uc *UsersController) GetSingle(userInfo hestia.User, c *gin.Context, admin bool) (interface{}, error) {
+func (uc *UsersController) GetSingle(userInfo hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
 	if admin {
 		id, ok := c.Params.Get("uid")
 		if !ok {

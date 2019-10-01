@@ -14,7 +14,7 @@ func TestOrdersController_GetUserAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	orders, err := ordersCtrl.GetAll(models.TestUser, c, false)
+	orders, err := ordersCtrl.GetAll(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	var ordersArray []hestia.Order
 	orderBytes, err := json.Marshal(orders)
@@ -30,7 +30,7 @@ func TestOrdersController_GetUserSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "orderid", Value: models.TestOrder.ID}}
-	order, err := ordersCtrl.GetSingle(models.TestUser, c, false)
+	order, err := ordersCtrl.GetSingle(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Order{}, order)
 	assert.Equal(t, models.TestOrder, order)
@@ -40,7 +40,7 @@ func TestOrdersController_GetAll(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	orders, err := ordersCtrl.GetAll(models.TestUser, c, true)
+	orders, err := ordersCtrl.GetAll(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	var orderArray []hestia.Order
 	orderBytes, err := json.Marshal(orders)
@@ -56,7 +56,7 @@ func TestOrdersController_GetSingle(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
 	c.Params = gin.Params{gin.Param{Key: "orderid", Value: models.TestOrder.ID}}
-	order, err := ordersCtrl.GetSingle(models.TestUser, c, true)
+	order, err := ordersCtrl.GetSingle(models.TestUser, c, true, "all")
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Order{}, order)
 	assert.Equal(t, models.TestOrder, order)

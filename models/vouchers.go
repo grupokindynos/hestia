@@ -46,7 +46,13 @@ func (m *VouchersModel) GetAll(filter string) (vouchers []hestia.Voucher, err er
 	for _, doc := range docSnap {
 		var voucher hestia.Voucher
 		_ = doc.DataTo(&voucher)
-		vouchers = append(vouchers, voucher)
+		if filter == "all" {
+			vouchers = append(vouchers, voucher)
+		} else {
+			if voucher.Status == filter {
+				vouchers = append(vouchers, voucher)
+			}
+		}
 	}
 	return vouchers, nil
 }

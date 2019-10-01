@@ -17,7 +17,7 @@ func TestCoinsController_GetCoinsAvailability(t *testing.T) {
 	resp := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(resp)
-	coins, err := coinsCtrl.GetCoinsAvailability(models.TestUser, c, false)
+	coins, err := coinsCtrl.GetCoinsAvailability(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	var coinsArray []hestia.Coin
 	coinsBytes, err := json.Marshal(coins)
@@ -41,7 +41,7 @@ func TestCoinsController_UpdateCoinsAvailability(t *testing.T) {
 	_, err = resp.Write(reqBytes)
 	c, _ := gin.CreateTestContext(resp)
 	c.Request, _ = http.NewRequest("POST", "/", buf)
-	res, err := coinsCtrl.UpdateCoinsAvailability(models.TestUser, c, false)
+	res, err := coinsCtrl.UpdateCoinsAvailability(models.TestUser, c, false, "all")
 	assert.Nil(t, err)
 	assert.Equal(t, true, res)
 }
