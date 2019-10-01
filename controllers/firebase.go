@@ -3,8 +3,11 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	firebase "firebase.google.com/go"
 	"fmt"
+	"io/ioutil"
+	"os"
+
+	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
@@ -13,8 +16,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
-	"io/ioutil"
-	"os"
 )
 
 type FirebaseController struct {
@@ -25,7 +26,7 @@ type FirebaseController struct {
 func (fb *FirebaseController) CheckAuth(c *gin.Context, method func(userData hestia.User, context *gin.Context, admin bool, filter string) (res interface{}, err error), admin bool) {
 	token := c.GetHeader("token")
 	if token == "" {
-		responses.GlobalResponseNoAuth(c)
+		responses.GlobalResponseError(nil, config.ErrorHeaderToken, c)
 		return
 	}
 	// Verify token and get user information
@@ -95,20 +96,23 @@ user:
 
 func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	reqBody, err := ioutil.ReadAll(c.Request.Body)
+
 	if err != nil {
-		responses.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, config.ErrorNoBody, c)
 		return
 	}
 	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
-		responses.GlobalResponseNoAuth(c)
+		responses.GlobalResponseError(nil, config.ErrorNoHeaderSignature, c)
 		return
 	}
+
 	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
 	if err != nil {
-		responses.GlobalResponseError(nil, err, c)
+		responses.GlobalResponseError(nil, config.ErrorSignatureParse, c)
 		return
 	}
+
 	var serviceStr string
 	err = json.Unmarshal(decodedHeader, &serviceStr)
 	if err != nil {
@@ -117,6 +121,7 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	}
 	// Check which service the request is announcing
 	var pubKey string
+
 	switch serviceStr {
 	case "ladon":
 		pubKey = os.Getenv("LADON_PUBLIC_KEY")
@@ -125,12 +130,17 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	case "adrestia":
 		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
 	default:
-		responses.GlobalResponseNoAuth(c)
+		responses.GlobalResponseError(nil, config.ErrorWrongMessage, c)
 		return
 	}
-	valid, payload := mvt.VerifyMVTToken(headerSignature, string(reqBody), pubKey, os.Getenv("MASTER_PASSWORD"))
+
+	var strBody string
+	err = json.Unmarshal(reqBody, &strBody)
+
+	valid, payload := mvt.VerifyMVTToken(headerSignature, strBody, pubKey, os.Getenv("MASTER_PASSWORD"))
+
 	if !valid {
-		responses.GlobalResponseNoAuth(c)
+		responses.GlobalResponseError(nil, config.ErrorInvalidPassword, c)
 		return
 	}
 	var fbToken string
