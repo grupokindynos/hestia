@@ -75,7 +75,7 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 		responses.GlobalResponseError(nil, config.ErrorMissingID, c)
 		return
 	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -100,7 +100,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -128,7 +128,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return

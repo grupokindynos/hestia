@@ -52,11 +52,11 @@ var TestOrder = hestia.Order{
 	Status: "COMPLETED",
 	PaymentInfo: hestia.Payment{
 		Address: "FAKE-ADDRRESS",
-		Amount:  "100",
+		Amount:  100,
 		Coin:    "POLIS",
 		Txid:    "FAKE-TXID",
 
-		Confirmations: "0",
+		Confirmations: 0,
 	},
 	AddressInfo: hestia.AddressInformation{
 		City:       "FAKE-CITY",
@@ -104,17 +104,17 @@ var TestShift = hestia.Shift{
 	UID:       "XYZ12345678910",
 	Payment: hestia.Payment{
 		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
+		Amount:        0123123,
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
-		Confirmations: "0",
+		Confirmations: 0,
 	},
 	Conversion: hestia.Payment{
 		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
+		Amount:        123123,
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
-		Confirmations: "0",
+		Confirmations: 0,
 	},
 }
 
@@ -133,23 +133,23 @@ var TestUser = hestia.User{
 var TestVoucher = hestia.Voucher{
 	ID:         "TEST-VOUCHER",
 	UID:        "XYZ12345678910",
-	VoucherID:  "FAKE-VOUCHER",
+	VoucherID:  123123,
 	VariantID:  "FAKE-VARIANT",
-	FiatAmount: "100",
+	FiatAmount: 123123,
 	Name:       "TEST-VOUCHER",
 	PaymentData: hestia.Payment{
 		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
+		Amount:        123123,
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
-		Confirmations: "0",
+		Confirmations: 123,
 	},
 	BitcouPaymentData: hestia.Payment{
 		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
+		Amount:        123123,
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
-		Confirmations: "0",
+		Confirmations: 123,
 	},
 	RedeemCode: "FAKE-REDEEM",
 	Status:     "COMPLETED",
@@ -161,10 +161,10 @@ var TestDeposit = hestia.Deposit{
 	UID: "XYZ12345678910",
 	Payment: hestia.Payment{
 		Address:       "FAKE-ADDR",
-		Amount:        "123123123",
+		Amount:        123123,
 		Coin:          "POLIS",
 		Txid:          "FAKE-TXID",
-		Confirmations: "0",
+		Confirmations: 123,
 	},
 	AmountInPeso: "100",
 	CardCode:     "TEST-CARDCODE",

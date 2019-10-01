@@ -134,14 +134,15 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 		return
 	}
 
-	var strBody string
-	err = json.Unmarshal(reqBody, &strBody)
+
+
+	var reqToken string
+	err = json.Unmarshal(reqBody, &reqToken)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-
-	valid, payload := mvt.VerifyMVTToken(headerSignature, strBody, pubKey, os.Getenv("MASTER_PASSWORD"))
+	valid, payload := mvt.VerifyMVTToken(headerSignature, reqToken, pubKey, os.Getenv("MASTER_PASSWORD"))
 
 	if !valid {
 		responses.GlobalResponseError(nil, config.ErrorInvalidPassword, c)
