@@ -57,7 +57,7 @@ func (m *UsersModel) GetAll() (users []hestia.User, err error) {
 func (m *UsersModel) AddShift(uid string, shiftID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Shifts", Value: firestore.ArrayUnion(shiftID)}})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "shifts", Value: firestore.ArrayUnion(shiftID)}})
 	return err
 }
 
@@ -65,7 +65,7 @@ func (m *UsersModel) AddShift(uid string, shiftID string) error {
 func (m *UsersModel) AddCard(uid string, cardCode string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Cards", Value: firestore.ArrayUnion(cardCode)}})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "cards", Value: firestore.ArrayUnion(cardCode)}})
 	return err
 }
 
@@ -73,7 +73,7 @@ func (m *UsersModel) AddCard(uid string, cardCode string) error {
 func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Vouchers", Value: firestore.ArrayUnion(voucherID)}})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "vouchers", Value: firestore.ArrayUnion(voucherID)}})
 	return err
 }
 
@@ -81,7 +81,7 @@ func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Deposits", Value: firestore.ArrayUnion(depositID)}})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "deposits", Value: firestore.ArrayUnion(depositID)}})
 	return err
 }
 
@@ -89,6 +89,6 @@ func (m *UsersModel) AddDeposit(uid string, depositID string) error {
 func (m *UsersModel) AddOrder(uid string, orderID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "Orders", Value: firestore.ArrayUnion(orderID)}})
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "orders", Value: firestore.ArrayUnion(orderID)}})
 	return err
 }
