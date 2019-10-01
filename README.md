@@ -57,10 +57,8 @@ Documentation: [API Reference](https://documenter.getpostman.com/view/4345063/SV
 Run:
 ```
 go test ./ -coverprofile=coverage.txt -covermode=atomic
-go test ./config -coverprofile=config/coverage.txt -covermode=atomic
 go test ./models -coverprofile=models/coverage.txt -covermode=atomic
 go test ./controllers -coverprofile=controllers/coverage.txt -covermode=atomic
-sed '1d' ./config/coverage.txt >> ./coverage.txt &&
 sed '1d' ./models/coverage.txt >> ./coverage.txt &&
 sed '1d' ./controllers/coverage.txt >> ./coverage.txt
 ```
