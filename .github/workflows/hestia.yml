@@ -37,7 +37,6 @@ jobs:
     
     - name: Merge Coverage Profiles
       run: |
-        sed '1d' ./config/coverage.txt >> ./coverage.txt &&
         sed '1d' ./models/coverage.txt >> ./coverage.txt &&
         sed '1d' ./controllers/coverage.txt >> ./coverage.txt
 
