@@ -47,7 +47,7 @@ func (uc *UsersController) GetSingle(userInfo hestia.User, c *gin.Context, admin
 }
 
 func (uc *UsersController) Store(userData hestia.User, c *gin.Context) (interface{}, error) {
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		return nil, config.ErrorUnmarshal

@@ -32,7 +32,7 @@ func TestCoinsController_UpdateCoinsAvailability(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	token, err := jwt.EncryptJWE(models.TestUser.ID, models.TestCoinData)
 	assert.Nil(t, err)
-	reqBody := models.BodyReq{
+	reqBody := hestia.BodyReq{
 		Payload: token,
 	}
 	reqBytes, err := json.Marshal(reqBody)

@@ -122,7 +122,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 
 func (sc *ShiftsController) Store(c *gin.Context) {
 	// Catch the request body
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)

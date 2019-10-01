@@ -73,7 +73,7 @@ func (cc *CardsController) GetSingle(userData hestia.User, c *gin.Context, admin
 
 func (cc *CardsController) Store(c *gin.Context) {
 	// Catch the request jwe
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)

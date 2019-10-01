@@ -84,7 +84,7 @@ func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 }
 
 func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		return nil, config.ErrorUnmarshal

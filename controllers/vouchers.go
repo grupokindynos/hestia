@@ -122,7 +122,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 
 func (vc *VouchersController) Store(c *gin.Context) {
 	// Catch the request jwe
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)

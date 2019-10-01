@@ -82,7 +82,7 @@ func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
 }
 
 func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.Context, admin bool) (interface{}, error) {
-	var ReqBody models.BodyReq
+	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
 		return nil, config.ErrorUnmarshal

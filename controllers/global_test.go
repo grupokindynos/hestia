@@ -32,7 +32,7 @@ func TestGlobalConfigController_UpdateConfigData(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	token, err := jwt.EncryptJWE(models.TestUser.ID, models.TestConfigData)
 	assert.Nil(t, err)
-	reqBody := models.BodyReq{
+	reqBody := hestia.BodyReq{
 		Payload: token,
 	}
 	reqBytes, err := json.Marshal(reqBody)
