@@ -75,7 +75,7 @@ func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, config.ErrorMissingID, c)
 		return
 	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -100,7 +100,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -121,24 +121,23 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 }
 
 func (vc *VouchersController) Store(c *gin.Context) {
-	// Catch the request jwe
-	var ReqBody hestia.BodyReq
-	err := c.BindJSON(&ReqBody)
-	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	headerSignature := os.Getenv("service")
+	headerSignature := c.GetHeader("service")
 	if headerSignature == "" {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	reqBytes, err := json.Marshal(ReqBody.Payload)
+	reqBytes, err := c.GetRawData()
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	valid, payload := mvt.VerifyMVTToken(headerSignature, string(reqBytes), os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	var reqString string
+	err = json.Unmarshal(reqBytes, &reqString)
+	if err != nil {
+		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		return
+	}
+	valid, payload := mvt.VerifyMVTToken(headerSignature, reqString, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -152,12 +151,6 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	}
 	// Hash the PaymentTxID as the ID
 	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
-	// Check if ID is already known on data
-	_, err = vc.Model.Get(voucherData.ID)
-	if err == nil {
-		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
-		return
-	}
 	err = vc.Model.Update(voucherData)
 	if err != nil {
 		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
