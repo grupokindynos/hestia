@@ -66,7 +66,7 @@ func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, pubKey, os.Getenv("MASTER_PASSWORD"))
+	valid, _ := mvt.VerifyMVTToken(headerSignature, "", pubKey, os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return

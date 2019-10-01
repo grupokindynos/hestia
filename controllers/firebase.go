@@ -124,7 +124,7 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBody, pubKey, os.Getenv("MASTER_PASSWORD"))
+	valid, payload := mvt.VerifyMVTToken(headerSignature, string(reqBody), pubKey, os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return

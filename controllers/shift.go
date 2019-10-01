@@ -80,7 +80,7 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	valid, _ := mvt.VerifyMVTToken(headerSignature, "", os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -105,7 +105,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, nil, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	valid, _ := mvt.VerifyMVTToken(headerSignature, "", os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -138,7 +138,7 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
 		return
 	}
-	valid, payload := mvt.VerifyMVTToken(headerSignature, reqBytes, os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
+	valid, payload := mvt.VerifyMVTToken(headerSignature, string(reqBytes), os.Getenv("TYCHE_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
 	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
