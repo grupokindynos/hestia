@@ -2,19 +2,16 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
 	"testing"
 )
 
+
+
 func TestCardsController_GetUserAll(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	cards, err := cardsCtrl.GetAll(models.TestUser, c, false, "all")
+	cards, err := cardsCtrl.GetAll(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	var cardsArray []hestia.Card
 	cardBytes, err := json.Marshal(cards)
@@ -26,21 +23,14 @@ func TestCardsController_GetUserAll(t *testing.T) {
 }
 
 func TestCardsController_GetUserSingle(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "cardcode", Value: models.TestCard.CardCode}}
-	card, err := cardsCtrl.GetSingle(models.TestUser, c, false, "all")
+	card, err := cardsCtrl.GetSingle(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Card{}, card)
 	assert.Equal(t, models.TestCard, card)
 }
 
 func TestCardsController_GetAll(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	cards, err := cardsCtrl.GetAll(models.TestUser, c, true, "all")
+	cards, err := cardsCtrl.GetAll(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	var cardsArray []hestia.Card
 	cardBytes, err := json.Marshal(cards)
@@ -52,11 +42,7 @@ func TestCardsController_GetAll(t *testing.T) {
 }
 
 func TestCardsController_GetSingle(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "cardcode", Value: models.TestCard.CardCode}}
-	card, err := cardsCtrl.GetSingle(models.TestUser, c, true, "all")
+	card, err := cardsCtrl.GetSingle(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Card{}, card)
 	assert.Equal(t, models.TestCard, card)

@@ -2,19 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
 	"testing"
 )
 
 func TestOrdersController_GetUserAll(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	orders, err := ordersCtrl.GetAll(models.TestUser, c, false, "all")
+	orders, err := ordersCtrl.GetAll(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	var ordersArray []hestia.Order
 	orderBytes, err := json.Marshal(orders)
@@ -26,21 +21,14 @@ func TestOrdersController_GetUserAll(t *testing.T) {
 }
 
 func TestOrdersController_GetUserSingle(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "orderid", Value: models.TestOrder.ID}}
-	order, err := ordersCtrl.GetSingle(models.TestUser, c, false, "all")
+	order, err := ordersCtrl.GetSingle(models.TestUser, TestParams)
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Order{}, order)
 	assert.Equal(t, models.TestOrder, order)
 }
 
 func TestOrdersController_GetAll(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	orders, err := ordersCtrl.GetAll(models.TestUser, c, true, "all")
+	orders, err := ordersCtrl.GetAll(models.TestUser, TestParamsAdmin)
 	assert.Nil(t, err)
 	var orderArray []hestia.Order
 	orderBytes, err := json.Marshal(orders)
@@ -52,11 +40,7 @@ func TestOrdersController_GetAll(t *testing.T) {
 }
 
 func TestOrdersController_GetSingle(t *testing.T) {
-	resp := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-	c, _ := gin.CreateTestContext(resp)
-	c.Params = gin.Params{gin.Param{Key: "orderid", Value: models.TestOrder.ID}}
-	order, err := ordersCtrl.GetSingle(models.TestUser, c, true, "all")
+	order, err := ordersCtrl.GetSingle(models.TestUser, TestParamsAdmin)
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Order{}, order)
 	assert.Equal(t, models.TestOrder, order)

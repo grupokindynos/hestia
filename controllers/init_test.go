@@ -21,6 +21,30 @@ var (
 	vouchersCtrl VouchersController
 )
 
+var TestParams = Params{
+	Admin:     false,
+	Filter:    "all",
+	ShiftID:   models.TestShift.ID,
+	OrderID:   models.TestOrder.ID,
+	UserID:    models.TestUser.ID,
+	VoucherID: models.TestVoucher.ID,
+	DepositID: models.TestDeposit.ID,
+	CardCode:  models.TestCard.CardCode,
+	Body:      nil,
+}
+
+var TestParamsAdmin = Params{
+	Admin:     true,
+	Filter:    "all",
+	ShiftID:   models.TestShift.ID,
+	OrderID:   models.TestOrder.ID,
+	UserID:    models.TestUser.ID,
+	VoucherID: models.TestVoucher.ID,
+	DepositID: models.TestDeposit.ID,
+	CardCode:  models.TestCard.CardCode,
+	Body:      nil,
+}
+
 func init() {
 	_ = godotenv.Load("../.env")
 
@@ -32,7 +56,7 @@ func init() {
 	opt := option.WithCredentialsJSON(fbCred)
 	fbApp, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		log.Fatal("unable to initialize firebase app")
+		log.Fatal("unable to initialize firebase app: " + err.Error())
 	}
 
 	// Init Database
