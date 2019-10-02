@@ -3,8 +3,8 @@ package models
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/hestia/config"
 	"time"
 )
 
@@ -16,19 +16,19 @@ type GlobalConfigModel struct {
 func (m *GlobalConfigModel) GetConfigData() (hestia.Config, error) {
 	shiftsProps, err := m.getPropData("shifts")
 	if err != nil {
-		return hestia.Config{}, config.ErrorConfigDataGet
+		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
 	depositsProps, err := m.getPropData("deposits")
 	if err != nil {
-		return hestia.Config{}, config.ErrorConfigDataGet
+		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
 	vouchersProps, err := m.getPropData("vouchers")
 	if err != nil {
-		return hestia.Config{}, config.ErrorConfigDataGet
+		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
 	ordersProps, err := m.getPropData("orders")
 	if err != nil {
-		return hestia.Config{}, config.ErrorConfigDataGet
+		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
 	configData := hestia.Config{
 		Shift:    shiftsProps,

@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"os"
 )
@@ -31,57 +31,51 @@ type VouchersController struct {
 	UserModel *models.UsersModel
 }
 
-func (vc *VouchersController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	if admin {
-		return vc.Model.GetAll(filter)
+func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	if params.Admin {
+		return vc.Model.GetAll(params.Filter)
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.Voucher
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
-			return nil, config.ErrorNotFound
+			return nil, errors.ErrorNotFound
 		}
 		Array = append(Array, obj)
 	}
 	return Array, nil
 }
 
-func (vc *VouchersController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	id, ok := c.Params.Get("voucherid")
-	if !ok {
-		return nil, config.ErrorMissingID
+func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (interface{}, error) {
+	if params.VoucherID == "" {
+		return nil, errors.ErrorMissingID
 	}
-	if admin {
-		return vc.Model.Get(id)
+	if params.Admin {
+		return vc.Model.Get(params.VoucherID)
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
-	if !utils.Contains(userInfo.Vouchers, id) {
-		return nil, config.ErrorInfoDontMatchUser
+	if !utils.Contains(userInfo.Vouchers, params.VoucherID) {
+		return nil, errors.ErrorInfoDontMatchUser
 	}
-	return vc.Model.Get(id)
+	return vc.Model.Get(params.VoucherID)
 }
 
 func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
 	// Check if the user has an id
 	id, ok := c.Params.Get("voucherid")
 	if !ok {
-		responses.GlobalResponseError(nil, config.ErrorMissingID, c)
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	headerSignature := c.GetHeader("service")
-	if headerSignature == "" {
-		responses.GlobalResponseNoAuth(c)
-		return
-	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, "", os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
-	if !valid {
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
@@ -100,13 +94,8 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	headerSignature := c.GetHeader("service")
-	if headerSignature == "" {
-		responses.GlobalResponseNoAuth(c)
-		return
-	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, "", os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
-	if !valid {
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
@@ -121,24 +110,8 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 }
 
 func (vc *VouchersController) Store(c *gin.Context) {
-	headerSignature := c.GetHeader("service")
-	if headerSignature == "" {
-		responses.GlobalResponseNoAuth(c)
-		return
-	}
-	reqBytes, err := c.GetRawData()
+	payload, err := mvt.VerifyRequest(c)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	var reqString string
-	err = json.Unmarshal(reqBytes, &reqString)
-	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	valid, payload := mvt.VerifyMVTToken(headerSignature, reqString, os.Getenv("LADON_PUBLIC_KEY"), os.Getenv("MASTER_PASSWORD"))
-	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
@@ -146,20 +119,20 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	var voucherData hestia.Voucher
 	err = json.Unmarshal(payload, &voucherData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
 	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
 	err = vc.Model.Update(voucherData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	// Store ID on user information
 	err = vc.UserModel.AddVoucher(voucherData.UID, voucherData.ID)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))

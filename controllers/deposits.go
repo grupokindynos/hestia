@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/utils"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"os"
 )
@@ -30,41 +30,40 @@ type DepositsController struct {
 	UserModel *models.UsersModel
 }
 
-func (dc *DepositsController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	if admin {
-		return dc.Model.GetAll(filter)
+func (dc *DepositsController) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	if params.Admin {
+		return dc.Model.GetAll(params.Filter)
 	}
 	userInfo, err := dc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.Deposit
 	for _, id := range userInfo.Deposits {
 		obj, err := dc.Model.Get(id)
 		if err != nil {
-			return nil, config.ErrorNotFound
+			return nil, errors.ErrorNotFound
 		}
 		Array = append(Array, obj)
 	}
 	return Array, nil
 }
 
-func (dc *DepositsController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	id, ok := c.Params.Get("depositid")
-	if !ok {
-		return nil, config.ErrorMissingID
+func (dc *DepositsController) GetSingle(userData hestia.User, params Params) (interface{}, error) {
+	if params.DepositID == "" {
+		return nil, errors.ErrorMissingID
 	}
-	if admin {
-		return dc.Model.Get(id)
+	if params.Admin {
+		return dc.Model.Get(params.DepositID)
 	}
 	userInfo, err := dc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
-	if !utils.Contains(userInfo.Deposits, id) {
-		return nil, config.ErrorInfoDontMatchUser
+	if !utils.Contains(userInfo.Deposits, params.DepositID) {
+		return nil, errors.ErrorInfoDontMatchUser
 	}
-	return dc.Model.Get(id)
+	return dc.Model.Get(params.DepositID)
 }
 
 func (dc *DepositsController) Store(c *gin.Context) {
@@ -72,21 +71,21 @@ func (dc *DepositsController) Store(c *gin.Context) {
 	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Verify Signature
 	// TODO here we need to use Deposits Microservice signature
 	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		responses.GlobalResponseError(nil, errors.ErrorDecryptJWE, c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var depositData hestia.Deposit
 	err = json.Unmarshal(rawBytes, &depositData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
@@ -95,7 +94,7 @@ func (dc *DepositsController) Store(c *gin.Context) {
 	// Store deposit data to process
 	err = dc.Model.Update(depositData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	response, err := jwt.EncodeJWS(depositData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))

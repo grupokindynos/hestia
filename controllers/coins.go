@@ -3,12 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"os"
 )
@@ -28,46 +27,17 @@ type CoinsController struct {
 	Model *models.CoinsModel
 }
 
-func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
+func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, params Params) (interface{}, error) {
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
-		return nil, config.ErrorCoinDataGet
+		return nil, errors.ErrorCoinDataGet
 	}
 	return coins, nil
 }
 
 func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
-	headerSignature := c.GetHeader("service")
-	if headerSignature == "" {
-		responses.GlobalResponseNoAuth(c)
-		return
-	}
-	decodedHeader, err := jwt.DecodeJWSNoVerify(headerSignature)
+	_, err := mvt.VerifyRequest(c)
 	if err != nil {
-		responses.GlobalResponseError(nil, err, c)
-		return
-	}
-	var serviceStr string
-	err = json.Unmarshal(decodedHeader, &serviceStr)
-	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
-		return
-	}
-	// Check which service the request is announcing
-	var pubKey string
-	switch serviceStr {
-	case "ladon":
-		pubKey = os.Getenv("LADON_PUBLIC_KEY")
-	case "tyche":
-		pubKey = os.Getenv("TYCHE_PUBLIC_KEY")
-	case "adrestia":
-		pubKey = os.Getenv("ADRESTIA_PUBLIC_KEY")
-	default:
-		responses.GlobalResponseNoAuth(c)
-		return
-	}
-	valid, _ := mvt.VerifyMVTToken(headerSignature, "", pubKey, os.Getenv("MASTER_PASSWORD"))
-	if !valid {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
@@ -81,24 +51,15 @@ func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
 	return
 }
 
-func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	var ReqBody hestia.BodyReq
-	err := c.BindJSON(&ReqBody)
-	if err != nil {
-		return nil, config.ErrorUnmarshal
-	}
-	rawBytes, err := jwt.DecryptJWE(userData.ID, ReqBody.Payload)
-	if err != nil {
-		return nil, config.ErrorDecryptJWE
-	}
+func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, params Params) (interface{}, error) {
 	var newCoinsData []hestia.Coin
-	err = json.Unmarshal(rawBytes, &newCoinsData)
+	err := json.Unmarshal(params.Body, &newCoinsData)
 	if err != nil {
-		return nil, config.ErrorUnmarshal
+		return nil, errors.ErrorUnmarshal
 	}
 	err = cc.Model.UpdateCoinsData(newCoinsData)
 	if err != nil {
-		return nil, config.ErrorDBStore
+		return nil, errors.ErrorDBStore
 	}
 	return true, nil
 }

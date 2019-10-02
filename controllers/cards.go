@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/jwt"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/utils"
-	"github.com/grupokindynos/hestia/config"
 	"github.com/grupokindynos/hestia/models"
 	"os"
 )
@@ -34,41 +34,40 @@ type CardsController struct {
 	UserModel *models.UsersModel
 }
 
-func (cc *CardsController) GetAll(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	if admin {
+func (cc *CardsController) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	if params.Admin {
 		return cc.Model.GetAll()
 	}
 	userInfo, err := cc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.Card
 	for _, id := range userInfo.Cards {
 		obj, err := cc.Model.Get(id)
 		if err != nil {
-			return nil, config.ErrorNotFound
+			return nil, errors.ErrorNotFound
 		}
 		Array = append(Array, obj)
 	}
 	return Array, nil
 }
 
-func (cc *CardsController) GetSingle(userData hestia.User, c *gin.Context, admin bool, filter string) (interface{}, error) {
-	id, ok := c.Params.Get("cardcode")
-	if !ok {
-		return nil, config.ErrorMissingID
+func (cc *CardsController) GetSingle(userData hestia.User, params Params) (interface{}, error) {
+	if params.CardCode == "" {
+		return nil, errors.ErrorMissingID
 	}
-	if admin {
-		return cc.Model.Get(id)
+	if params.Admin {
+		return cc.Model.Get(params.CardCode)
 	}
 	userInfo, err := cc.UserModel.Get(userData.ID)
 	if err != nil {
-		return nil, config.ErrorNoUserInformation
+		return nil, errors.ErrorNoUserInformation
 	}
-	if !utils.Contains(userInfo.Cards, id) {
-		return nil, config.ErrorInfoDontMatchUser
+	if !utils.Contains(userInfo.Cards, params.CardCode) {
+		return nil, errors.ErrorInfoDontMatchUser
 	}
-	return cc.Model.Get(id)
+	return cc.Model.Get(params.CardCode)
 }
 
 func (cc *CardsController) Store(c *gin.Context) {
@@ -76,21 +75,21 @@ func (cc *CardsController) Store(c *gin.Context) {
 	var ReqBody hestia.BodyReq
 	err := c.BindJSON(&ReqBody)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Verify Signature
 	// TODO here we need to use Cards Microservice signature
 	rawBytes, err := jwt.DecodeJWS(ReqBody.Payload, os.Getenv(""))
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDecryptJWE, c)
+		responses.GlobalResponseError(nil, errors.ErrorDecryptJWE, c)
 		return
 	}
 	// Try to unmarshal the information of the payload
 	var cardData hestia.Card
 	err = json.Unmarshal(rawBytes, &cardData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorUnmarshal, c)
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Hash the PaymentTxID as the ID
@@ -98,18 +97,18 @@ func (cc *CardsController) Store(c *gin.Context) {
 	// Check if ID is already known on data
 	_, err = cc.Model.Get(cardData.CardCode)
 	if err == nil {
-		responses.GlobalResponseError(nil, config.ErrorAlreadyExists, c)
+		responses.GlobalResponseError(nil, errors.ErrorAlreadyExists, c)
 		return
 	}
 	err = cc.Model.Update(cardData)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	// Store ID on user information
 	err = cc.UserModel.AddVoucher(cardData.UID, cardData.CardCode)
 	if err != nil {
-		responses.GlobalResponseError(nil, config.ErrorDBStore, c)
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	response, err := jwt.EncodeJWS(cardData.CardCode, os.Getenv("HESTIA_PRIVATE_KEY"))
