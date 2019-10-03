@@ -8,8 +8,6 @@ import (
 	"testing"
 )
 
-
-
 func TestCardsController_GetUserAll(t *testing.T) {
 	cards, err := cardsCtrl.GetAll(models.TestUser, TestParams)
 	assert.Nil(t, err)

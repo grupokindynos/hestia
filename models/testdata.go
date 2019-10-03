@@ -2,6 +2,15 @@ package models
 
 import "github.com/grupokindynos/common/hestia"
 
+var TestFeePayment = hestia.Payment{
+	Address:       "TEST-ADDR",
+	Amount:        0,
+	Coin:          "polis",
+	RawTx:         "TEST-RAW-TX",
+	Txid:          "TEST-TXID",
+	Confirmations: 0,
+}
+
 var TestCard = hestia.Card{
 	Address:    "TEST-ADDRRESS",
 	CardCode:   "TEST-CARDCODE",
@@ -58,6 +67,7 @@ var TestOrder = hestia.Order{
 
 		Confirmations: 0,
 	},
+	FeePayment: TestFeePayment,
 	AddressInfo: hestia.AddressInformation{
 		City:       "FAKE-CITY",
 		Country:    "FAKE-COUNTRY",
@@ -109,6 +119,7 @@ var TestShift = hestia.Shift{
 		Txid:          "FAKE-TXID",
 		Confirmations: 0,
 	},
+	FeePayment: TestFeePayment,
 	Conversion: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
@@ -137,6 +148,7 @@ var TestVoucher = hestia.Voucher{
 	VariantID:  "FAKE-VARIANT",
 	FiatAmount: 123123,
 	Name:       "TEST-VOUCHER",
+	FeePayment: TestFeePayment,
 	PaymentData: hestia.Payment{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
@@ -166,6 +178,7 @@ var TestDeposit = hestia.Deposit{
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
+	FeePayment:   TestFeePayment,
 	AmountInPeso: "100",
 	CardCode:     "TEST-CARDCODE",
 	Status:       "COMPLETED",

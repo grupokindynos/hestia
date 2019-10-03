@@ -40,7 +40,7 @@ func TestDepositsController_GetAll(t *testing.T) {
 }
 
 func TestDepositsController_GetSingle(t *testing.T) {
-	deposit, err := depositsCtrl.GetSingle(models.TestUser,TestParamsAdmin)
+	deposit, err := depositsCtrl.GetSingle(models.TestUser, TestParamsAdmin)
 	assert.Nil(t, err)
 	assert.IsType(t, hestia.Deposit{}, deposit)
 	assert.Equal(t, models.TestDeposit, deposit)
