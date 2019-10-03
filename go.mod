@@ -7,7 +7,7 @@ require (
 	firebase.google.com/go v3.9.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
-	github.com/grupokindynos/common v0.0.0-20191002182547-4eac7138a118
+	github.com/grupokindynos/common v0.0.0-20191003011957-be58ad215e8c
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0
 	google.golang.org/api v0.10.0
