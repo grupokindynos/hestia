@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -88,8 +86,6 @@ func (oc *OrdersController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	// Hash the PaymentTxID as the ID
-	orderData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(orderData.PaymentInfo.Txid)))
 	// Check if ID is already known on data
 	_, err = oc.Model.Get(orderData.ID)
 	if err == nil {

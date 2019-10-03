@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -123,7 +121,6 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		return
 	}
 	// Hash the PaymentTxID as the ID
-	voucherData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(voucherData.PaymentData.Txid)))
 	err = vc.Model.Update(voucherData)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
