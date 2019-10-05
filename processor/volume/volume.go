@@ -29,8 +29,7 @@ const (
 )
 
 func init() {
-	_ = godotenv.Load("../../.env")
-
+	_ = godotenv.Load()
 	fbCredStr := os.Getenv("FIREBASE_CRED")
 	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
 	if err != nil {
