@@ -123,7 +123,17 @@ var TestShift = hestia.Shift{
 		Confirmations: 0,
 	},
 	FeePayment: TestFeePayment,
-	Rate: hestia.Rate{},
+	Rate: hestia.ShiftRate{
+		Rate: 0.1,
+		FromCoin: "polis",
+		FromAmount: 1000,
+		ToCoin: "dash",
+		ToAmount: 1000,
+		ToAddress: "FakE_ADDR",
+		FeeCoin: "polis",
+		FeeAmount: 1000,
+		FeeAddress: "FAKE_FEE_ADDR",
+	},
 }
 
 var TestUser = hestia.User{
