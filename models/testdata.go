@@ -1,6 +1,9 @@
 package models
 
-import "github.com/grupokindynos/common/hestia"
+import (
+	"github.com/grupokindynos/common/hestia"
+	"time"
+)
 
 var TestFeePayment = hestia.Payment{
 	Address:       "TEST-ADDR",
@@ -120,13 +123,7 @@ var TestShift = hestia.Shift{
 		Confirmations: 0,
 	},
 	FeePayment: TestFeePayment,
-	Conversion: hestia.Payment{
-		Address:       "FAKE-ADDR",
-		Amount:        123123,
-		Coin:          "POLIS",
-		Txid:          "FAKE-TXID",
-		Confirmations: 0,
-	},
+	Rate: hestia.Rate{},
 }
 
 var TestUser = hestia.User{
@@ -165,7 +162,8 @@ var TestVoucher = hestia.Voucher{
 	},
 	RedeemCode: "FAKE-REDEEM",
 	Status:     "COMPLETED",
-	Timestamp:  "00000000000",
+	Timestamp:  time.Unix(0,0).Unix(),
+	RedeemTimestamp: time.Unix(0,0).Unix(),
 }
 
 var TestDeposit = hestia.Deposit{
