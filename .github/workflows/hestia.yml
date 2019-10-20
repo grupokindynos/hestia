@@ -40,7 +40,7 @@ jobs:
         sed '1d' ./models/coverage.txt >> ./coverage.txt &&
         sed '1d' ./controllers/coverage.txt >> ./coverage.txt
 
-    - uses: codecov/codecov-action@v1.0.2
+    - uses: codecov/codecov-action@v1.0.3
       with:
         file: ./coverage.txt
         token: ${{secrets.CODECOV_TOKEN}}
