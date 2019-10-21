@@ -6,7 +6,7 @@
 [![Go Report](https://goreportcard.com/badge/github.com/grupokindynos/hestia)](https://goreportcard.com/report/github.com/grupokindynos/hestia) 
 [![GoDocs](https://godoc.org/github.com/grupokindynos/hestia?status.svg)](http://godoc.org/github.com/grupokindynos/hestia)
 
-Hestia is a microservice API for safe using firebase auth and mongodb
+Hestia is a microservice API for safe using firebase auth and firestore
 
 ## Deploy
 
