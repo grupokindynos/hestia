@@ -65,6 +65,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	usersModel := &models.UsersModel{Firestore: doc, Collection: "users"}
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
+	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -76,6 +77,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
+	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
 
 	api := r.Group("/")
 	{
@@ -118,6 +120,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
+
+		// Adrestia
+		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)
+		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
+		authApi.PUT("/adrestia/new", exchangesCtrl.UpdateOrder)
 
 		// @TODO pending microservices
 		// Deposit Service

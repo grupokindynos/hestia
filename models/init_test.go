@@ -11,14 +11,15 @@ import (
 )
 
 var (
-	shiftsModel   *ShiftModel
-	cardsModel    *CardsModel
-	depositsModel *DepositsModel
-	ordersModel   *OrdersModel
-	vouchersModel *VouchersModel
-	coinsModel    *CoinsModel
-	configModel   *GlobalConfigModel
-	usersModel    *UsersModel
+	shiftsModel    *ShiftModel
+	cardsModel     *CardsModel
+	depositsModel  *DepositsModel
+	ordersModel    *OrdersModel
+	vouchersModel  *VouchersModel
+	coinsModel     *CoinsModel
+	configModel    *GlobalConfigModel
+	usersModel     *UsersModel
+	exchangesModel *ExchangesModel
 )
 
 func init() {
@@ -51,4 +52,5 @@ func init() {
 	coinsModel = &CoinsModel{Firestore: baseDoc, Collection: "coins"}
 	usersModel = &UsersModel{Firestore: baseDoc, Collection: "users"}
 	configModel = &GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
+	exchangesModel = &ExchangesModel{Firestore: baseDoc, Collection: "exchanges"}
 }

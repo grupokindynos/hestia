@@ -112,7 +112,7 @@ var TestOrder = hestia.Order{
 
 var TestShift = hestia.Shift{
 	ID:        "TEST-SHIFT",
-	Status:    "COMPLETED",
+	Status:    hestia.GetShiftStatusString(hestia.ShiftStatusComplete),
 	Timestamp: "000000000000",
 	UID:       "XYZ12345678910",
 	Payment: hestia.Payment{
@@ -124,14 +124,14 @@ var TestShift = hestia.Shift{
 	},
 	FeePayment: TestFeePayment,
 	Rate: hestia.ShiftRate{
-		Rate: 0.1,
-		FromCoin: "polis",
+		Rate:       0.1,
+		FromCoin:   "polis",
 		FromAmount: 1000,
-		ToCoin: "dash",
-		ToAmount: 1000,
-		ToAddress: "FakE_ADDR",
-		FeeCoin: "polis",
-		FeeAmount: 1000,
+		ToCoin:     "dash",
+		ToAmount:   1000,
+		ToAddress:  "FakE_ADDR",
+		FeeCoin:    "polis",
+		FeeAmount:  1000,
 		FeeAddress: "FAKE_FEE_ADDR",
 	},
 }
@@ -170,10 +170,10 @@ var TestVoucher = hestia.Voucher{
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
-	RedeemCode: "FAKE-REDEEM",
-	Status:     "COMPLETED",
-	Timestamp:  time.Unix(0,0).Unix(),
-	RedeemTimestamp: time.Unix(0,0).Unix(),
+	RedeemCode:      "FAKE-REDEEM",
+	Status:          hestia.GetVoucherStatusString(hestia.VoucherStatusComplete),
+	Timestamp:       time.Unix(0, 0).Unix(),
+	RedeemTimestamp: time.Unix(0, 0).Unix(),
 }
 
 var TestDeposit = hestia.Deposit{
@@ -191,4 +191,16 @@ var TestDeposit = hestia.Deposit{
 	CardCode:     "TEST-CARDCODE",
 	Status:       "COMPLETED",
 	Timestamp:    "000000000000",
+}
+
+var TestExchangeData = hestia.AdrestiaOrder{
+	ID:              "TEST-ORDER",
+	Exchange:        "fake-exchange",
+	Time:            0000000000,
+	Status:          hestia.GetAdrestiaStatusString(hestia.AdrestiaStatusCompleted),
+	Amount:          10000,
+	FromCoin:        "fake-coin",
+	ToCoin:          "fake-coin",
+	WithdrawAddress: "FAKE-ADDR",
+	Message:         "NO-MESSAGE",
 }
