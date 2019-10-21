@@ -18,3 +18,10 @@ func TestExchangesModel_Update(t *testing.T) {
 	err := exchangesModel.Update(TestExchangeData)
 	assert.Nil(t, err)
 }
+
+func TestExchangesModel_Get(t *testing.T) {
+	order, err := exchangesModel.Get(TestExchangeData.ID)
+	assert.Nil(t, err)
+	assert.Equal(t, TestExchangeData, order)
+
+}

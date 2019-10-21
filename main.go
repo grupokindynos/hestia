@@ -81,7 +81,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 	api := r.Group("/")
 	{
-
 		// Any
 		api.GET("/user/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinsAvailability, false) })
 		api.GET("/user/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.GetConfig, false) })
