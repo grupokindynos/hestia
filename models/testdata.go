@@ -170,6 +170,7 @@ var TestVoucher = hestia.Voucher{
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
+	BitcouID: 		 "FAKE-ID",
 	RedeemCode:      "FAKE-REDEEM",
 	Status:          hestia.GetVoucherStatusString(hestia.VoucherStatusComplete),
 	Timestamp:       time.Unix(0, 0).Unix(),
