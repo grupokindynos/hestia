@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	coinfactory "github.com/grupokindynos/common/coin-factory"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/responses"
@@ -28,9 +29,42 @@ type CoinsController struct {
 }
 
 func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, params Params) (interface{}, error) {
+load:
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
 		return nil, errors.ErrorCoinDataGet
+	}
+	// First we check if CoinsData contains all coins on CoinFactory
+	coinsDataMap := make(map[string]hestia.Coin)
+	for _, coin := range coins {
+		coinsDataMap[coin.Ticker] = coin
+	}
+	requireUpdate := false
+	for k, v := range coinfactory.Coins{
+		_, ok := coinsDataMap[k]
+		if !ok {
+			requireUpdate = true
+			// If doesn't exists it means we must create it.
+			newCoinData := hestia.Coin{
+				Ticker:            v.Tag,
+				ShiftAvailable:    false,
+				DepositAvailable:  false,
+				VouchersAvailable: false,
+				OrdersAvailable:   false,
+				Balances:          hestia.Balances{
+					HotWallet: 0,
+					Exchanges: 0,
+				},
+			}
+			coins = append(coins, newCoinData)
+		}
+	}
+	if requireUpdate {
+		err := cc.Model.UpdateCoinsData(coins)
+		if err != nil {
+			return nil, errors.ErrorCoinDataGet
+		}
+		goto load
 	}
 	return coins, nil
 }
@@ -41,10 +75,43 @@ func (cc *CoinsController) GetCoinsAvailabilityMicroService(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
+load:
 	coins, err := cc.Model.GetCoinsData()
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
+	}
+	// First we check if CoinsData contains all coins on CoinFactory
+	coinsDataMap := make(map[string]hestia.Coin)
+	for _, coin := range coins {
+		coinsDataMap[coin.Ticker] = coin
+	}
+	requireUpdate := false
+	for k, v := range coinfactory.Coins{
+		_, ok := coinsDataMap[k]
+		if !ok {
+			requireUpdate = true
+			// If doesn't exists it means we must create it.
+			newCoinData := hestia.Coin{
+				Ticker:            v.Tag,
+				ShiftAvailable:    false,
+				DepositAvailable:  false,
+				VouchersAvailable: false,
+				OrdersAvailable:   false,
+				Balances:          hestia.Balances{
+					HotWallet: 0,
+					Exchanges: 0,
+				},
+			}
+			coins = append(coins, newCoinData)
+		}
+	}
+	if requireUpdate {
+		err := cc.Model.UpdateCoinsData(coins)
+		if err != nil {
+			responses.GlobalResponseError(nil, err, c)
+		}
+		goto load
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), coins, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)

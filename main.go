@@ -98,7 +98,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
-		// @TODO pending routes
+		// TODO route
+		api.GET("/balances/admin", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.GetConfig, true) })
+
+		// TODO pending routes
 		//api.GET("/users/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, true) })
 		//.GET("/users/info/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetAll, true) })
 	}
@@ -125,7 +128,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
 		authApi.PUT("/adrestia/new", exchangesCtrl.UpdateOrder)
 
-		// @TODO pending microservices
+		// TODO pending MS
 		// Deposit Service
 		//api.GET("/deposit/single/:depositid", depositsCtrl.GetSingle)
 		//api.GET("/deposit/all", depositsCtrl.GetAll)
@@ -144,6 +147,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// For all microservices
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
+		// TODO route
+		api.GET("/balances/services", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
 	}
 	r.NoRoute(func(c *gin.Context) {
