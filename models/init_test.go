@@ -20,6 +20,7 @@ var (
 	configModel    *GlobalConfigModel
 	usersModel     *UsersModel
 	exchangesModel *ExchangesModel
+	balancesModel  *BalancesModel
 )
 
 func init() {
@@ -41,7 +42,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	baseDoc := firestore.Collection("polispay").Doc("hestia_test")
+	baseDoc := firestore.Collection("polispay").Doc("hestia")
 
 	// Init DB models
 	shiftsModel = &ShiftModel{Firestore: baseDoc, Collection: "shifts"}
@@ -53,4 +54,5 @@ func init() {
 	usersModel = &UsersModel{Firestore: baseDoc, Collection: "users"}
 	configModel = &GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
 	exchangesModel = &ExchangesModel{Firestore: baseDoc, Collection: "exchanges"}
+	balancesModel = &BalancesModel{Firestore: baseDoc, Collection: "balances"}
 }

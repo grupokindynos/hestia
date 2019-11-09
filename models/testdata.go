@@ -43,6 +43,24 @@ var TestCoinData = []hestia.Coin{
 	{Ticker: "XZC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
 }
 
+var TestBalances = []hestia.CoinBalances{
+	{Ticker: "BTC", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "COLX", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "DASH", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "DGB", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "ETH", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "GRS", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "LTC", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "ONION", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "POLIS", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "TELOS", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "TUSD", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "USDC", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "USDT", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "XSG", Balance: 0, Status: "SUCCESS"},
+	{Ticker: "XZC", Balance: 0, Status: "SUCCESS"},
+}
+
 var TestConfigData = hestia.Config{
 	Shift:    hestia.Available{Available: true},
 	Deposits: hestia.Available{Available: true},
