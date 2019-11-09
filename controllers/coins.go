@@ -40,18 +40,30 @@ load:
 		coinsDataMap[coin.Ticker] = coin
 	}
 	requireUpdate := false
-	for k, v := range coinfactory.Coins{
+	for k, v := range coinfactory.Coins {
 		_, ok := coinsDataMap[k]
 		if !ok {
 			requireUpdate = true
 			// If doesn't exists it means we must create it.
 			newCoinData := hestia.Coin{
-				Ticker:            v.Tag,
-				ShiftAvailable:    false,
-				DepositAvailable:  false,
-				VouchersAvailable: false,
-				OrdersAvailable:   false,
-				Balances:          hestia.Balances{
+				Ticker: v.Tag,
+				Shift: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Deposits: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Vouchers: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Orders: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Balances: hestia.BalanceLimits{
 					HotWallet: 0,
 					Exchanges: 0,
 				},
@@ -87,18 +99,30 @@ load:
 		coinsDataMap[coin.Ticker] = coin
 	}
 	requireUpdate := false
-	for k, v := range coinfactory.Coins{
+	for k, v := range coinfactory.Coins {
 		_, ok := coinsDataMap[k]
 		if !ok {
 			requireUpdate = true
 			// If doesn't exists it means we must create it.
 			newCoinData := hestia.Coin{
-				Ticker:            v.Tag,
-				ShiftAvailable:    false,
-				DepositAvailable:  false,
-				VouchersAvailable: false,
-				OrdersAvailable:   false,
-				Balances:          hestia.Balances{
+				Ticker: v.Tag,
+				Shift: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Deposits: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Vouchers: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Orders: hestia.Properties{
+					FeePercentage: 10,
+					Available:     false,
+				},
+				Balances: hestia.BalanceLimits{
 					HotWallet: 0,
 					Exchanges: 0,
 				},

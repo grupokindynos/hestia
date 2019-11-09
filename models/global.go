@@ -14,44 +14,44 @@ type GlobalConfigModel struct {
 }
 
 func (m *GlobalConfigModel) GetConfigData() (hestia.Config, error) {
-	shiftsProps, err := m.getPropData("shifts")
+	shiftAvailable, err := m.getAvailable("shifts")
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
-	depositsProps, err := m.getPropData("deposits")
+	depositAvailable, err := m.getAvailable("deposits")
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
-	vouchersProps, err := m.getPropData("vouchers")
+	voucherAvailable, err := m.getAvailable("vouchers")
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
-	ordersProps, err := m.getPropData("orders")
+	ordersAvailable, err := m.getAvailable("orders")
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
 	configData := hestia.Config{
-		Shift:    shiftsProps,
-		Deposits: depositsProps,
-		Vouchers: vouchersProps,
-		Orders:   ordersProps,
+		Shift:    shiftAvailable,
+		Deposits: depositAvailable,
+		Vouchers: voucherAvailable,
+		Orders:   ordersAvailable,
 	}
 	return configData, nil
 }
 
-func (m *GlobalConfigModel) getPropData(id string) (props hestia.Properties, err error) {
+func (m *GlobalConfigModel) getAvailable(id string) (available hestia.Available, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection).Doc(id)
 	doc, err := ref.Get(ctx)
 	if err != nil {
-		return props, err
+		return available, err
 	}
-	err = doc.DataTo(&props)
+	err = doc.DataTo(&available)
 	if err != nil {
-		return props, err
+		return available, err
 	}
-	return props, nil
+	return available, nil
 }
 
 func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
@@ -74,9 +74,9 @@ func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
 	return nil
 }
 
-func (m *GlobalConfigModel) storePropData(id string, props hestia.Properties) error {
+func (m *GlobalConfigModel) storePropData(id string, available hestia.Available) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(id).Set(ctx, props)
+	_, err := m.Firestore.Collection(m.Collection).Doc(id).Set(ctx, available)
 	return err
 }

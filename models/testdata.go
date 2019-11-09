@@ -26,36 +26,28 @@ var TestCard = hestia.Card{
 }
 
 var TestCoinData = []hestia.Coin{
-	{Ticker: "BTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "COLX", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DASH", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "DGB", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "GRS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "LTC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "MNP", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "ONION", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "POLIS", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "XSG", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
-	{Ticker: "XZC", ShiftAvailable: false, DepositAvailable: false, VouchersAvailable: false, OrdersAvailable: false, Balances: hestia.Balances{HotWallet: 1, Exchanges: 1}},
+	{Ticker: "BTC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "COLX", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "DASH", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "DGB", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "ETH", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "GRS", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "LTC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "ONION", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "POLIS", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "TELOS", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "TUSD", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "USDC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "USDT", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "XSG", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
+	{Ticker: "XZC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
 }
 
 var TestConfigData = hestia.Config{
-	Shift: hestia.Properties{
-		FeePercentage: 1,
-		Available:     true,
-	},
-	Deposits: hestia.Properties{
-		FeePercentage: 1,
-		Available:     true,
-	},
-	Orders: hestia.Properties{
-		FeePercentage: 0,
-		Available:     true,
-	},
-	Vouchers: hestia.Properties{
-		FeePercentage: 1,
-		Available:     true,
-	},
+	Shift:    hestia.Available{Available: true},
+	Deposits: hestia.Available{Available: true},
+	Orders:   hestia.Available{Available: true},
+	Vouchers: hestia.Available{Available: true},
 }
 
 var TestOrder = hestia.Order{
@@ -170,7 +162,7 @@ var TestVoucher = hestia.Voucher{
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
-	BitcouID: 		 "FAKE-ID",
+	BitcouID:        "FAKE-ID",
 	RedeemCode:      "FAKE-REDEEM",
 	Status:          hestia.GetVoucherStatusString(hestia.VoucherStatusComplete),
 	Timestamp:       time.Unix(0, 0).Unix(),

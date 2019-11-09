@@ -59,6 +59,12 @@ github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5m
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/grupokindynos/common v0.0.0-20191102150721-98971afc3df9 h1:IxDaqh7AFV5TjgQgVtgcnE97VtOviZwRyG1CgLyWAME=
 github.com/grupokindynos/common v0.0.0-20191102150721-98971afc3df9/go.mod h1:GUdrFqqFWFaecQtHAuQQdS0elR2mqHJAClBW98GIFzI=
+github.com/grupokindynos/common v0.0.0-20191109154536-40a19cad8776 h1:Pz+YnlOGPrXLXPfUVcKe5MjwV+pZi3M9Rgd9Xw84Wyc=
+github.com/grupokindynos/common v0.0.0-20191109154536-40a19cad8776/go.mod h1:GUdrFqqFWFaecQtHAuQQdS0elR2mqHJAClBW98GIFzI=
+github.com/grupokindynos/common v0.0.0-20191109154724-aa7faee66e5c h1:kZ4X6OKTIVeRBh4WEFDjkR2F2OzWWkzQfVgSXleybeg=
+github.com/grupokindynos/common v0.0.0-20191109154724-aa7faee66e5c/go.mod h1:GUdrFqqFWFaecQtHAuQQdS0elR2mqHJAClBW98GIFzI=
+github.com/grupokindynos/common v0.0.0-20191109160051-74bb687d9a58 h1:kqcMrXex9xOUXwQNs09K5eGHrIQHSdhm+o7uJ8oSp/I=
+github.com/grupokindynos/common v0.0.0-20191109160051-74bb687d9a58/go.mod h1:GUdrFqqFWFaecQtHAuQQdS0elR2mqHJAClBW98GIFzI=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=

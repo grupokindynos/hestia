@@ -73,7 +73,7 @@ func main() {
 		var shiftAvailable bool
 		var vouchersAvailable bool
 
-		if !currentCoinInfo.DepositAvailable {
+		if !currentCoinInfo.Deposits.Available {
 			depositAvailable = false
 		} else {
 			if *coinInfo.Quote.USD.Volume24h > MinVolumeForDeposits {
@@ -83,7 +83,7 @@ func main() {
 			}
 		}
 
-		if !currentCoinInfo.VouchersAvailable {
+		if !currentCoinInfo.Vouchers.Available {
 			vouchersAvailable = false
 		} else {
 			if *coinInfo.Quote.USD.Volume24h > MinVolumeForVouchers {
@@ -93,7 +93,7 @@ func main() {
 			}
 		}
 
-		if !currentCoinInfo.ShiftAvailable {
+		if !currentCoinInfo.Shift.Available {
 			shiftAvailable = false
 		} else {
 			if *coinInfo.Quote.USD.Volume24h > MinVolumeForConversions {
@@ -103,7 +103,7 @@ func main() {
 			}
 		}
 
-		if !currentCoinInfo.OrdersAvailable {
+		if !currentCoinInfo.Orders.Available {
 			orderAvailable = false
 		} else {
 			if *coinInfo.Quote.USD.Volume24h > MinVolumeForOrders {
@@ -114,12 +114,24 @@ func main() {
 		}
 
 		newConfig := hestia.Coin{
-			Ticker:            coin.Tag,
-			ShiftAvailable:    shiftAvailable,
-			DepositAvailable:  depositAvailable,
-			VouchersAvailable: vouchersAvailable,
-			OrdersAvailable:   orderAvailable,
-			Balances:          currentCoinInfo.Balances,
+			Ticker: coin.Tag,
+			Shift: hestia.Properties{
+				FeePercentage: currentCoinInfo.Shift.FeePercentage,
+				Available:     shiftAvailable,
+			},
+			Deposits: hestia.Properties{
+				FeePercentage: currentCoinInfo.Deposits.FeePercentage,
+				Available:     depositAvailable,
+			},
+			Vouchers: hestia.Properties{
+				FeePercentage: currentCoinInfo.Vouchers.FeePercentage,
+				Available:     vouchersAvailable,
+			},
+			Orders: hestia.Properties{
+				FeePercentage: currentCoinInfo.Orders.FeePercentage,
+				Available:     orderAvailable,
+			},
+			Balances: currentCoinInfo.Balances,
 		}
 		newCoinConfigs = append(newCoinConfigs, newConfig)
 	}
