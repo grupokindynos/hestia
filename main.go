@@ -66,6 +66,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
+	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -75,7 +76,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
 	vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel}
-	coinsCtrl := controllers.CoinsController{Model: coinsModel}
+	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
 
@@ -98,8 +99,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
-		// TODO route
-		api.GET("/balances/admin", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.GetConfig, true) })
+		api.GET("/balances", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinBalances, true) })
 
 		// TODO pending routes
 		//api.GET("/users/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, true) })
@@ -147,8 +147,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// For all microservices
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
-		// TODO route
-		api.GET("/balances/services", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
 	}
 	r.NoRoute(func(c *gin.Context) {

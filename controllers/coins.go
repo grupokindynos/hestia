@@ -25,7 +25,8 @@ import (
 */
 
 type CoinsController struct {
-	Model *models.CoinsModel
+	Model         *models.CoinsModel
+	BalancesModel *models.BalancesModel
 }
 
 func (cc *CoinsController) GetCoinsAvailability(userData hestia.User, params Params) (interface{}, error) {
@@ -153,4 +154,12 @@ func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, params 
 		return nil, errors.ErrorDBStore
 	}
 	return true, nil
+}
+
+func (cc *CoinsController) GetCoinBalances(userData hestia.User, params Params) (interface{}, error) {
+	balances, err := cc.BalancesModel.GetBalances()
+	if err != nil {
+		return nil, err
+	}
+	return balances, nil
 }
