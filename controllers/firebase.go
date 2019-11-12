@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	firebase "firebase.google.com/go"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -141,20 +140,17 @@ func (fb *FirebaseController) CheckToken(c *gin.Context) {
 	var fbToken string
 	err = json.Unmarshal(payload, &fbToken)
 	if err != nil {
-		fmt.Println(err)
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
 	// Verify token and get user information
 	fbAuth, err := fb.App.Auth(context.Background())
 	if err != nil {
-		fmt.Println(err)
 		responses.GlobalResponseError(nil, errors.ErrorFbInitializeAuth, c)
 		return
 	}
 	user, err := fbAuth.VerifyIDToken(context.Background(), fbToken)
 	if err != nil {
-		fmt.Println(err)
 		responses.GlobalResponseError(false, nil, c)
 		return
 	}

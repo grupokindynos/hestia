@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -92,9 +90,6 @@ func (cc *CardsController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	// Hash the PaymentTxID as the ID
-	cardData.CardCode = fmt.Sprintf("%x", sha256.Sum256([]byte(cardData.CardNumber)))
-	// Check if ID is already known on data
 	_, err = cc.Model.Get(cardData.CardCode)
 	if err == nil {
 		responses.GlobalResponseError(nil, errors.ErrorAlreadyExists, c)

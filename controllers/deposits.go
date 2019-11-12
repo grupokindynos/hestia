@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -88,10 +86,6 @@ func (dc *DepositsController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	// Hash the PaymentTxID as the ID
-	// If this already exists, doesn't matter since it is deterministic
-	depositData.ID = fmt.Sprintf("%x", sha256.Sum256([]byte(depositData.Payment.Txid)))
-	// Store deposit data to process
 	err = dc.Model.Update(depositData)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)

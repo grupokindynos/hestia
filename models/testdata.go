@@ -123,7 +123,7 @@ var TestOrder = hestia.Order{
 var TestShift = hestia.Shift{
 	ID:        "TEST-SHIFT",
 	Status:    hestia.GetShiftStatusString(hestia.ShiftStatusComplete),
-	Timestamp: "000000000000",
+	Timestamp: time.Unix(10000000, 0).Unix(),
 	UID:       "XYZ12345678910",
 	Payment: hestia.Payment{
 		Address:       "FAKE-ADDR",
@@ -133,17 +133,9 @@ var TestShift = hestia.Shift{
 		Confirmations: 0,
 	},
 	FeePayment: TestFeePayment,
-	Rate: hestia.ShiftRate{
-		Rate:       0.1,
-		FromCoin:   "polis",
-		FromAmount: 1000,
-		ToCoin:     "dash",
-		ToAmount:   1000,
-		ToAddress:  "FakE_ADDR",
-		FeeCoin:    "polis",
-		FeeAmount:  1000,
-		FeeAddress: "FAKE_FEE_ADDR",
-	},
+	ToCoin: "Fake_coIN",
+	ToAmount: 1000,
+	ToAddress: "FakeAddress",
 }
 
 var TestUser = hestia.User{
