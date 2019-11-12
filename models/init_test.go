@@ -42,7 +42,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	baseDoc := firestore.Collection("polispay").Doc("hestia")
+	baseDoc := firestore.Collection("polispay").Doc("hestia_test")
 
 	// Init DB models
 	shiftsModel = &ShiftModel{Firestore: baseDoc, Collection: "shifts"}
