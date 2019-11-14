@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -9,8 +12,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/models"
-	"os"
-	"strconv"
 )
 
 type ExchangesController struct {
@@ -18,14 +19,13 @@ type ExchangesController struct {
 }
 
 func (ec *ExchangesController) GetOrders(c *gin.Context) {
-	includeComplete, _ := c.Params.Get("include_complete")
-	sinceTimestamp, _ := c.Params.Get("added_since")
+	includeComplete := c.Query("include_complete")
+	sinceTimestamp := c.Query("added_since")
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-
 	include, _ := strconv.ParseBool(includeComplete)
 	timestamp, _ := strconv.Atoi(sinceTimestamp)
 	orders, err := ec.Model.GetAll(include, timestamp)
