@@ -133,9 +133,9 @@ var TestShift = hestia.Shift{
 		Confirmations: 0,
 	},
 	FeePayment: TestFeePayment,
-	ToCoin: "Fake_coIN",
-	ToAmount: 1000,
-	ToAddress: "FakeAddress",
+	ToCoin:     "Fake_coIN",
+	ToAmount:   1000,
+	ToAddress:  "FakeAddress",
 }
 
 var TestUser = hestia.User{
@@ -162,6 +162,7 @@ var TestVoucher = hestia.Voucher{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
 		Coin:          "POLIS",
+		RawTx:         "NOTX",
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
@@ -169,8 +170,17 @@ var TestVoucher = hestia.Voucher{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
 		Coin:          "POLIS",
+		RawTx:         "NOTX",
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
+	},
+	BitcouFeePaymentData: hestia.Payment{
+		Address:       "TEST_ADDR",
+		Amount:        123,
+		Coin:          "POLIS",
+		RawTx:         "NOTX",
+		Txid:          "Fakse_TXID",
+		Confirmations: 0,
 	},
 	BitcouID:        "FAKE-ID",
 	RedeemCode:      "FAKE-REDEEM",
