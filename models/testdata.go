@@ -155,7 +155,6 @@ var TestVoucher = hestia.Voucher{
 	UID:        "XYZ12345678910",
 	VoucherID:  123123,
 	VariantID:  "FAKE-VARIANT",
-	FiatAmount: 123123,
 	Name:       "TEST-VOUCHER",
 	FeePayment: TestFeePayment,
 	PaymentData: hestia.Payment{
