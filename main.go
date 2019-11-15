@@ -99,10 +99,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 		// Stats routes
 		// Total Stats
-		api.GET("/user/stats/shifts/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
+		api.GET("/user/stats/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
 		api.GET("/user/stats/vouchers/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetVoucherStats, true) })
 		// Time based stats
-		api.GET("/user/stats/shifts/time", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftsByTimeStats, true) })
+		api.GET("/user/stats/shift/time", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftsByTimeStats, true) })
 		api.GET("/user/stats/vouchers/time", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetVouchersByTimeStats, true) })
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
