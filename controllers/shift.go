@@ -120,12 +120,6 @@ func (sc *ShiftsController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	// Check if ID is already known on data
-	_, err = sc.Model.Get(shiftData.ID)
-	if err == nil {
-		responses.GlobalResponseError(nil, errors.ErrorAlreadyExists, c)
-		return
-	}
 	// Store shift data to process
 	err = sc.Model.Update(shiftData)
 	if err != nil {
