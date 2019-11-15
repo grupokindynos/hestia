@@ -114,7 +114,7 @@ user:
 		DepositID: c.Param("depositid"),
 		CardCode:  c.Param("cardcode"),
 		Body:      bodyBytes,
-		Timestamp: c.Param("from"),
+		Timestamp: c.Query("from"),
 	}
 	res, err := method(userData, params)
 	if err != nil {
