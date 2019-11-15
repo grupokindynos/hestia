@@ -120,7 +120,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	// Hash the PaymentTxID as the ID
+	// Store voucher data to process
 	err = vc.Model.Update(voucherData)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
