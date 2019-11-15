@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
 	"strconv"
