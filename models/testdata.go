@@ -133,6 +133,7 @@ var TestShift = hestia.Shift{
 	},
 	FeePayment: TestFeePayment,
 	ToCoin:     "Fake_coIN",
+	RefundAddr: "FAKE_ADDR",
 	ToAmount:   1000,
 	ToAddress:  "FakeAddress",
 }
@@ -177,6 +178,7 @@ var TestVoucher = hestia.Voucher{
 		Txid:          "Fakse_TXID",
 		Confirmations: 0,
 	},
+	RefundAddr:      "FAKE_ADDR",
 	BitcouID:        "FAKE-ID",
 	RedeemCode:      "FAKE-REDEEM",
 	Status:          hestia.GetVoucherStatusString(hestia.VoucherStatusComplete),
