@@ -79,6 +79,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
+	statsCtrl := controllers.StatsController{ShiftModel: shiftsModel, VouchersModel: vouchersModel, DepositsModel: depositsModel, OrdersModel: ordersModel}
 
 	api := r.Group("/")
 	{
@@ -96,6 +97,13 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/card/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetAll, false) })
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
+		// Stats routes
+		// Total Stats
+		api.GET("/user/stats/shifts/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
+		api.GET("/user/stats/vouchers/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetVoucherStats, true) })
+		// Time based stats
+		api.GET("/user/stats/shifts/time", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftsByTimeStats, true) })
+		api.GET("/user/stats/vouchers/time", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetVouchersByTimeStats, true) })
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })

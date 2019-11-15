@@ -57,8 +57,8 @@ github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+
 github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+Tv3SM=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
-github.com/grupokindynos/common v0.0.0-20191115191832-86db1d6de755 h1:kakrsGv47CaKY5ul61gafJn/6ShkEgLx8XPvNqf8mME=
-github.com/grupokindynos/common v0.0.0-20191115191832-86db1d6de755/go.mod h1:271qNb8e6iiAaLcuI9qLQCPrUE36/MGJpCOI2oq+LvA=
+github.com/grupokindynos/common v0.0.0-20191115202351-7a6a6d47b4a6 h1:+9cph1tifjfzZPxM0UFzs77QktqHnxDB9Pv+zYVmFB4=
+github.com/grupokindynos/common v0.0.0-20191115202351-7a6a6d47b4a6/go.mod h1:271qNb8e6iiAaLcuI9qLQCPrUE36/MGJpCOI2oq+LvA=
 github.com/grupokindynos/olympus-utils v0.0.0-20191114150906-5c358df85e5c h1:6CSFnEkKH1eAs9FqS2DNqksoSPNYfVE05riAx5cg6ME=
 github.com/grupokindynos/olympus-utils v0.0.0-20191114150906-5c358df85e5c/go.mod h1:CO1mJJZwQrTgBTLXxhn5wJf00YNex3T7kAVy19RBun8=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=

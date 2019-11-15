@@ -131,13 +131,13 @@ var TestShift = hestia.Shift{
 		Txid:          "FAKE-TXID",
 		Confirmations: 0,
 	},
-	FeePayment: TestFeePayment,
-	ToCoin:     "Fake_coIN",
-	RefundAddr: "FAKE_ADDR",
-	ToAmount:   1000,
-	ProofTimestamp:time.Unix(10000000, 0).Unix(),
-	PaymentProof: "fakeTxid",
-	ToAddress:  "FakeAddress",
+	FeePayment:     TestFeePayment,
+	ToCoin:         "Fake_coIN",
+	RefundAddr:     "FAKE_ADDR",
+	ToAmount:       1000,
+	ProofTimestamp: time.Unix(10000000, 0).Unix(),
+	PaymentProof:   "fakeTxid",
+	ToAddress:      "FakeAddress",
 }
 
 var TestUser = hestia.User{

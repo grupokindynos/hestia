@@ -25,6 +25,7 @@ type Params struct {
 	DepositID string
 	CardCode  string
 	Body      []byte
+	Timestamp string
 }
 
 type FirebaseController struct {
@@ -113,6 +114,7 @@ user:
 		DepositID: c.Param("depositid"),
 		CardCode:  c.Param("cardcode"),
 		Body:      bodyBytes,
+		Timestamp: c.Param("from"),
 	}
 	res, err := method(userData, params)
 	if err != nil {
