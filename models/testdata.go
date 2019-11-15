@@ -9,7 +9,6 @@ var TestFeePayment = hestia.Payment{
 	Address:       "TEST-ADDR",
 	Amount:        0,
 	Coin:          "polis",
-	RawTx:         "TEST-RAW-TX",
 	Txid:          "TEST-TXID",
 	Confirmations: 0,
 }
@@ -62,10 +61,10 @@ var TestBalances = []hestia.CoinBalances{
 }
 
 var TestConfigData = hestia.Config{
-	Shift:    hestia.Available{Available: true},
-	Deposits: hestia.Available{Available: true},
-	Orders:   hestia.Available{Available: true},
-	Vouchers: hestia.Available{Available: true},
+	Shift:    hestia.Available{Service: true, Processor: true},
+	Deposits: hestia.Available{Service: true, Processor: true},
+	Orders:   hestia.Available{Service: true, Processor: true},
+	Vouchers: hestia.Available{Service: true, Processor: true},
 }
 
 var TestOrder = hestia.Order{
@@ -161,7 +160,6 @@ var TestVoucher = hestia.Voucher{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
 		Coin:          "POLIS",
-		RawTx:         "NOTX",
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
@@ -169,7 +167,6 @@ var TestVoucher = hestia.Voucher{
 		Address:       "FAKE-ADDR",
 		Amount:        123123,
 		Coin:          "POLIS",
-		RawTx:         "NOTX",
 		Txid:          "FAKE-TXID",
 		Confirmations: 123,
 	},
@@ -177,7 +174,6 @@ var TestVoucher = hestia.Voucher{
 		Address:       "TEST_ADDR",
 		Amount:        123,
 		Coin:          "POLIS",
-		RawTx:         "NOTX",
 		Txid:          "Fakse_TXID",
 		Confirmations: 0,
 	},
