@@ -135,6 +135,8 @@ var TestShift = hestia.Shift{
 	ToCoin:     "Fake_coIN",
 	RefundAddr: "FAKE_ADDR",
 	ToAmount:   1000,
+	ProofTimestamp:time.Unix(10000000, 0).Unix(),
+	PaymentProof: "fakeTxid",
 	ToAddress:  "FakeAddress",
 }
 
