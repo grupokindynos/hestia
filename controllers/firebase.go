@@ -26,6 +26,9 @@ type Params struct {
 	CardCode  string
 	Body      []byte
 	Timestamp string
+	Country   string
+	Category  string
+	Provider  string
 }
 
 type FirebaseController struct {
@@ -113,6 +116,9 @@ user:
 		VoucherID: c.Param("voucherid"),
 		DepositID: c.Param("depositid"),
 		CardCode:  c.Param("cardcode"),
+		Country:   c.Param("country"),
+		Category:  c.Param("category"),
+		Provider:  c.Param("provider"),
 		Body:      bodyBytes,
 		Timestamp: c.Query("from"),
 	}

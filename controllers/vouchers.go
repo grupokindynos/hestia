@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -25,8 +26,9 @@ import (
 */
 
 type VouchersController struct {
-	Model     *models.VouchersModel
-	UserModel *models.UsersModel
+	Model       *models.VouchersModel
+	UserModel   *models.UsersModel
+	BitcouModel *models.BitcouModel
 }
 
 func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
@@ -135,4 +137,29 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucherData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
+}
+
+func (vc *VouchersController) GetCountries(userData hestia.User, params Params) (interface{}, error) {
+	return nil, nil
+}
+
+func (vc *VouchersController) GetCategories(userData hestia.User, params Params) (interface{}, error) {
+	country := params.Country
+	fmt.Println(country)
+	return nil, nil
+}
+
+func (vc *VouchersController) GetProviders(userData hestia.User, params Params) (interface{}, error) {
+	country := params.Country
+	category := params.Category
+	fmt.Println(country, category)
+	return nil, nil
+}
+
+func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
+	country := params.Country
+	category := params.Category
+	provider := params.Provider
+	fmt.Println(country, category, provider)
+	return nil, nil
 }

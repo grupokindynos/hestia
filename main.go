@@ -55,6 +55,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		log.Fatal(err)
 	}
 	doc := firestore.Collection("polispay").Doc("hestia")
+	bitcouDoc := firestore.Collection("polispay").Doc("bitcou")
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
@@ -67,6 +68,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
+	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -75,7 +77,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
-	vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel}
+	vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel, BitcouModel: bitcouModel}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
@@ -97,6 +99,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/card/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, cardsCtrl.GetAll, false) })
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
+		// Vouchers list
+		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetCountries, false) })
+		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetCategories, false) })
+		api.GET("/user/voucher/list/:country/:category", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetProviders, false) })
+		api.GET("/user/voucher/list/:country/:category/:provider", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
 		// Stats routes
 		// Total Stats
 		api.GET("/user/stats/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
