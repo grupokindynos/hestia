@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -183,6 +184,12 @@ func (vc *VouchersController) GetCategories(userData hestia.User, params Params)
 				cat["Gift Card"] = nil
 			}
 		}
+		if voucher.Benefits["Gaming"] {
+			_, ok := cat["Gaming"]
+			if !ok {
+				cat["Gaming"] = nil
+			}
+		}
 	}
 	var catResponse []string
 	for k, _ := range cat {
@@ -215,6 +222,10 @@ func (vc *VouchersController) GetProviders(userData hestia.User, params Params) 
 			}
 		case "Gift Card":
 			if voucher.Benefits["DigitalProducst"] {
+				vouchersFiltered = append(vouchersFiltered, voucher)
+			}
+		case "Gaming":
+			if voucher.Benefits["Gaming"] {
 				vouchersFiltered = append(vouchersFiltered, voucher)
 			}
 		}
