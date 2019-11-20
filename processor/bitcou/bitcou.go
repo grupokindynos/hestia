@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
-	"fmt"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"github.com/joho/godotenv"
@@ -32,20 +31,39 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	doc := firestore.Collection("polispay").Doc("bitcou")
+	doc := firestore.Collection("bitcou")
 	model := models.BitcouModel{Firestore: doc}
 	service := bitcou.InitService()
 	voucherList, err := service.GetList()
 	if err != nil {
 		panic("unable to load bitcou voucher list")
 	}
-	var availableCountries models.BitcouCountries
-	for name, _ := range voucherList[0].Countries {
-		availableCountries.Countries = append(availableCountries.Countries, name)
+	var countries []models.BitcouCountry
+	var availableCountry []string
+	for key, _ := range voucherList[0].Countries {
+		availableCountry = append(availableCountry, key)
 	}
-	err = model.StoreCountries(availableCountries)
-	if err != nil {
-		fmt.Println(err)
-		panic("unable to store bitcou available countries")
+	for _, availableCountry := range availableCountry {
+		newCountryData := models.BitcouCountry{
+			ID: availableCountry,
+			// TODO sanitize name
+			Name:     "",
+			Vouchers: []bitcou.Voucher{},
+		}
+		for _, voucher := range voucherList {
+			available := voucher.Countries[availableCountry]
+			if available {
+				newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
+			}
+		}
+		countries = append(countries, newCountryData)
 	}
+
+	for _, bitcouCountry := range countries {
+		err = model.AddCountry(bitcouCountry)
+		if err != nil {
+			panic("unable to store country information")
+		}
+	}
+
 }

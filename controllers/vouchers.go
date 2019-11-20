@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -11,6 +10,7 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
+	"github.com/grupokindynos/hestia/services/bitcou"
 	"os"
 )
 
@@ -140,26 +140,136 @@ func (vc *VouchersController) Store(c *gin.Context) {
 }
 
 func (vc *VouchersController) GetCountries(userData hestia.User, params Params) (interface{}, error) {
-	return nil, nil
+	usaVoucherData, err := vc.BitcouModel.GetCountry("usa")
+	if err != nil {
+		return nil, err
+	}
+	var countries []string
+	for k := range usaVoucherData.Vouchers[0].Countries {
+		countries = append(countries, k)
+	}
+	return countries, nil
 }
 
 func (vc *VouchersController) GetCategories(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
-	fmt.Println(country)
-	return nil, nil
+	countryData, err := vc.BitcouModel.GetCountry(country)
+	if err != nil {
+		return nil, err
+	}
+	cat := make(map[string]interface{})
+	for _, voucher := range countryData.Vouchers {
+		if voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] {
+			_, ok := cat["Credit for calls"]
+			if !ok {
+				cat["Credit for calls"] = nil
+			}
+		}
+		if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] {
+			_, ok := cat["Credit for internet"]
+			if !ok {
+				cat["Credit for internet"] = nil
+			}
+		}
+		if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && voucher.Benefits["Minutes"] {
+			_, ok := cat["Credit for calls and internet"]
+			if !ok {
+				cat["Credit for calls and internet"] = nil
+			}
+		}
+		if voucher.Benefits["DigitalProducst"] {
+			_, ok := cat["Gift Card"]
+			if !ok {
+				cat["Gift Card"] = nil
+			}
+		}
+	}
+	var catResponse []string
+	for k, _ := range cat {
+		catResponse = append(catResponse, k)
+	}
+	return catResponse, nil
 }
 
 func (vc *VouchersController) GetProviders(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
 	category := params.Category
-	fmt.Println(country, category)
-	return nil, nil
+	countryData, err := vc.BitcouModel.GetCountry(country)
+	if err != nil {
+		return nil, err
+	}
+	var vouchersFiltered []bitcou.Voucher
+	for _, voucher := range countryData.Vouchers {
+		switch category {
+		case "Credit for calls":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] {
+				vouchersFiltered = append(vouchersFiltered, voucher)
+			}
+		case "Credit for internet":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] {
+				vouchersFiltered = append(vouchersFiltered, voucher)
+			}
+		case "Credit for calls and internet":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && voucher.Benefits["Minutes"] {
+				vouchersFiltered = append(vouchersFiltered, voucher)
+			}
+		case "Gift Card":
+			if voucher.Benefits["DigitalProducst"] {
+				vouchersFiltered = append(vouchersFiltered, voucher)
+			}
+		}
+	}
+
+	providers := make(map[string]interface{})
+	for _, filtVoucher := range vouchersFiltered {
+		_, ok := providers[filtVoucher.ProviderName]
+		if !ok {
+			providers[filtVoucher.ProviderName] = nil
+		}
+	}
+	var providerRes []string
+	for k, _ := range providers {
+		providerRes = append(providerRes, k)
+	}
+	return providerRes, nil
 }
 
 func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
 	category := params.Category
 	provider := params.Provider
-	fmt.Println(country, category, provider)
-	return nil, nil
+	countryData, err := vc.BitcouModel.GetCountry(country)
+	if err != nil {
+		return nil, err
+	}
+	var vouchersFiltered []bitcou.Voucher
+	for _, voucher := range countryData.Vouchers {
+		switch category {
+		case "Credit for calls":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] {
+				if voucher.ProviderName == provider {
+					vouchersFiltered = append(vouchersFiltered, voucher)
+				}
+			}
+		case "Credit for internet":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] {
+				if voucher.ProviderName == provider {
+					vouchersFiltered = append(vouchersFiltered, voucher)
+				}
+			}
+		case "Credit for calls and internet":
+			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && voucher.Benefits["Minutes"] {
+				if voucher.ProviderName == provider {
+					vouchersFiltered = append(vouchersFiltered, voucher)
+				}
+			}
+		case "Gift Card":
+			if voucher.Benefits["DigitalProducst"] {
+				if voucher.ProviderName == provider {
+					vouchersFiltered = append(vouchersFiltered, voucher)
+				}
+			}
+		}
+	}
+	return vouchersFiltered, nil
 }

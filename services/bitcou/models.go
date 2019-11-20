@@ -20,15 +20,17 @@ type Shipping struct {
 }
 
 type Voucher struct {
-	Countries   map[string]bool `json:"countries"`
-	Image       string          `json:"image"`
-	Name        string          `json:"name"`
-	ProductID   int             `json:"product_id"`
-	RedeemPlace RedeemPlace     `json:"redeem_place"`
-	Shipping    Shipping        `json:"shipping"`
-	TraderID    int             `json:"trader_id"`
-	Variants    []Variants      `json:"variants"`
-	Benefits    map[string]bool `json:"benefits"`
+	Countries    map[string]bool `firestore:"countries" json:"countries"`
+	Image        string          `firestore:"image" json:"image"`
+	Name         string          `firestore:"name" json:"name"`
+	ProductID    int             `firestore:"product_id" json:"product_id"`
+	RedeemPlace  RedeemPlace     `firestore:"redeem_place" json:"redeem_place"`
+	Shipping     Shipping        `firestore:"shipping" json:"shipping"`
+	TraderID     int             `firestore:"trader_id" json:"trader_id"`
+	Variants     []Variants      `firestore:"variants" json:"variants"`
+	ProviderID   string          `firestore:"provider_id" json:"provider_id"`
+	ProviderName string          `firestore:"provider_name" json:"provider_name"`
+	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
 }
 
 type BaseResponse struct {

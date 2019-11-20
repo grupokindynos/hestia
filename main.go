@@ -55,7 +55,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		log.Fatal(err)
 	}
 	doc := firestore.Collection("polispay").Doc("hestia")
-	bitcouDoc := firestore.Collection("polispay").Doc("bitcou")
+	bitcouDoc := firestore.Collection("bitcou")
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
