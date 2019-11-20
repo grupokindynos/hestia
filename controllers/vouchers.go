@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -178,7 +177,7 @@ func (vc *VouchersController) GetCategories(userData hestia.User, params Params)
 				cat["Credit for calls and internet"] = nil
 			}
 		}
-		if voucher.Benefits["DigitalProducst"] {
+		if voucher.Benefits["DigitalProducts"] {
 			_, ok := cat["Gift Card"]
 			if !ok {
 				cat["Gift Card"] = nil
@@ -221,7 +220,7 @@ func (vc *VouchersController) GetProviders(userData hestia.User, params Params) 
 				vouchersFiltered = append(vouchersFiltered, voucher)
 			}
 		case "Gift Card":
-			if voucher.Benefits["DigitalProducst"] {
+			if voucher.Benefits["DigitalProducts"] {
 				vouchersFiltered = append(vouchersFiltered, voucher)
 			}
 		case "Gaming":
@@ -229,13 +228,18 @@ func (vc *VouchersController) GetProviders(userData hestia.User, params Params) 
 				vouchersFiltered = append(vouchersFiltered, voucher)
 			}
 		}
+
 	}
 
 	providers := make(map[string]interface{})
 	for _, filtVoucher := range vouchersFiltered {
 		_, ok := providers[filtVoucher.ProviderName]
 		if !ok {
-			providers[filtVoucher.ProviderName] = nil
+			if filtVoucher.ProviderName == "" {
+				providers["Others"] = nil
+			} else {
+				providers[filtVoucher.ProviderName] = nil
+			}
 		}
 	}
 	var providerRes []string
@@ -275,7 +279,13 @@ func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (
 				}
 			}
 		case "Gift Card":
-			if voucher.Benefits["DigitalProducst"] {
+			if voucher.Benefits["DigitalProducts"] {
+				if voucher.ProviderName == provider {
+					vouchersFiltered = append(vouchersFiltered, voucher)
+				}
+			}
+		case "Others":
+			if voucher.Benefits["DigitalProducts"] {
 				if voucher.ProviderName == provider {
 					vouchersFiltered = append(vouchersFiltered, voucher)
 				}
