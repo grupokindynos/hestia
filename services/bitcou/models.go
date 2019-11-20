@@ -28,7 +28,7 @@ type Voucher struct {
 	Shipping     Shipping        `firestore:"shipping" json:"shipping"`
 	TraderID     int             `firestore:"trader_id" json:"trader_id"`
 	Variants     []Variants      `firestore:"variants" json:"variants"`
-	ProviderID   string          `firestore:"provider_id" json:"provider_id"`
+	ProviderID   int             `firestore:"provider_id" json:"provider_id"`
 	ProviderName string          `firestore:"provider_name" json:"provider_name"`
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
 }

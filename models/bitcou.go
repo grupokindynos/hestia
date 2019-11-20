@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var CountryNames = map[string]string{}
+
 type BitcouCountry struct {
 	ID       string           `firestore:"id" json:"id"`
 	Name     string           `firestore:"name" json:"name"`
@@ -18,7 +20,7 @@ type BitcouModel struct {
 }
 
 func (bm *BitcouModel) AddCountry(country BitcouCountry) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	_, err := bm.Firestore.Doc(country.ID).Set(ctx, country)
 	return err
