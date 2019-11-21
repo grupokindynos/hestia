@@ -28,7 +28,6 @@ type Params struct {
 	Timestamp string
 	Country   string
 	Category  string
-	Provider  string
 }
 
 type FirebaseController struct {
@@ -118,7 +117,6 @@ user:
 		CardCode:  c.Param("cardcode"),
 		Country:   c.Param("country"),
 		Category:  c.Param("category"),
-		Provider:  c.Param("provider"),
 		Body:      bodyBytes,
 		Timestamp: c.Query("from"),
 	}

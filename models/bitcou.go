@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-var CountryNames = map[string]string{}
-
 type BitcouCountry struct {
 	ID       string           `firestore:"id" json:"id"`
 	Name     string           `firestore:"name" json:"name"`
