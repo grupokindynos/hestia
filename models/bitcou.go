@@ -9,7 +9,6 @@ import (
 
 type BitcouCountry struct {
 	ID       string           `firestore:"id" json:"id"`
-	Name     string           `firestore:"name" json:"name"`
 	Vouchers []bitcou.Voucher `firestore:"vouchers" json:"vouchers"`
 }
 
