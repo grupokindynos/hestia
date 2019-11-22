@@ -15,7 +15,6 @@ import (
 // This tool must be run every 12 hours to index the bitcou vouchers list.
 
 var ProvidersMap = map[int]string{
-	0:  "Other",
 	1:  "Telcel",
 	2:  "AT&T",
 	3:  "Unefon",
