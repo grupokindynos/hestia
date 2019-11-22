@@ -15,89 +15,93 @@ import (
 // This tool must be run every 12 hours to index the bitcou vouchers list.
 
 var ProvidersMap = map[int]string{
-	1:  "Telcel",
-	2:  "AT&T",
-	3:  "Unefon",
-	4:  "Black Wireless",
-	5:  "Black Wireless",
-	6:  "Ultra Mobile PayGo",
-	7:  "H2O Wireless",
-	8:  "AT&T",
-	9:  "H2O Wireless",
-	10: "Access Wireless",
+	0:  "Wunschgutschein", // Missing img
+	1:  "Access Wireless",
+	2:  "Airvoice",
+	3:  "AT&T",
+	4:  "AT&T",
+	5:  "AT&T",
+	6:  "Bell",
+	7:  "Black Wireless",
+	8:  "ChatR",
+	9:  "Cricket Wireless",
+	10: "DollarPhone",
 	11: "easyGO",
-	12: "Verizon Wireless",
-	13: "Life Wireless",
-	14: "H2O Wireless",
-	15: "H2O Wireless",
-	16: "H2O Wireless",
-	17: "H2O Wireless",
-	18: "H2O Wireless",
-	19: "Red Pocket",
-	20: "Airvoice",
-	21: "Airvoice",
-	22: "Pure Unlimited",
-	23: "Airvoice",
-	24: "Pure Unlimited",
-	25: "Pure Unlimited",
-	26: "Pure",
-	27: "i-Wireless Kroger",
-	28: "Feelsafe",
-	29: "Black Wireless",
-	30: "AT&T",
-	31: "Southern Linc",
-	32: "DollarPhone",
-	33: "Pure Unlimited",
-	34: "Black Wireless",
-	35: "AT&T",
-	36: "Airvoice",
-	37: "Life Wireless",
-	38: "Life Wireless",
-	39: "NET10 Wireless",
-	40: "AT&T",
-	41: "SIN PIN",
-	42: "T-Mobile",
-	43: "Page Plus",
-	44: "TracFone",
-	45: "Simple Mobile",
-	46: "Telcel",
-	47: "NET10 Wireless",
-	48: "NET10 Wireless",
-	49: "NET10 Wireless",
-	50: "NET10 Wireless",
-	51: "NET10 Wireless",
-	53: "Lycamobile",
-	54: "Go Smart",
-	55: "iTunes",
-	56: "Google Play",
-	57: "Playstation Network",
-	58: "Xbox",
-	59: "T-Mobile",
-	60: "Ultra Mobile",
-	61: "T-Mobile",
-	62: "Cricket Paygo",
-	63: "Xfinity Prepaid Internet",
-	64: "Xfinity Prepaid TV",
-	65: "Xfinity Prepaid TV",
-	66: "Total Wireless",
-	67: "Bell",
-	68: "ChatR",
-	69: "Fido",
-	70: "Koodo",
-	71: "Bell MTS",
-	72: "Public Mobile",
-	73: "Rogers",
-	74: "Virgin",
-	75: "Freedom Mobile",
-	76: "Solo Mobile",
-	77: "Movistar",
-	78: "Simple Mobile",
-	79: "Skype",
-	80: "Movistar",
-	81: "Movistar Bundles",
-	82: "Spotify",
-	84: "Telcel",
-	85: "Telcel",
+	12: "Feelsafe Wireless",
+	13: "Fido",
+	14: "Freedom Mobile",
+	15: "Go", // Missing img
+	16: "Google Play",
+	17: "H2O",
+	18: "i-Wireless", // Missing img
+	19: "iTunes",
+	20: "Koodo",
+	21: "Life Wireless",
+	22: "Lycamobile",
+	23: "Metro", // Missing img
+	24: "Movistar",
+	25: "Bell MTS",
+	26: "NET10",
+	27: "Page Plus",
+	28: "PlayStation",
+	29: "Public Mobile",
+	30: "Pure Unlimited",
+	31: "Red Pocket Mobile",
+	32: "Rogers",
+	33: "Simple Mobile",
+	34: "SIN PIN",
+	35: "Skype",
+	36: "Solo Mobile",
+	37: "Southern Linc",
+	38: "Spotify",
+	39: "T-Mobile",
+	40: "Telcel",
+	41: "Telcel",
+	42: "Total Wireless",
+	43: "TracFone",
+	44: "Ultra Mobile",
+	45: "Unefon",
+	46: "Verizon",
+	47: "Virgin",
+	48: "Xbox",
+	49: "Xfinity",
+	50: "Bildmobil", // Missing img
+	51: "Blau", // Missing img
+	52: "Confstar", // Missing img
+	53: "E-Plus", // Missing img
+	54: "FC Bayern Mobil", // Missing img
+	55: "Fonic", // Missing img
+	56: "Klarmobil", // Missing img
+	57: "Lebara", // Missing img
+	58: "Lifecell", // Missing img
+	59: "Lycamobile",
+	60: "Mobi", // Missing img
+	61: "O2", // Missing img
+	62: "Ortel", // Missing img
+	63: "Otelo", // Missing img
+	64: "SIM", // Missing img
+	65: "Simyo", // Missing img
+	66: "Tchibo Mobil", // Missing img
+	67: "Telekom", // Missing img
+	68: "Vodafone", // Missing img
+	69: "Yourfone", // Missing img
+	70: "About you", // Missing img
+	71: "Adidas", // Missing img
+	72: "Amazon", // Missing img
+	73: "DAZN", // Missing img
+	74: "Deezer", // Missing img
+	75: "Epay Card", // Missing img
+	76: "Google Play", // Missing img
+	77: "iTunes",
+	78: "Netflix", // Missing img
+	79: "Spotify",
+	80: "Zalando", // Missing img
+	81: "Battle.net", // Missing img
+	82: "Bigpoint", // Missing img
+	83: "Nintendo", // Missing img
+	84: "PlayStation",
+	85: "Steam", // Missing img
+	86: "Xbox",
 }
 
 func main() {
