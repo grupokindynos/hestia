@@ -13,9 +13,8 @@ import (
 )
 
 // This tool must be run every 12 hours to index the bitcou vouchers list.
-
 var ProvidersMap = map[int]string{
-	0:  "Wunschgutschein", // Missing img
+	0:  "Wunschgutschein",
 	1:  "Access Wireless",
 	2:  "Airvoice",
 	3:  "AT&T",
@@ -30,15 +29,15 @@ var ProvidersMap = map[int]string{
 	12: "Feelsafe Wireless",
 	13: "Fido",
 	14: "Freedom Mobile",
-	15: "Go", // Missing img
+	15: "Go",
 	16: "Google Play",
 	17: "H2O",
-	18: "i-Wireless", // Missing img
+	18: "i-Wireless",
 	19: "iTunes",
 	20: "Koodo",
 	21: "Life Wireless",
 	22: "Lycamobile",
-	23: "Metro", // Missing img
+	23: "Metro",
 	24: "Movistar",
 	25: "Bell MTS",
 	26: "NET10",
@@ -65,42 +64,42 @@ var ProvidersMap = map[int]string{
 	47: "Virgin",
 	48: "Xbox",
 	49: "Xfinity",
-	50: "Bildmobil", // Missing img
-	51: "Blau", // Missing img
-	52: "Confstar", // Missing img
-	53: "E-Plus", // Missing img
-	54: "FC Bayern Mobil", // Missing img
-	55: "Fonic", // Missing img
-	56: "Klarmobil", // Missing img
-	57: "Lebara", // Missing img
-	58: "Lifecell", // Missing img
+	50: "Bildmobil",
+	51: "Blau",
+	52: "Confstar",
+	53: "E-Plus",
+	54: "FC Bayern Mobil",
+	55: "Fonic",
+	56: "Klarmobil",
+	57: "Lebara",
+	58: "Lifecell",
 	59: "Lycamobile",
-	60: "Mobi", // Missing img
-	61: "O2", // Missing img
-	62: "Ortel", // Missing img
-	63: "Otelo", // Missing img
-	64: "SIM", // Missing img
-	65: "Simyo", // Missing img
-	66: "Tchibo Mobil", // Missing img
-	67: "Telekom", // Missing img
-	68: "Vodafone", // Missing img
-	69: "Yourfone", // Missing img
-	70: "About you", // Missing img
-	71: "Adidas", // Missing img
-	72: "Amazon", // Missing img
-	73: "DAZN", // Missing img
-	74: "Deezer", // Missing img
-	75: "Epay Card", // Missing img
-	76: "Google Play", // Missing img
+	60: "Mobi",
+	61: "O2",
+	62: "Ortel",
+	63: "Otelo",
+	64: "SIM",
+	65: "Simyo",
+	66: "Tchibo Mobil",
+	67: "Telekom",
+	68: "Vodafone",
+	69: "Yourfone",
+	70: "About you",
+	71: "Adidas",
+	72: "Amazon",
+	73: "DAZN",
+	74: "Deezer",
+	75: "Epay Card",
+	76: "Google Play",
 	77: "iTunes",
-	78: "Netflix", // Missing img
+	78: "Netflix",
 	79: "Spotify",
-	80: "Zalando", // Missing img
-	81: "Battle.net", // Missing img
-	82: "Bigpoint", // Missing img
-	83: "Nintendo", // Missing img
+	80: "Zalando",
+	81: "Battle.net",
+	82: "Bigpoint",
+	83: "Nintendo",
 	84: "PlayStation",
-	85: "Steam", // Missing img
+	85: "Steam",
 	86: "Xbox",
 }
 

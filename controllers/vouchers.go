@@ -10,7 +10,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/grupokindynos/hestia/services/bitcou"
 	"os"
 )
 
@@ -139,7 +138,7 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	return
 }
 
-func (vc *VouchersController) GetCountries(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
 	usaVoucherData, err := vc.BitcouModel.GetCountry("usa")
 	if err != nil {
 		return nil, err
@@ -151,80 +150,11 @@ func (vc *VouchersController) GetCountries(userData hestia.User, params Params) 
 	return countries, nil
 }
 
-func (vc *VouchersController) GetCategories(userData hestia.User, params Params) (interface{}, error) {
-	country := params.Country
-	countryData, err := vc.BitcouModel.GetCountry(country)
-	if err != nil {
-		return nil, err
-	}
-	cat := make(map[string]interface{})
-	for _, voucher := range countryData.Vouchers {
-		if voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && !voucher.Benefits["Data"] {
-			_, ok := cat["Credit for calls"]
-			if !ok {
-				cat["Credit for calls"] = nil
-			}
-		}
-		if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && !voucher.Benefits["Minutes"] {
-			_, ok := cat["Credit for internet"]
-			if !ok {
-				cat["Credit for internet"] = nil
-			}
-		}
-		if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && voucher.Benefits["Minutes"] {
-			_, ok := cat["Credit for calls and internet"]
-			if !ok {
-				cat["Credit for calls and internet"] = nil
-			}
-		}
-		if voucher.Benefits["DigitalProducts"] {
-			_, ok := cat["Gift Card"]
-			if !ok {
-				cat["Gift Card"] = nil
-			}
-		}
-		if voucher.Benefits["Gaming"] {
-			_, ok := cat["Gaming"]
-			if !ok {
-				cat["Gaming"] = nil
-			}
-		}
-	}
-	var catResponse []string
-	for k, _ := range cat {
-		catResponse = append(catResponse, k)
-	}
-	return catResponse, nil
-}
-
 func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
-	category := params.Category
 	countryData, err := vc.BitcouModel.GetCountry(country)
 	if err != nil {
 		return nil, err
 	}
-	var vouchersFiltered []bitcou.Voucher
-	for _, voucher := range countryData.Vouchers {
-		switch category {
-		case "Credit for calls":
-			if voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && !voucher.Benefits["Data"] {
-				vouchersFiltered = append(vouchersFiltered, voucher)
-
-			}
-		case "Credit for internet":
-			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && !voucher.Benefits["Minutes"] {
-				vouchersFiltered = append(vouchersFiltered, voucher)
-			}
-		case "Credit for calls and internet":
-			if voucher.Benefits["Mobile"] && voucher.Benefits["Data"] && voucher.Benefits["Minutes"] {
-				vouchersFiltered = append(vouchersFiltered, voucher)
-			}
-		case "Gift Card":
-			if voucher.Benefits["DigitalProducts"] {
-				vouchersFiltered = append(vouchersFiltered, voucher)
-			}
-		}
-	}
-	return vouchersFiltered, nil
+	return countryData.Vouchers, nil
 }

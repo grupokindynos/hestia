@@ -100,9 +100,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 		// Vouchers list
-		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetCountries, false) })
-		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetCategories, false) })
-		api.GET("/user/voucher/list/:country/:category", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
+		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
+		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
 		// Stats routes
 		// Total Stats
 		api.GET("/user/stats/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
