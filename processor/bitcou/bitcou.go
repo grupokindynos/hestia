@@ -142,7 +142,15 @@ func main() {
 			if !ok {
 				continue
 			}
-			voucher.ProviderName = provName
+			if voucher.ProductID == 17 {
+				voucher.ProviderName = "PlayStation Live"
+			} else if voucher.ProductID == 361 {
+				voucher.ProviderName = "Battle Net Warcraft"
+			} else if voucher.ProductID == 363 {
+				voucher.ProviderName = "Nintendo Switch"
+			} else {
+				voucher.ProviderName = provName
+			}
 			available := voucher.Countries[availableCountry]
 			if available {
 				newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
