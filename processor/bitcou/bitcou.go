@@ -142,7 +142,31 @@ func main() {
 			if !ok {
 				continue
 			}
-			if voucher.ProductID == 17 {
+			if availableCountry == "usa" &&
+				voucher.ProviderID == 2 ||
+				voucher.ProviderID == 3 ||
+				voucher.ProviderID == 4 ||
+				voucher.ProviderID == 5 ||
+				voucher.ProviderID == 7 ||
+				voucher.ProviderID == 15 ||
+				voucher.ProviderID == 17 ||
+				voucher.ProviderID == 21 ||
+				voucher.ProviderID == 22 ||
+				voucher.ProviderID == 59 ||
+				voucher.ProviderID == 26 ||
+				voucher.ProviderID == 27 ||
+				voucher.ProviderID == 30 ||
+				voucher.ProviderID == 40 ||
+				voucher.ProviderID == 41 ||
+				voucher.ProviderID == 43 ||
+				voucher.ProviderID == 49 ||
+				voucher.ProviderID == 10 ||
+				voucher.ProviderID == 34  {
+				continue
+			}
+			if voucher.ProviderID == 24 && voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && voucher.Benefits["Data"] {
+				voucher.ProviderName = "Movistar Bundles"
+			} else if voucher.ProductID == 17 {
 				voucher.ProviderName = "PlayStation Live"
 			} else if voucher.ProductID == 361 {
 				voucher.ProviderName = "Battle Net Warcraft"
