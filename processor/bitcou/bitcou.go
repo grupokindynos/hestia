@@ -161,7 +161,9 @@ func main() {
 				voucher.ProviderID == 43 ||
 				voucher.ProviderID == 49 ||
 				voucher.ProviderID == 10 ||
-				voucher.ProviderID == 34  {
+				voucher.ProviderID == 24 ||
+				voucher.ProviderID == 45 ||
+				voucher.ProviderID == 34 {
 				continue
 			}
 			if voucher.ProviderID == 24 && voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && voucher.Benefits["Data"] {
