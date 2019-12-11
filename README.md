@@ -10,18 +10,12 @@ Hestia is a microservice API for safe using firebase auth and firestore
 
 ## Deploy
 
-#### Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/grupokindynos/hestia)
-
 #### Docker
 
 To deploy to docker, simply pull the image
 ```
 docker pull kindynos/hestia:latest
 ```
-Create a new `.env` file with all the necessary environment variables defined on `app.json`
-
 Run the docker image
 ```
 docker run -p 8080:8080 --env-file .env kindynos/hestia:latest 
