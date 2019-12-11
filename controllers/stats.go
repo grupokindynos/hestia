@@ -3,6 +3,7 @@ package controllers
 import (
 	"errors"
 	"github.com/grupokindynos/common/hestia"
+	"github.com/grupokindynos/common/obol"
 	"github.com/grupokindynos/hestia/models"
 	"strconv"
 )
@@ -13,6 +14,10 @@ type StatsController struct {
 	DepositsModel *models.DepositsModel
 	OrdersModel   *models.OrdersModel
 }
+
+var coinRates = make(map[string][]obol.Rate)
+
+// Big TODO this methods can be merged.
 
 func (sc StatsController) GetShiftStats(userData hestia.User, params Params) (interface{}, error) {
 	shifts, err := sc.ShiftModel.GetAll("all")
@@ -30,6 +35,45 @@ func (sc StatsController) GetShiftStats(userData hestia.User, params Params) (in
 		Total:      0,
 	}
 	for _, shift := range shifts {
+		if shift.Status == hestia.GetShiftStatusString(hestia.ShiftStatusComplete) {
+			if shift.FeePayment.Txid != "" {
+				feeRates, ok := coinRates[shift.FeePayment.Coin]
+				if !ok {
+					feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+					if err != nil {
+						return nil, err
+					}
+					coinRates[shift.FeePayment.Coin] = feeRates
+				}
+				feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+				if err != nil {
+					return nil, err
+				}
+				var btcFeeRate float64
+				for _, rate := range feeRates {
+					if rate.Code == "BTC" {
+						btcFeeRate = rate.Rate
+					}
+				}
+				response.Volume += btcFeeRate * (float64(shift.FeePayment.Amount) / 1e8)
+			}
+			paymentRates, ok := coinRates[shift.Payment.Coin]
+			if !ok {
+				paymentRates, err := obol.GetCoinRates(obol.ProductionURL, shift.Payment.Coin)
+				if err != nil {
+					return nil, err
+				}
+				coinRates[shift.Payment.Coin] = paymentRates
+			}
+
+			var btcPaymentRate float64
+			for _, rate := range paymentRates {
+				if rate.Code == "BTC" {
+					btcPaymentRate = rate.Rate
+				}
+			}
+			response.Volume += btcPaymentRate * (float64(shift.Payment.Amount) / 1e8)
+		}
 		response.Total += 1
 		switch shift.Status {
 		case hestia.GetShiftStatusString(hestia.ShiftStatusPending):
@@ -70,6 +114,10 @@ func (sc StatsController) GetVoucherStats(userData hestia.User, params Params) (
 		Total:             0,
 	}
 	for _, voucher := range vouchers {
+		if voucher.Status == hestia.GetVoucherStatusString(hestia.VoucherStatusComplete) {
+			response.Volume += float64(voucher.BitcouPaymentData.Amount) / 1e8
+			response.VolumeFee += float64(voucher.BitcouFeePaymentData.Amount) / 1e8
+		}
 		response.Total += 1
 		switch voucher.Status {
 		case hestia.GetVoucherStatusString(hestia.VoucherStatusPending):
@@ -123,6 +171,45 @@ func (sc StatsController) GetShiftsByTimeStats(userData hestia.User, params Para
 		if shift.Timestamp < timestamp {
 			continue
 		}
+		if shift.Status == hestia.GetShiftStatusString(hestia.ShiftStatusComplete) {
+			if shift.FeePayment.Txid != "" {
+				feeRates, ok := coinRates[shift.FeePayment.Coin]
+				if !ok {
+					feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+					if err != nil {
+						return nil, err
+					}
+					coinRates[shift.FeePayment.Coin] = feeRates
+				}
+				feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+				if err != nil {
+					return nil, err
+				}
+				var btcFeeRate float64
+				for _, rate := range feeRates {
+					if rate.Code == "BTC" {
+						btcFeeRate = rate.Rate
+					}
+				}
+				response.Volume += btcFeeRate * (float64(shift.FeePayment.Amount) / 1e8)
+			}
+			paymentRates, ok := coinRates[shift.Payment.Coin]
+			if !ok {
+				paymentRates, err := obol.GetCoinRates(obol.ProductionURL, shift.Payment.Coin)
+				if err != nil {
+					return nil, err
+				}
+				coinRates[shift.Payment.Coin] = paymentRates
+			}
+
+			var btcPaymentRate float64
+			for _, rate := range paymentRates {
+				if rate.Code == "BTC" {
+					btcPaymentRate = rate.Rate
+				}
+			}
+			response.Volume += btcPaymentRate * (float64(shift.Payment.Amount) / 1e8)
+		}
 		response.Total += 1
 		switch shift.Status {
 		case hestia.GetShiftStatusString(hestia.ShiftStatusPending):
@@ -172,6 +259,10 @@ func (sc StatsController) GetVouchersByTimeStats(userData hestia.User, params Pa
 	for _, voucher := range vouchers {
 		if voucher.Timestamp < timestamp {
 			continue
+		}
+		if voucher.Status == hestia.GetVoucherStatusString(hestia.VoucherStatusComplete) {
+			response.Volume += float64(voucher.BitcouPaymentData.Amount) / 1e8
+			response.VolumeFee += float64(voucher.BitcouFeePaymentData.Amount / 1e8)
 		}
 		response.Total += 1
 		switch voucher.Status {
