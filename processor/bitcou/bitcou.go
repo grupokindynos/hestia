@@ -142,6 +142,9 @@ func main() {
 			if !ok {
 				continue
 			}
+			if voucher.TraderID == 4 {
+				continue
+			}
 			if availableCountry == "usa" &&
 				voucher.ProviderID == 2 ||
 				voucher.ProviderID == 3 ||
