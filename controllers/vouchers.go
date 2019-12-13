@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -10,7 +13,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"os"
 )
 
 /*
@@ -64,6 +66,31 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 		return nil, errors.ErrorInfoDontMatchUser
 	}
 	return vc.Model.Get(params.VoucherID)
+}
+
+func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
+	// Para que sirve params.Admin?
+	userId := c.Query("userid")
+	ts := c.Query("timestamp")
+
+	userInfo, err := vc.UserModel.Get(userId)
+	if err != nil {
+		return nil, errors.ErrorNoUserInformation
+	}
+	var Array []hestia.Voucher
+	timestamp, _ := strconv.ParseInt(ts, 10, 64)
+
+	for _, id := range userInfo.Vouchers {
+		obj, err := vc.Model.Get(id)
+		if err != nil {
+			return nil, errors.ErrorNotFound
+		}
+		if timestamp <= obj.Timestamp {
+			Array = append(Array, obj)
+		}
+	}
+
+	return Array, nil
 }
 
 func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
