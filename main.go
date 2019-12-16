@@ -132,7 +132,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.POST("/shift", shiftCtrl.Store)
 
 		// Ladon
-		api.GET("/user/voucher/all_by_timestamp", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchersByTimestampLadon, false) })
+		authApi.GET("/user/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
