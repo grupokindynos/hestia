@@ -75,22 +75,25 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 
 	userInfo, err := vc.UserModel.Get(userId)
 	if err != nil {
-		return nil, errors.ErrorNoUserInformation
+		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
+		return
 	}
-	var Array []hestia.Voucher
+	var userVouchers []hestia.Voucher
 	timestamp, _ := strconv.ParseInt(ts, 10, 64)
 
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
+			return
 		}
 		if timestamp <= obj.Timestamp {
-			Array = append(Array, obj)
+			userVouchers = append(userVouchers, obj)
 		}
 	}
-
-	return Array, nil
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userVouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
 }
 
 func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
