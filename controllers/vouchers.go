@@ -150,9 +150,30 @@ func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params
 	return countries, nil
 }
 
+func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
+	usaVoucherData, err := vc.BitcouModel.GetTestCountry("usa")
+	if err != nil {
+		return nil, err
+	}
+	var countries []string
+	for k := range usaVoucherData.Vouchers[0].Countries {
+		countries = append(countries, k)
+	}
+	return countries, nil
+}
+
 func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
 	countryData, err := vc.BitcouModel.GetCountry(country)
+	if err != nil {
+		return nil, err
+	}
+	return countryData.Vouchers, nil
+}
+
+func (vc *VouchersController) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
+	country := params.Country
+	countryData, err := vc.BitcouModel.GetTestCountry(country)
 	if err != nil {
 		return nil, err
 	}

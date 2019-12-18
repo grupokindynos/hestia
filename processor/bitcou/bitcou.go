@@ -121,16 +121,46 @@ func main() {
 		log.Fatal(err)
 	}
 	doc := firestore.Collection("bitcou")
-	model := models.BitcouModel{Firestore: doc}
+	docTest := firestore.Collection("bitcou_test")
+	model := models.BitcouModel{Firestore: doc, FirestoreTest: docTest}
 	service := bitcou.InitService()
 	voucherList, err := service.GetList()
 	if err != nil {
 		panic("unable to load bitcou voucher list")
 	}
 	var countries []models.BitcouCountry
+	var countriesDev []models.BitcouCountry
 	var availableCountry []string
 	for key, _ := range voucherList[0].Countries {
 		availableCountry = append(availableCountry, key)
+	}
+	for _, availableCountry := range availableCountry {
+		newCountryData := models.BitcouCountry{
+			ID:       availableCountry,
+			Vouchers: []bitcou.Voucher{},
+		}
+		for _, voucher := range voucherList {
+			provName, ok := ProvidersMap[voucher.ProviderID]
+			if !ok {
+				continue
+			}
+			if voucher.ProviderID == 24 && voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && voucher.Benefits["Data"] {
+				voucher.ProviderName = "Movistar Bundles"
+			} else if voucher.ProductID == 17 {
+				voucher.ProviderName = "PlayStation Live"
+			} else if voucher.ProductID == 361 {
+				voucher.ProviderName = "Battle Net Warcraft"
+			} else if voucher.ProductID == 363 {
+				voucher.ProviderName = "Nintendo Switch"
+			} else {
+				voucher.ProviderName = provName
+			}
+			available := voucher.Countries[availableCountry]
+			if available {
+				newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
+			}
+		}
+		countriesDev = append(countriesDev, newCountryData)
 	}
 	for _, availableCountry := range availableCountry {
 		newCountryData := models.BitcouCountry{
@@ -187,12 +217,16 @@ func main() {
 		}
 		countries = append(countries, newCountryData)
 	}
-
 	for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
 		if err != nil {
 			panic("unable to store country information")
 		}
 	}
-
+	for _, bitcouTestCountry := range countriesDev {
+		err = model.AddTestCountry(bitcouTestCountry)
+		if err != nil {
+			panic("unable to store test country information")
+		}
+	}
 }
