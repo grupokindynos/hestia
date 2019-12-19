@@ -124,14 +124,18 @@ func main() {
 	docTest := firestore.Collection("bitcou_test")
 	model := models.BitcouModel{Firestore: doc, FirestoreTest: docTest}
 	service := bitcou.InitService()
-	voucherList, err := service.GetList()
+	voucherListProd, err := service.GetList(false)
+	if err != nil {
+		panic("unable to load bitcou voucher list")
+	}
+	voucherListDev, err := service.GetList(true)
 	if err != nil {
 		panic("unable to load bitcou voucher list")
 	}
 	var countries []models.BitcouCountry
 	var countriesDev []models.BitcouCountry
 	var availableCountry []string
-	for key, _ := range voucherList[0].Countries {
+	for key, _ := range voucherListProd[0].Countries {
 		availableCountry = append(availableCountry, key)
 	}
 	for _, availableCountry := range availableCountry {
@@ -139,7 +143,7 @@ func main() {
 			ID:       availableCountry,
 			Vouchers: []bitcou.Voucher{},
 		}
-		for _, voucher := range voucherList {
+		for _, voucher := range voucherListDev {
 			provName, ok := ProvidersMap[voucher.ProviderID]
 			if !ok {
 				continue
@@ -167,7 +171,7 @@ func main() {
 			ID:       availableCountry,
 			Vouchers: []bitcou.Voucher{},
 		}
-		for _, voucher := range voucherList {
+		for _, voucher := range voucherListProd {
 			provName, ok := ProvidersMap[voucher.ProviderID]
 			if !ok {
 				continue
