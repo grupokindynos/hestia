@@ -49,7 +49,7 @@ func (bm *BitcouModel) GetCountry(id string) (country BitcouCountry, err error) 
 func (bm *BitcouModel) GetTestCountry(id string) (country BitcouCountry, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	ref := bm.Firestore.Doc(id)
+	ref := bm.FirestoreTest.Doc(id)
 	doc, err := ref.Get(ctx)
 	if err != nil {
 		return country, err
