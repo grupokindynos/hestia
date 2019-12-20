@@ -72,6 +72,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	}
 	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
 	bitcouDoc := firestore.Collection("bitcou")
+	bitcouTestDoc := firestore.Collection("bitcou_test")
 
 	fmt.Println(polisPayDatabase)
 
@@ -86,7 +87,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
-	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc}
+	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -120,6 +121,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Vouchers list
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
+		// Voucher routes for development environment
+		api.GET("/user/voucher/dev/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestAvailableCountries, false) })
+		api.GET("/user/voucher/dev/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestVouchers, false) })
 		// Stats routes
 		// Total Stats
 		api.GET("/user/stats/shift/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, statsCtrl.GetShiftStats, true) })
@@ -131,10 +135,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
 		api.GET("/balances", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinBalances, true) })
-
-		// TODO pending routes
-		//api.GET("/users/info/single/:uid", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetSingle, true) })
-		//.GET("/users/info/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, userCtrl.GetAll, true) })
 	}
 
 	authUser := os.Getenv("HESTIA_AUTH_USERNAME")
@@ -150,6 +150,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.POST("/shift", shiftCtrl.Store)
 
 		// Ladon
+		authApi.GET("/user/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
@@ -158,22 +159,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)
 		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
 		authApi.PUT("/adrestia/new", exchangesCtrl.UpdateOrder)
-
-		// TODO pending MS
-		// Deposit Service
-		//api.GET("/deposit/single/:depositid", depositsCtrl.GetSingle)
-		//api.GET("/deposit/all", depositsCtrl.GetAll)
-		//authApi.POST("/deposit", depositsCtrl.Store)
-
-		// Order Service
-		//authApi.GET("/order/single/:orderid", ordersCtrl.GetSingle)
-		//authApi.GET("/order/all", ordersCtrl.GetAll)
-		//authApi.POST("/order", ordersCtrl.Store)
-
-		// Cards Service
-		//api.GET("/card/single/:cardcode", cardsCtrl.GetSingle)
-		//api.GET("/card/all", cardsCtrl.GetAll)
-		//authApi.POST("/card", cardsCtrl.Store)
 
 		// For all microservices
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)

@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -10,7 +13,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"os"
 )
 
 /*
@@ -64,6 +66,34 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 		return nil, errors.ErrorInfoDontMatchUser
 	}
 	return vc.Model.Get(params.VoucherID)
+}
+
+func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
+	// Para que sirve params.Admin?
+	userId := c.Query("userid")
+	ts := c.Query("timestamp")
+
+	userInfo, err := vc.UserModel.Get(userId)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
+		return
+	}
+	var userVouchers []hestia.Voucher
+	timestamp, _ := strconv.ParseInt(ts, 10, 64)
+
+	for _, id := range userInfo.Vouchers {
+		obj, err := vc.Model.Get(id)
+		if err != nil {
+			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
+			return
+		}
+		if timestamp <= obj.Timestamp {
+			userVouchers = append(userVouchers, obj)
+		}
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userVouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
 }
 
 func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
@@ -150,9 +180,30 @@ func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params
 	return countries, nil
 }
 
+func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
+	usaVoucherData, err := vc.BitcouModel.GetTestCountry("usa")
+	if err != nil {
+		return nil, err
+	}
+	var countries []string
+	for k := range usaVoucherData.Vouchers[0].Countries {
+		countries = append(countries, k)
+	}
+	return countries, nil
+}
+
 func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
 	countryData, err := vc.BitcouModel.GetCountry(country)
+	if err != nil {
+		return nil, err
+	}
+	return countryData.Vouchers, nil
+}
+
+func (vc *VouchersController) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
+	country := params.Country
+	countryData, err := vc.BitcouModel.GetTestCountry(country)
 	if err != nil {
 		return nil, err
 	}
