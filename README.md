@@ -42,8 +42,10 @@ go mod download
 Make sure the port is configured under en enviroment variable `PORT=8080`
 
 ## Running flags
-
+```
 -local
+```
+
 Set this flag to change from production database to testing database.
 
 ## API Reference
