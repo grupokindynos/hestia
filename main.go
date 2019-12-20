@@ -3,18 +3,18 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	firebase "firebase.google.com/go"
 	"flag"
-	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/controllers"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
-	"log"
-	"net/http"
-	"os"
 )
 
 var polisPayDatabase string
@@ -73,8 +73,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
-
-	fmt.Println(polisPayDatabase)
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
