@@ -3,6 +3,11 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"flag"
+	"log"
+	"net/http"
+	"os"
+
 	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -10,15 +15,26 @@ import (
 	"github.com/grupokindynos/hestia/models"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
-	"log"
-	"net/http"
-	"os"
 )
+
+var polisPayDatabase string
 
 func init() {
 	_ = godotenv.Load()
 }
+
 func main() {
+	// Read input flag
+	localRun := flag.Bool("local", false, "set this flag to run hestia with testing data")
+	flag.Parse()
+
+	// If flag was set, change the polispay database to use testing data.
+	if *localRun {
+		polisPayDatabase = "hestia_test"
+	} else {
+		polisPayDatabase = "hestia"
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -54,7 +70,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	doc := firestore.Collection("polispay").Doc("hestia")
+	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
 
