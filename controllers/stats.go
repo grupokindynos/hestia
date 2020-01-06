@@ -36,16 +36,17 @@ func (sc StatsController) GetShiftStats(userData hestia.User, params Params) (in
 	}
 	for _, shift := range shifts {
 		if shift.Status == hestia.GetShiftStatusString(hestia.ShiftStatusComplete) {
+			req := obol.ObolRequest{ObolURL: "https://obol.polispay.com"}
 			if shift.FeePayment.Txid != "" {
 				feeRates, ok := coinRates[shift.FeePayment.Coin]
 				if !ok {
-					feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+					feeRates, err := req.GetCoinRates(shift.FeePayment.Coin)
 					if err != nil {
 						return nil, err
 					}
 					coinRates[shift.FeePayment.Coin] = feeRates
 				}
-				feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+				feeRates, err := req.GetCoinRates(shift.FeePayment.Coin)
 				if err != nil {
 					return nil, err
 				}
@@ -59,7 +60,7 @@ func (sc StatsController) GetShiftStats(userData hestia.User, params Params) (in
 			}
 			paymentRates, ok := coinRates[shift.Payment.Coin]
 			if !ok {
-				paymentRates, err := obol.GetCoinRates(obol.ProductionURL, shift.Payment.Coin)
+				paymentRates, err := req.GetCoinRates(shift.Payment.Coin)
 				if err != nil {
 					return nil, err
 				}
@@ -172,16 +173,17 @@ func (sc StatsController) GetShiftsByTimeStats(userData hestia.User, params Para
 			continue
 		}
 		if shift.Status == hestia.GetShiftStatusString(hestia.ShiftStatusComplete) {
+			req := obol.ObolRequest{ObolURL: "https://obol.polispay.com"}
 			if shift.FeePayment.Txid != "" {
 				feeRates, ok := coinRates[shift.FeePayment.Coin]
 				if !ok {
-					feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+					feeRates, err := req.GetCoinRates(shift.FeePayment.Coin)
 					if err != nil {
 						return nil, err
 					}
 					coinRates[shift.FeePayment.Coin] = feeRates
 				}
-				feeRates, err := obol.GetCoinRates(obol.ProductionURL, shift.FeePayment.Coin)
+				feeRates, err := req.GetCoinRates(shift.FeePayment.Coin)
 				if err != nil {
 					return nil, err
 				}
@@ -195,7 +197,7 @@ func (sc StatsController) GetShiftsByTimeStats(userData hestia.User, params Para
 			}
 			paymentRates, ok := coinRates[shift.Payment.Coin]
 			if !ok {
-				paymentRates, err := obol.GetCoinRates(obol.ProductionURL, shift.Payment.Coin)
+				paymentRates, err := req.GetCoinRates(shift.Payment.Coin)
 				if err != nil {
 					return nil, err
 				}

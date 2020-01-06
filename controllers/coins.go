@@ -6,6 +6,7 @@ import (
 	coinfactory "github.com/grupokindynos/common/coin-factory"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
+	"github.com/grupokindynos/common/obol"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
@@ -157,7 +158,38 @@ func (cc *CoinsController) UpdateCoinsAvailability(userData hestia.User, params 
 }
 
 func (cc *CoinsController) GetCoinBalances(userData hestia.User, params Params) (interface{}, error) {
+	totalBalanceBTC := hestia.CoinBalances{
+		Ticker:  "TOTAL (BTC)",
+		Balance: 0,
+		Status:  "SUCCESS",
+	}
+	totalBalanceUSD := hestia.CoinBalances{
+		Ticker:  "TOTAL (USD)",
+		Balance: 0,
+		Status:  "SUCCESS",
+	}
 	balances, err := cc.BalancesModel.GetBalances()
+	for _, coinBalance := range balances {
+		req := obol.ObolRequest{ObolURL: "https://obol.polispay.com"}
+		rates, err := req.GetCoinRates(coinBalance.Ticker)
+		if err != nil {
+			return nil, err
+		}
+		var coinRateBTC float64
+		var coinRateUSD float64
+		for _, rate := range rates {
+			if rate.Code == "BTC" {
+				coinRateBTC = rate.Rate
+				totalBalanceBTC.Balance += coinRateBTC * coinBalance.Balance
+			}
+			if rate.Code == "USD" {
+				coinRateUSD = rate.Rate
+				totalBalanceUSD.Balance += coinRateUSD * coinBalance.Balance
+			}
+		}
+	}
+	balances = append(balances, totalBalanceBTC)
+	balances = append(balances, totalBalanceUSD)
 	if err != nil {
 		return nil, err
 	}
