@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	ofmt "fmt"
+	"fmt"
 	"os"
 	"strconv"
 
@@ -71,13 +71,11 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 
 func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 	// Check if the user has an id
-	ofmt.Println("0")
 	userId:= c.Query("userid")
 	if userId == "" {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	ofmt.Println("02")
 	ts := c.Query("timestamp")
 	if ts == "" {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
@@ -88,20 +86,14 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	ofmt.Println("1")
 
-	ofmt.Println("userId", userId)
 	userInfo, err := vc.UserModel.Get(userId)
 	if err != nil {
-		ofmt.Println("error getting user model, ", err)
 		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
 		return
 	}
-
 	var userVouchers []hestia.Voucher
-	ofmt.Println("UserVoucher", userVouchers)
 	timestamp, _ := strconv.ParseInt(ts, 10, 64)
-	ofmt.Println("timestamp", timestamp)
 
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
@@ -109,10 +101,12 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
 			return
 		}
+		fmt.Println("obj:", obj)
 		if timestamp <= obj.Timestamp {
 			userVouchers = append(userVouchers, obj)
 		}
 	}
+	fmt.Println("userVouchers", userVouchers)
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userVouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
