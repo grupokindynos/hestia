@@ -21,7 +21,7 @@ func init() {
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 	App := GetApp()
 	_ = App.Run(":" + port)
@@ -83,6 +83,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
 	statsCtrl := controllers.StatsController{ShiftModel: shiftsModel, VouchersModel: vouchersModel, DepositsModel: depositsModel, OrdersModel: ordersModel}
 
+	// API Groups the endpoints that require Firebase token authentication.
 	api := r.Group("/")
 	{
 		// Any
@@ -132,10 +133,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.POST("/shift", shiftCtrl.Store)
 
 		// Ladon
-		authApi.GET("/user/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
+		authApi.GET("/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 
 		// Adrestia
 		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)

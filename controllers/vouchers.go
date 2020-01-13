@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	ofmt "fmt"
 	"os"
 	"strconv"
 
@@ -69,17 +70,38 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 }
 
 func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
-	// Para que sirve params.Admin?
-	userId := c.Query("userid")
+	// Check if the user has an id
+	ofmt.Println("0")
+	userId:= c.Query("userid")
+	if userId == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	ofmt.Println("02")
 	ts := c.Query("timestamp")
+	if ts == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	ofmt.Println("1")
 
+	ofmt.Println("userId", userId)
 	userInfo, err := vc.UserModel.Get(userId)
 	if err != nil {
+		ofmt.Println("error getting user model, ", err)
 		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
 		return
 	}
+
 	var userVouchers []hestia.Voucher
+	ofmt.Println("UserVoucher", userVouchers)
 	timestamp, _ := strconv.ParseInt(ts, 10, 64)
+	ofmt.Println("timestamp", timestamp)
 
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
