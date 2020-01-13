@@ -70,14 +70,8 @@ github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+
 github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+Tv3SM=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
-github.com/grupokindynos/common v0.0.0-20191203174058-340ead09e2ab h1:3orkWGPxfywSF84r0+9yUjk96ALPFjt7ocxtayZNhPA=
-github.com/grupokindynos/common v0.0.0-20191203174058-340ead09e2ab/go.mod h1:271qNb8e6iiAaLcuI9qLQCPrUE36/MGJpCOI2oq+LvA=
-github.com/grupokindynos/common v0.0.0-20191217195117-f37abc85bf54 h1:qDDnGJke7tsQcKM/RyqF0SqGhQhLKoW4gxDuKwTPCfE=
-github.com/grupokindynos/common v0.0.0-20191217195117-f37abc85bf54/go.mod h1:LGf4Vw/gG9LotMlC0G6ciDpoihzUyxPe/1SyhKktvOg=
-github.com/grupokindynos/common v0.0.0-20191220021040-c2c54d69a235 h1:qgVbg2qkcZqAD9SPpcm6NbkeCUnZu4oN9f7qLeYqLkQ=
-github.com/grupokindynos/common v0.0.0-20191220021040-c2c54d69a235/go.mod h1:8qRxv5jfOO0PNIGpPLbXwdlNdlAXg0bH+UehIFuhN2U=
-github.com/grupokindynos/common v0.0.0-20191220180949-5d6e776d2a1a h1:3splytlnUYBxcb8Ui5Fl8od9RKCTkY8PXxpEueoGMdI=
-github.com/grupokindynos/common v0.0.0-20191220180949-5d6e776d2a1a/go.mod h1:8qRxv5jfOO0PNIGpPLbXwdlNdlAXg0bH+UehIFuhN2U=
+github.com/grupokindynos/common v0.0.0-20191222182434-1fb61ba6289e h1:dqsiIr1+t49Tf35XmKzbWb9srz//X5nrNRC8pj2t2U0=
+github.com/grupokindynos/common v0.0.0-20191222182434-1fb61ba6289e/go.mod h1:8qRxv5jfOO0PNIGpPLbXwdlNdlAXg0bH+UehIFuhN2U=
 github.com/grupokindynos/olympus-utils v0.0.0-20191114150906-5c358df85e5c h1:6CSFnEkKH1eAs9FqS2DNqksoSPNYfVE05riAx5cg6ME=
 github.com/grupokindynos/olympus-utils v0.0.0-20191114150906-5c358df85e5c/go.mod h1:CO1mJJZwQrTgBTLXxhn5wJf00YNex3T7kAVy19RBun8=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
@@ -92,6 +86,7 @@ github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqx
 github.com/jrick/logrotate v1.0.0/go.mod h1:LNinyqDIJnpAur+b8yyulnQw/wDuN1+BYKlTRt3OuAQ=
 github.com/json-iterator/go v1.1.6 h1:MrUvLMLTMxbqFJ9kzlvat/rYZqZnW3u4wkLzWTaFwKs=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
+github.com/json-iterator/go v1.1.7 h1:KfgG9LzI+pYjr4xvmz/5H4FXjokeP+rlHLhv3iH62Fo=
 github.com/json-iterator/go v1.1.7/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024 h1:rBMNdlhTLzJjJSDIjNEXX1Pz3Hmwmz91v+zycvx9PJc=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
@@ -193,8 +188,7 @@ golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190606165138-5da285871e9c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0 h1:HyfiK1WMnHj5FXFXatD+Qs1A/xC2Run6RzeW1SyHxpc=
 golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa h1:KIDDMLT1O0Nr7TSxp8xM5tJcdn8tgyAONntO829og1M=
-golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c h1:S/FtSvpNLtFBgjTqcKsRpsa6aVsI6iztaz1bQd9BJwE=
 golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

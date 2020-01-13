@@ -40,3 +40,12 @@ func (m *BalancesModel) UpdateBalances(Balances []hestia.CoinBalances) error {
 	}
 	return nil
 }
+
+func (m *BalancesModel) AddBalance(balance hestia.CoinBalances) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := m.Firestore.Collection(m.Collection)
+	docref := ref.Doc(balance.Ticker)
+	_, _ = docref.Set(ctx, balance)
+	return nil
+}

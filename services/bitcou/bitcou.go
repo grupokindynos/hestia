@@ -2,6 +2,7 @@ package bitcou
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -13,8 +14,14 @@ type Service struct {
 	BitcouToken string
 }
 
-func (bs *Service) GetList() ([]Voucher, error) {
-	url := os.Getenv("BITCOU_URL") + "voucher/availableVouchers/"
+func (bs *Service) GetList(dev bool) ([]Voucher, error) {
+	var url string
+	if dev {
+		url = os.Getenv("BITCOU_URL_DEV") + "voucher/availableVouchers/"
+	} else {
+		url = os.Getenv("BITCOU_URL_PROD") + "voucher/availableVouchers/"
+	}
+	fmt.Println(url)
 	token := "Bearer " + os.Getenv("BITCOU_TOKEN")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {

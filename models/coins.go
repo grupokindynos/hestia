@@ -40,3 +40,12 @@ func (m *CoinsModel) UpdateCoinsData(Coins []hestia.Coin) error {
 	}
 	return nil
 }
+
+func (m *CoinsModel) AddCoin(Coin hestia.Coin) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := m.Firestore.Collection(m.Collection)
+	docref := ref.Doc(Coin.Ticker)
+	_, _ = docref.Set(ctx, Coin)
+	return nil
+}
