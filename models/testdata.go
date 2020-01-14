@@ -207,8 +207,8 @@ var TestDeposit = hestia.Deposit{
 }
 
 var TestExchangeData = hestia.AdrestiaOrder{
-	ID:              "TEST-ORDER",
-	DualExchange:    true,
+	ID:              "",
+	DualExchange:    false,
 	Time:            0000000000,
 	Status:          hestia.AdrestiaStatusCompleted,
 	Amount:          10000,
