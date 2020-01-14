@@ -68,6 +68,34 @@ func (ec *ExchangesController) UpdateOrder(c *gin.Context) {
 		return
 	}
 	// Try to unmarshal the information of the payload
+	var updateData hestia.AdrestiaOrder
+	err = json.Unmarshal(payload, &updateData)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
+		return
+	}
+	_, err = ec.Model.Get(updateData.ID)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	err = ec.Model.Update(updateData)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), updateData.ID, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
+}
+
+func (ec *ExchangesController) UpdateOrderStatus(c *gin.Context) {
+	payload, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	// Try to unmarshal the information of the payload
 	var updateData hestia.AdrestiaOrderUpdate
 	err = json.Unmarshal(payload, &updateData)
 	if err != nil {
