@@ -207,14 +207,14 @@ var TestDeposit = hestia.Deposit{
 }
 
 var TestExchangeData = hestia.AdrestiaOrder{
-	ID:              "",
+	ID:              "TEST-ORDER",
 	DualExchange:    false,
 	Time:            0000000000,
-	Status:          0,
-	Amount:          0,
-	BtcRate:		 0.0,
-	FromCoin:        "",
-	ToCoin:          "",
-	WithdrawAddress: "",
-	Message:         "",
+	Status:          6,
+	Amount:          10000,
+	BtcRate:		 0.001123,
+	FromCoin:        "fake-coin",
+	ToCoin:          "fake-coin",
+	WithdrawAddress: "FAKE-ADDR",
+	Message:         "NO-MESSAGE",
 }
