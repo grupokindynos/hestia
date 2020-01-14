@@ -208,10 +208,11 @@ var TestDeposit = hestia.Deposit{
 
 var TestExchangeData = hestia.AdrestiaOrder{
 	ID:              "TEST-ORDER",
-	Exchange:        "fake-exchange",
+	DualExchange:    true,
 	Time:            0000000000,
-	Status:          hestia.GetAdrestiaStatusString(hestia.AdrestiaStatusCompleted),
+	Status:          hestia.AdrestiaStatusCompleted,
 	Amount:          10000,
+	BtcRate:		 0.0011230,
 	FromCoin:        "fake-coin",
 	ToCoin:          "fake-coin",
 	WithdrawAddress: "FAKE-ADDR",

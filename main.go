@@ -156,7 +156,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Adrestia
 		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)
 		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
-		authApi.PUT("/adrestia/new", exchangesCtrl.UpdateOrder)
+		authApi.PUT("/adrestia/update", exchangesCtrl.UpdateOrder)
+		authApi.PUT("/adrestia/update/status", exchangesCtrl.UpdateOrderStatus)
 
 		// For all microservices
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
