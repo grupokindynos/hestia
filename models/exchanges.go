@@ -51,7 +51,7 @@ func (m *ExchangesModel) GetAll(includeComplete bool, sinceTimestamp int) (order
 				if includeComplete {
 					orders = append(orders, order)
 				} else {
-					if order.Status != hestia.GetAdrestiaStatusString(hestia.AdrestiaStatusCompleted) {
+					if order.Status != hestia.AdrestiaStatusCompleted {
 						orders = append(orders, order)
 					}
 				}
@@ -60,7 +60,7 @@ func (m *ExchangesModel) GetAll(includeComplete bool, sinceTimestamp int) (order
 			if includeComplete {
 				orders = append(orders, order)
 			} else {
-				if order.Status != hestia.GetAdrestiaStatusString(hestia.AdrestiaStatusCompleted) {
+				if order.Status != hestia.AdrestiaStatusCompleted {
 					orders = append(orders, order)
 				}
 			}
