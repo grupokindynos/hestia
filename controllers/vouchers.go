@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"strconv"
 
@@ -101,12 +100,12 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
 			return
 		}
-		fmt.Println("obj:", obj)
+
 		if timestamp <= obj.Timestamp {
 			userVouchers = append(userVouchers, obj)
 		}
 	}
-	fmt.Println("userVouchers", userVouchers)
+
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userVouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
