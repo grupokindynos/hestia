@@ -212,7 +212,7 @@ var TestExchangeData = hestia.AdrestiaOrder{
 	Time:            0000000000,
 	Status:          6,
 	Amount:          10000,
-	BtcRate:		 0.001123,
+	BtcRate:         0.001123,
 	FromCoin:        "fake-coin",
 	ToCoin:          "fake-coin",
 	WithdrawAddress: "FAKE-ADDR",

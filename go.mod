@@ -8,10 +8,8 @@ require (
 	firebase.google.com/go v3.10.0+incompatible
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.4.0
-	github.com/grupokindynos/common v0.0.0-20200114182142-9e70e5f26d70
-	github.com/grupokindynos/olympus-utils v0.0.0-20191114150906-5c358df85e5c // indirect
+	github.com/grupokindynos/common v0.0.0-20200116182445-ec833aaa5a55
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0
-	golang.org/x/tools v0.0.0-20190911174233-4f2ddba30aff
 	google.golang.org/api v0.13.0
 )

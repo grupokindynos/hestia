@@ -54,8 +54,8 @@ func main() {
 	}
 	var newCoinData []hestia.CoinBalances
 	for _, coin := range coinfactory.Coins {
-		currCoinInfo := coinsMap[coin.Tag]
-		balanceReq, err := mvt.CreateMVTToken("GET", plutus.ProductionURL+"/balance/"+coin.Tag, "hestia", os.Getenv("MASTER_PASSWORD"), nil, os.Getenv("PLUTUS_AUTH_USERNAME"), os.Getenv("PLUTUS_AUTH_PASSWORD"), os.Getenv("HESTIA_PRIVATE_KEY"))
+		currCoinInfo := coinsMap[coin.Info.Tag]
+		balanceReq, err := mvt.CreateMVTToken("GET", plutus.ProductionURL+"/balance/"+coin.Info.Tag, "hestia", os.Getenv("MASTER_PASSWORD"), nil, os.Getenv("PLUTUS_AUTH_USERNAME"), os.Getenv("PLUTUS_AUTH_PASSWORD"), os.Getenv("HESTIA_PRIVATE_KEY"))
 		if err != nil {
 			currCoinInfo.Balance = 0
 			currCoinInfo.Status = "ERROR: Unable to create request"
