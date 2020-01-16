@@ -69,9 +69,22 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 }
 
 func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
-	// Para que sirve params.Admin?
-	userId := c.Query("userid")
+	// Check if the user has an id
+	userId:= c.Query("userid")
+	if userId == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
 	ts := c.Query("timestamp")
+	if ts == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
 
 	userInfo, err := vc.UserModel.Get(userId)
 	if err != nil {
@@ -87,10 +100,12 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
 			return
 		}
+
 		if timestamp <= obj.Timestamp {
 			userVouchers = append(userVouchers, obj)
 		}
 	}
+
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userVouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
