@@ -70,7 +70,7 @@ func (vc *VouchersController) GetSingle(userData hestia.User, params Params) (in
 
 func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 	// Check if the user has an id
-	userId:= c.Query("userid")
+	userId := c.Query("userid")
 	if userId == "" {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return

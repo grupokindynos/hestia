@@ -63,14 +63,14 @@ func main() {
 	list, err := getVolumeForCoins()
 	var newCoinConfigs []hestia.Coin
 	for _, coin := range coinfactory.Coins {
-		if coin.Tag == "POLIS" {
+		if coin.Info.Tag == "POLIS" {
 			continue
 		}
-		coinInfo, err := getCoinInfoFromList(list, coin.Tag)
+		coinInfo, err := getCoinInfoFromList(list, coin.Info.Tag)
 		if err != nil {
 			log.Panic(err)
 		}
-		currentCoinInfo := coinConfigMap[coin.Tag]
+		currentCoinInfo := coinConfigMap[coin.Info.Tag]
 		var orderAvailable, depositAvailable, shiftAvailable, vouchersAvailable bool
 
 		if !currentCoinInfo.Deposits.Available {
@@ -114,7 +114,7 @@ func main() {
 		}
 
 		newConfig := hestia.Coin{
-			Ticker: coin.Tag,
+			Ticker: coin.Info.Tag,
 			Shift: hestia.Properties{
 				FeePercentage: currentCoinInfo.Shift.FeePercentage,
 				Available:     shiftAvailable,
