@@ -209,7 +209,7 @@ var TestDeposit = hestia.Deposit{
 var TestExchangeData = hestia.AdrestiaOrder{
 	ID:              "TEST-ORDER",
 	DualExchange:    false,
-	Time:            0000000000,
+	CreatedTime:     0000000000,
 	Status:          6,
 	Amount:          10000,
 	BtcRate:         0.001123,

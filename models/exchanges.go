@@ -47,7 +47,7 @@ func (m *ExchangesModel) GetAll(includeComplete bool, sinceTimestamp int) (order
 		var order hestia.AdrestiaOrder
 		_ = doc.DataTo(&order)
 		if sinceTimestamp != 0 {
-			if int(order.Time) >= sinceTimestamp {
+			if int(order.CreatedTime) >= sinceTimestamp {
 				if includeComplete {
 					orders = append(orders, order)
 				} else {
