@@ -25,6 +25,7 @@ var TestCard = hestia.Card{
 }
 
 var TestCoinData = []hestia.Coin{
+	{Ticker: "BITG", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
 	{Ticker: "BTC", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
 	{Ticker: "COLX", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
 	{Ticker: "DASH", Shift: hestia.Properties{FeePercentage: 10, Available: true}, Deposits: hestia.Properties{FeePercentage: 10, Available: true}, Vouchers: hestia.Properties{FeePercentage: 10, Available: true}, Orders: hestia.Properties{FeePercentage: 10, Available: true}, Balances: hestia.BalanceLimits{HotWallet: 0, Exchanges: 0}},
