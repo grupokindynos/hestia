@@ -89,6 +89,8 @@ github.com/grupokindynos/common v0.0.0-20200120175750-e77c2d8e0f05 h1:d+WJ4VHRP0
 github.com/grupokindynos/common v0.0.0-20200120175750-e77c2d8e0f05/go.mod h1:a07U9nSnk1IOH5FzDJKq+glpD08Az5RshbW3nIw+IlI=
 github.com/grupokindynos/common v0.0.0-20200124193829-bdaa5874d002 h1:y/DznsdR/URVmdvR8CZcYBU28bUFDQnhh9x99E8W/tM=
 github.com/grupokindynos/common v0.0.0-20200124193829-bdaa5874d002/go.mod h1:GuHK2gA5yF3hD5PjguSHuTf8f2xyEmdxoiFOFviyhng=
+github.com/grupokindynos/common v0.0.0-20200131054916-78887ddbc759 h1:73yXvSMXb2awwZxNtPESeeAoSK2M/Yq2AvSMypb+giQ=
+github.com/grupokindynos/common v0.0.0-20200131054916-78887ddbc759/go.mod h1:GuHK2gA5yF3hD5PjguSHuTf8f2xyEmdxoiFOFviyhng=
 github.com/grupokindynos/ogen-utils v0.0.0-20191231185057-013d602e50bd h1:jaa30PtdPBQ8KPkuxLTpJTzdOvgRdr2sZrClrErlfwo=
 github.com/grupokindynos/ogen-utils v0.0.0-20191231185057-013d602e50bd/go.mod h1:YRceCfzbrvndLCynQkYkHm6QXBAveskFuJx6rTo5e5I=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
