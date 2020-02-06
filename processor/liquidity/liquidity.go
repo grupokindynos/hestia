@@ -5,18 +5,18 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	firebase "firebase.google.com/go"
+	"fmt"
 	coinfactory "github.com/grupokindynos/common/coin-factory"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
-	cmc "github.com/grupokindynos/hestia/processor/volume/models"
+	obol "github.com/grupokindynos/hestia/processor/liquidity/models"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
+	"time"
 )
 
 var CoinsModel *models.CoinsModel
@@ -60,57 +60,46 @@ func main() {
 	for _, coin := range currentCoinConfigs {
 		coinConfigMap[coin.Ticker] = coin
 	}
-	list, err := getVolumeForCoins()
 	var newCoinConfigs []hestia.Coin
 	for _, coin := range coinfactory.Coins {
-		if coin.Info.Tag == "POLIS" {
+		// Omit BTC and POLIS because we are always available for this coins.
+		if coin.Info.Tag == "BTC" || coin.Info.Tag == "POLIS" {
 			continue
 		}
-		coinInfo, err := getCoinInfoFromList(list, coin.Info.Tag)
+
+		// Temporally omit ETH and ERC20 + ONION
+		if coin.Info.Tag == "ETH" || coin.Info.Token || coin.Info.Tag == "ONION" {
+			continue
+		}
+
+		coinLiquidity, err := getLiquidity(coin.Info.Tag)
 		if err != nil {
 			log.Panic(err)
 		}
+		fmt.Println(coinLiquidity, coin.Info.Tag)
 		currentCoinInfo := coinConfigMap[coin.Info.Tag]
 		var orderAvailable, depositAvailable, shiftAvailable, vouchersAvailable bool
 
-		if !currentCoinInfo.Deposits.Available {
+		if coinLiquidity > MinVolumeForDeposits {
+			depositAvailable = true
+		} else {
 			depositAvailable = false
-		} else {
-			if *coinInfo.Quote.USD.Volume24h > MinVolumeForDeposits {
-				depositAvailable = true
-			} else {
-				depositAvailable = false
-			}
 		}
-
-		if !currentCoinInfo.Vouchers.Available {
+		if coinLiquidity > MinVolumeForVouchers {
+			vouchersAvailable = true
+		} else {
 			vouchersAvailable = false
-		} else {
-			if *coinInfo.Quote.USD.Volume24h > MinVolumeForVouchers {
-				vouchersAvailable = true
-			} else {
-				vouchersAvailable = false
-			}
 		}
 
-		if !currentCoinInfo.Shift.Available {
+		if coinLiquidity > MinVolumeForConversions {
+			shiftAvailable = true
+		} else {
 			shiftAvailable = false
-		} else {
-			if *coinInfo.Quote.USD.Volume24h > MinVolumeForConversions {
-				shiftAvailable = true
-			} else {
-				shiftAvailable = false
-			}
 		}
-
-		if !currentCoinInfo.Orders.Available {
-			orderAvailable = false
+		if coinLiquidity > MinVolumeForOrders {
+			orderAvailable = true
 		} else {
-			if *coinInfo.Quote.USD.Volume24h > MinVolumeForOrders {
-				orderAvailable = true
-			} else {
-				orderAvailable = false
-			}
+			orderAvailable = false
 		}
 
 		newConfig := hestia.Coin{
@@ -135,43 +124,28 @@ func main() {
 		}
 		newCoinConfigs = append(newCoinConfigs, newConfig)
 	}
-
 	err = CoinsModel.UpdateCoinsData(newCoinConfigs)
 	if err != nil {
 		log.Panic(err)
 	}
 }
 
-func getVolumeForCoins() (cmc.CoinsList, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", nil)
+func getLiquidity(coin string) (float64, error) {
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+	resp, err := client.Get("https://obol.polispay.com/liquidity/" + coin)
 	if err != nil {
-		return cmc.CoinsList{}, err
+		return 0, err
 	}
-	q := url.Values{}
-	q.Add("start", "1")
-	q.Add("limit", "5000")
-	req.Header.Set("Accepts", "application/json")
-	req.Header.Add("X-CMC_PRO_API_KEY", os.Getenv("CMC_API"))
-	req.URL.RawQuery = q.Encode()
-	resp, err := client.Do(req)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	body, err := ioutil.ReadAll(resp.Body)
+	var response obol.Liquidity
+	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return cmc.CoinsList{}, err
+		return 0, err
 	}
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	var CoinsList cmc.CoinsList
-	err = json.Unmarshal(respBody, &CoinsList)
-	if err != nil {
-		return cmc.CoinsList{}, err
-	}
-	return CoinsList, nil
-}
-
-func getCoinInfoFromList(list cmc.CoinsList, coinTag string) (cmc.CoinInfo, error) {
-	for _, coin := range list.Data {
-		if coin.Symbol == strings.ToUpper(coinTag) {
-			return coin, nil
-		}
-	}
-	return cmc.CoinInfo{}, nil
+	return response.Data, nil
 }

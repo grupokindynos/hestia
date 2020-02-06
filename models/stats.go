@@ -9,7 +9,7 @@ type ShiftStatsResponse struct {
 	Refunded   int     `json:"refunded"`
 	Complete   int     `json:"complete"`
 	Total      int     `json:"total"`
-	Volume     float64 `json:"volume"`
+	Volume     float64 `json:"liquidity"`
 }
 
 type VoucherStatsResponse struct {
@@ -24,6 +24,6 @@ type VoucherStatsResponse struct {
 	Refunded          int     `json:"refunded"`
 	RefundedPartially int     `json:"refunded_partially"`
 	Total             int     `json:"total"`
-	Volume            float64 `json:"volume"`
+	Volume            float64 `json:"liquidity"`
 	VolumeFee         float64 `json:"volume_fee"`
 }
