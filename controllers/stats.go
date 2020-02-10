@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/grupokindynos/common/hestia"
-	"github.com/grupokindynos/common/obol"
 	"github.com/grupokindynos/hestia/models"
 )
 
@@ -12,8 +11,6 @@ type StatsController struct {
 	DepositsModel *models.DepositsModel
 	OrdersModel   *models.OrdersModel
 }
-
-var coinRates = make(map[string][]obol.Rate)
 
 // Big TODO this methods can be merged.
 
