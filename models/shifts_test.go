@@ -18,7 +18,7 @@ func TestShiftsModel_Get(t *testing.T) {
 }
 
 func TestShiftsModel_GetAll(t *testing.T) {
-	shifts, err := shiftsModel.GetAll("all")
+	shifts, err := shiftsModel.GetAll("all", "")
 	assert.Nil(t, err)
 	assert.NotZero(t, len(shifts))
 	assert.IsType(t, []hestia.Shift{}, shifts)

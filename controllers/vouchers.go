@@ -34,7 +34,7 @@ type VouchersController struct {
 
 func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
 	if params.Admin {
-		return vc.Model.GetAll(params.Filter)
+		return vc.Model.GetAll(params.Filter, "")
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -143,7 +143,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	vouchersList, err := vc.Model.GetAll(filter)
+	vouchersList, err := vc.Model.GetAll(filter, "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return

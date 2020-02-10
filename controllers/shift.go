@@ -31,7 +31,7 @@ type ShiftsController struct {
 
 func (sc *ShiftsController) GetAll(userData hestia.User, params Params) (interface{}, error) {
 	if params.Admin {
-		return sc.Model.GetAll(params.Filter)
+		return sc.Model.GetAll(params.Filter, "")
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -97,7 +97,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	shiftList, err := sc.Model.GetAll(filter)
+	shiftList, err := sc.Model.GetAll(filter, "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
