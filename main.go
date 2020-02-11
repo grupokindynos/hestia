@@ -93,7 +93,16 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
-	vouchersCtrl := controllers.VouchersController{Model: vouchersModel, UserModel: usersModel, BitcouModel: bitcouModel}
+
+	vouchersCtrl := controllers.VouchersController{
+		Model: vouchersModel,
+		UserModel: usersModel,
+		BitcouModel: bitcouModel,
+		CachedVouchers: controllers.VouchersCache{
+			Vouchers: make(map[string]controllers.CachedVouchersData),
+			CachedCountries: []string{},
+			CachedCountriesUpdated: 0,
+	}}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}

@@ -37,7 +37,7 @@ type CachedVouchersData struct {
 }
 
 type VouchersCache struct {
-	lock                   sync.Locker
+	lock                   sync.RWMutex
 	Vouchers               map[string]CachedVouchersData
 	CachedCountries        []string
 	CachedCountriesUpdated int64
