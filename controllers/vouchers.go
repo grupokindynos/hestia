@@ -196,7 +196,7 @@ func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params
 }
 
 func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
-	usaVoucherData, err := vc.BitcouModel.GetTestCountry("usa")
+	usaVoucherData, err := vc.BitcouModel.GetTestCountry("mexico")
 	if err != nil {
 		return nil, err
 	}

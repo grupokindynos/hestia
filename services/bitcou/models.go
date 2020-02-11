@@ -41,3 +41,8 @@ type BaseResponse struct {
 type MetaData struct {
 	Datetime string `json:"datetime"`
 }
+
+type Provider struct {
+	Id int `json:"provider_id"`
+	Name string `json:"provider_name"`
+}
