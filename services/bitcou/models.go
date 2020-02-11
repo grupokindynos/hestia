@@ -31,6 +31,7 @@ type Voucher struct {
 	ProviderID   int             `firestore:"provider_id" json:"provider_id"`
 	ProviderName string          `firestore:"provider_name" json:"provider_name"`
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
+	Description	 string			 `firestore:"description" json:"description"`
 }
 
 type BaseResponse struct {
