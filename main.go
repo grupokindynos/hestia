@@ -7,11 +7,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/hestia/controllers"
+	"github.com/gin-contrib/cache"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
@@ -64,6 +67,8 @@ func GetApp() *gin.Engine {
 }
 
 func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
+
+	store := persistence.NewInMemoryStore(time.Hour * 12)
 
 	// Init Database
 	firestore, err := fbApp.Firestore(context.Background())
@@ -119,8 +124,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 
 		// Vouchers list
-		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
-		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
+		api.GET("/user/voucher/list", cache.CachePage(store, time.Hour * 6, func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) }))
+		api.GET("/user/voucher/list/:country", cache.CachePage(store, time.Hour * 6, func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) }))
 		// Voucher routes for development environment
 		api.GET("/user/voucher/dev/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestAvailableCountries, false) })
 		api.GET("/user/voucher/dev/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestVouchers, false) })
@@ -133,7 +138,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Admin
 		api.POST("/coins", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.UpdateCoinsAvailability, true) })
 		api.POST("/config", func(c *gin.Context) { fbCtrl.CheckAuth(c, globalConfigCtrl.UpdateConfigData, true) })
-		api.GET("/balances", func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinBalances, true) })
+		api.GET("/balances", cache.CachePage(store, time.Minute * 10, func(c *gin.Context) { fbCtrl.CheckAuth(c, coinsCtrl.GetCoinBalances, true) }))
 	}
 
 	authUser := os.Getenv("HESTIA_AUTH_USERNAME")

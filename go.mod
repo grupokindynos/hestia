@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/firestore v1.1.1
 	cloud.google.com/go/storage v1.0.0
 	firebase.google.com/go v3.10.0+incompatible
+	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-contrib/cors v1.3.0
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
