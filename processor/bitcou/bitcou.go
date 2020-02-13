@@ -54,7 +54,7 @@ func main() {
 	var countries []models.BitcouCountry
 	var countriesDev []models.BitcouCountry
 	var availableCountry []string
-	for key, _ := range voucherListProd[0].Countries {
+	for key := range voucherListProd[0].Countries {
 		availableCountry = append(availableCountry, key)
 	}
 	for _, availableCountry := range availableCountry {
@@ -95,6 +95,7 @@ func main() {
 	}
 	fmt.Println("273")
 	for _, availableCountry := range availableCountry {
+		fmt.Println(availableCountry)
 		newCountryData := models.BitcouCountry{
 			ID:       availableCountry,
 			Vouchers: []bitcou.Voucher{},
@@ -149,12 +150,12 @@ func main() {
 		}
 		countries = append(countries, newCountryData)
 	}
-	for _, bitcouCountry := range countries {
+	/*for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
 		if err != nil {
 			panic("unable to store country information")
 		}
-	}
+	}*/
 	for _, bitcouTestCountry := range countriesDev {
 		err = model.AddTestCountry(bitcouTestCountry)
 		if err != nil {
