@@ -2,8 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/grupokindynos/hestia/services/bitcou"
 	"os"
 	"strconv"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
@@ -26,15 +29,40 @@ import (
 
 */
 
+const voucherCacheTimeFrame = 24 * 60 * 60 // 24 hours
+
+type CachedVouchersData struct {
+	LastUpdated int64
+	Vouchers    []bitcou.Voucher
+}
+
+type VouchersCache struct {
+	lock                   sync.RWMutex
+	Vouchers               map[string]CachedVouchersData
+	CachedCountries        []string
+	CachedCountriesUpdated int64
+}
+
+func (vc *VouchersCache) AddCountryVouchers(country string, vouchers []bitcou.Voucher) {
+	vc.lock.Lock()
+	vc.Vouchers[country] = CachedVouchersData{
+		LastUpdated: time.Now().Unix(),
+		Vouchers:    vouchers,
+	}
+	vc.lock.Unlock()
+	return
+}
+
 type VouchersController struct {
-	Model       *models.VouchersModel
-	UserModel   *models.UsersModel
-	BitcouModel *models.BitcouModel
+	Model          *models.VouchersModel
+	UserModel      *models.UsersModel
+	BitcouModel    *models.BitcouModel
+	CachedVouchers VouchersCache
 }
 
 func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
 	if params.Admin {
-		return vc.Model.GetAll(params.Filter)
+		return vc.Model.GetAll(params.Filter, "")
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -143,7 +171,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	vouchersList, err := vc.Model.GetAll(filter)
+	vouchersList, err := vc.Model.GetAll(filter, "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
@@ -184,15 +212,21 @@ func (vc *VouchersController) Store(c *gin.Context) {
 }
 
 func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
-	usaVoucherData, err := vc.BitcouModel.GetCountry("usa")
-	if err != nil {
-		return nil, err
+	if len(vc.CachedVouchers.CachedCountries) > 0 && vc.CachedVouchers.CachedCountriesUpdated+voucherCacheTimeFrame > time.Now().Unix() {
+		return vc.CachedVouchers.CachedCountries, nil
+	} else {
+		usaVoucherData, err := vc.BitcouModel.GetCountry("usa")
+		if err != nil {
+			return nil, err
+		}
+		var countries []string
+		for k := range usaVoucherData.Vouchers[0].Countries {
+			countries = append(countries, k)
+		}
+		vc.CachedVouchers.CachedCountries = countries
+		vc.CachedVouchers.CachedCountriesUpdated = time.Now().Unix()
+		return countries, nil
 	}
-	var countries []string
-	for k := range usaVoucherData.Vouchers[0].Countries {
-		countries = append(countries, k)
-	}
-	return countries, nil
 }
 
 func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
@@ -208,12 +242,25 @@ func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, pa
 }
 
 func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
-	country := params.Country
-	countryData, err := vc.BitcouModel.GetCountry(country)
-	if err != nil {
-		return nil, err
+	cachedData, ok := vc.CachedVouchers.Vouchers[params.Country]
+	if !ok {
+		countryData, err := vc.BitcouModel.GetCountry(params.Country)
+		if err != nil {
+			return nil, err
+		}
+		vc.CachedVouchers.AddCountryVouchers(params.Country, countryData.Vouchers)
+		return countryData.Vouchers, nil
 	}
-	return countryData.Vouchers, nil
+	if cachedData.LastUpdated+voucherCacheTimeFrame > time.Now().Unix() {
+		return vc.CachedVouchers.Vouchers[params.Country].Vouchers, nil
+	} else {
+		countryData, err := vc.BitcouModel.GetCountry(params.Country)
+		if err != nil {
+			return nil, err
+		}
+		vc.CachedVouchers.AddCountryVouchers(params.Country, countryData.Vouchers)
+		return countryData.Vouchers, nil
+	}
 }
 
 func (vc *VouchersController) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
