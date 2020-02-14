@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
+	"strconv"
 	"time"
 )
 
@@ -34,25 +35,39 @@ func (m *VouchersModel) Update(voucher hestia.Voucher) error {
 	return err
 }
 
-func (m *VouchersModel) GetAll(filter string) (vouchers []hestia.Voucher, err error) {
+func (m *VouchersModel) GetAll(filter string, timefilter string) (vouchers []hestia.Voucher, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
-	docIterator := ref.Documents(ctx)
-	docSnap, err := docIterator.GetAll()
-	if err != nil {
-		return nil, err
+	var docSnap []*firestore.DocumentSnapshot
+	if timefilter != "" {
+		timeInt, err := strconv.Atoi(timefilter)
+		if err != nil {
+			return nil, err
+		}
+		query := ref.Where("timestamp", ">=", timeInt)
+		docSnap, err = query.Documents(ctx).GetAll()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		if filter == "all" {
+			docSnap, err = ref.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			query := ref.Where("status", "==", filter)
+			docSnap, err = query.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	for _, doc := range docSnap {
 		var voucher hestia.Voucher
 		_ = doc.DataTo(&voucher)
-		if filter == "all" {
-			vouchers = append(vouchers, voucher)
-		} else {
-			if voucher.Status == filter {
-				vouchers = append(vouchers, voucher)
-			}
-		}
+		vouchers = append(vouchers, voucher)
 	}
 	return vouchers, nil
 }

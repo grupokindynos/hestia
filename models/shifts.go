@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/grupokindynos/common/hestia"
+	"strconv"
 	"time"
 )
 
@@ -34,25 +35,39 @@ func (m *ShiftModel) Update(shift hestia.Shift) error {
 	return err
 }
 
-func (m *ShiftModel) GetAll(filter string) (shifts []hestia.Shift, err error) {
+func (m *ShiftModel) GetAll(filter string, timefilter string) (shifts []hestia.Shift, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
-	docIterator := ref.Documents(ctx)
-	docSnap, err := docIterator.GetAll()
-	if err != nil {
-		return nil, err
+	var docSnap []*firestore.DocumentSnapshot
+	if timefilter != "" {
+		timeInt, err := strconv.Atoi(timefilter)
+		if err != nil {
+			return nil, err
+		}
+		query := ref.Where("timestamp", ">=", timeInt)
+		docSnap, err = query.Documents(ctx).GetAll()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		if filter == "all" {
+			docSnap, err = ref.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			query := ref.Where("status", "==", filter)
+			docSnap, err = query.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	for _, doc := range docSnap {
 		var shift hestia.Shift
 		_ = doc.DataTo(&shift)
-		if filter == "all" {
-			shifts = append(shifts, shift)
-		} else {
-			if shift.Status == filter {
-				shifts = append(shifts, shift)
-			}
-		}
+		shifts = append(shifts, shift)
 	}
 	return shifts, nil
 }
