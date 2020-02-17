@@ -1,10 +1,11 @@
 package models
 
 import (
-	"cloud.google.com/go/firestore"
 	"context"
-	"github.com/grupokindynos/common/hestia"
 	"time"
+
+	"cloud.google.com/go/firestore"
+	"github.com/grupokindynos/common/hestia"
 )
 
 type CoinsModel struct {
@@ -13,7 +14,7 @@ type CoinsModel struct {
 }
 
 func (m *CoinsModel) GetCoinsData() ([]hestia.Coin, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
 	docIterator := ref.Documents(ctx)
