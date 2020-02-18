@@ -38,21 +38,23 @@ func (m *DepositsModel) GetAll(filter string) (deposits []hestia.Deposit, err er
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
-	docIterator := ref.Documents(ctx)
-	docSnap, err := docIterator.GetAll()
-	if err != nil {
-		return nil, err
+	var docSnap []*firestore.DocumentSnapshot
+	if filter == "all" {
+		docSnap, err = ref.Documents(ctx).GetAll()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		query := ref.Where("status", "==", filter)
+		docSnap, err = query.Documents(ctx).GetAll()
+		if err != nil {
+			return nil, err
+		}
 	}
 	for _, doc := range docSnap {
 		var deposit hestia.Deposit
 		_ = doc.DataTo(&deposit)
-		if filter == "all" {
-			deposits = append(deposits, deposit)
-		} else {
-			if deposit.Status == filter {
-				deposits = append(deposits, deposit)
-			}
-		}
+		deposits = append(deposits, deposit)
 	}
 	return deposits, nil
 }
