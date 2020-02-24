@@ -1,11 +1,12 @@
 package models
 
 import (
-	"cloud.google.com/go/firestore"
 	"context"
+	"time"
+
+	"cloud.google.com/go/firestore"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
-	"time"
 )
 
 type GlobalConfigModel struct {
@@ -30,11 +31,16 @@ func (m *GlobalConfigModel) GetConfigData() (hestia.Config, error) {
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
+	adrestiaAvailable, err := m.getAvailable("adrestia")
+	if err != nil {
+		return hestia.Config{}, errors.ErrorConfigDataGet
+	}
 	configData := hestia.Config{
 		Shift:    shiftAvailable,
 		Deposits: depositAvailable,
 		Vouchers: voucherAvailable,
 		Orders:   ordersAvailable,
+		Adrestia: adrestiaAvailable,
 	}
 	return configData, nil
 }
@@ -68,6 +74,10 @@ func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {
 		return err
 	}
 	err = m.storePropData("orders", config.Orders)
+	if err != nil {
+		return err
+	}
+	err = m.storePropData("adrestia", config.Adrestia)
 	if err != nil {
 		return err
 	}

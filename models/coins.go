@@ -14,7 +14,7 @@ type CoinsModel struct {
 }
 
 func (m *CoinsModel) GetCoinsData() ([]hestia.Coin, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
 	docIterator := ref.Documents(ctx)
