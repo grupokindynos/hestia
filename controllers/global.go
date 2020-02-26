@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -9,7 +12,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/models"
-	"os"
 )
 
 /*
@@ -38,6 +40,7 @@ func (gc *GlobalConfigController) GetConfig(userData hestia.User, params Params)
 }
 
 func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
+	log.Println("Entra microservice")
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
