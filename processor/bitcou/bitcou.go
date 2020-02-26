@@ -79,7 +79,7 @@ func main() {
 			_, okProv := devProvFilter[voucher.ProviderID]
 			_, okVoucher := devVoucherFilter[voucher.ProductID]
 			if !okProv && !okVoucher {
-				provName, ok := ProvidersMap[voucher.ProviderID]
+				provName, ok := devProvidersMap[voucher.ProviderID]
 				if !ok {
 					continue
 				}
