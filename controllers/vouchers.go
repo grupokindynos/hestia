@@ -72,7 +72,8 @@ func (vc *VouchersController) GetAll(userData hestia.User, params Params) (inter
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			continue
+			/* return nil, errors.ErrorNotFound*/
 		}
 		Array = append(Array, obj)
 	}
@@ -125,8 +126,9 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 	for _, id := range userInfo.Vouchers {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
-			responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
-			return
+			continue
+			/* responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
+			return*/
 		}
 
 		if timestamp <= obj.Timestamp {
