@@ -15,12 +15,29 @@ type BitcouCountry struct {
 type BitcouFilter struct {
 	ID       string           `firestore:"id" json:"id"`
 	Providers []int `firestore:"providers" json:"providers"`
-	Vouchers []int `firestore:"vouchers" json:"vouchers"`
+	Vouchers []string `firestore:"vouchers" json:"vouchers"`
+}
+
+type ApiBitcouFilter struct {
+	Target string `json:"api"`
+	Vouchers []string `json:"vouchers"`
+	Providers []int `json:"providers"`
 }
 
 type BitcouModel struct {
 	Firestore     *firestore.CollectionRef
 	FirestoreTest *firestore.CollectionRef
+}
+
+type BitcouConfModel struct {
+	Firestore *firestore.CollectionRef
+}
+
+func (bcm *BitcouConfModel) UpdateFilters(filter BitcouFilter) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, err := bcm.Firestore.Doc(filter.ID).Set(ctx, filter)
+	return err
 }
 
 func (bm *BitcouModel) AddTestCountry(country BitcouCountry) error {
@@ -67,10 +84,10 @@ func (bm *BitcouModel) GetTestCountry(id string) (country BitcouCountry, err err
 	return country, nil
 }
 
-func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers  map[int]bool, err error) {
+func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers  map[string]bool, err error) {
 	var filter BitcouFilter
 	filterMapProviders = make(map[int]bool)
-	filterMapVouchers = make(map[int]bool)
+	filterMapVouchers = make(map[string]bool)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

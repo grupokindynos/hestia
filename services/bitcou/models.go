@@ -33,6 +33,7 @@ type Voucher struct {
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
 	Description	 string			 `firestore:"description" json:"description"`
 	Valid	 int64			 `firestore:"valid" json:"valid"`
+	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
 }
 
 type BaseResponse struct {

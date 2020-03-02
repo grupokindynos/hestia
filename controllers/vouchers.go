@@ -3,11 +3,14 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/grupokindynos/hestia/services/bitcou"
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"sync"
 	"time"
 
+	e "errors"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -57,6 +60,7 @@ type VouchersController struct {
 	Model          *models.VouchersModel
 	UserModel      *models.UsersModel
 	BitcouModel    *models.BitcouModel
+	BitcouConfModel *models.BitcouConfModel
 	CachedVouchers VouchersCache
 }
 
@@ -272,4 +276,34 @@ func (vc *VouchersController) GetTestVouchers(userData hestia.User, params Param
 		return nil, err
 	}
 	return countryData.Vouchers, nil
+}
+
+
+func (vc *VouchersController) AddFilters(c *gin.Context) {
+	// Try to unmarshal the information of the payload
+	var filterData models.ApiBitcouFilter
+	reqBody, _ := ioutil.ReadAll(c.Request.Body)
+	err := json.Unmarshal(reqBody, &filterData)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
+		return
+	}
+	log.Println(filterData)
+	if filterData.Target != "dev" && filterData.Target != "prod" {
+		responses.GlobalResponseError(nil, e.New("api can only have one of the following values (dev | prod)"), c)
+		return
+	}
+
+	filter := models.BitcouFilter{
+		ID:        filterData.Target,
+		Providers: filterData.Providers,
+		Vouchers:  filterData.Vouchers,
+	}
+	err = vc.BitcouConfModel.UpdateFilters(filter)
+	if err != nil {
+		responses.GlobalResponseError(nil, e.New("failed to update filter"), c)
+		return
+	}
+	// Store voucher data to processs
+	return
 }
