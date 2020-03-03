@@ -72,6 +72,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
+	bitcouConfDoc := firestore.Collection("bitcou_filters")
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
@@ -85,6 +86,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
 	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
+	bitcouConfModel := &models.BitcouConfModel{Firestore:bitcouConfDoc}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -98,6 +100,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		Model: vouchersModel,
 		UserModel: usersModel,
 		BitcouModel: bitcouModel,
+		BitcouConfModel: bitcouConfModel,
 		CachedVouchers: controllers.VouchersCache{
 			Vouchers: make(map[string]controllers.CachedVouchersData),
 			CachedCountries: []string{},
@@ -172,6 +175,20 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
+	}
+	r.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "Not Found")
+	})
+
+	authAdminUser := os.Getenv("HESTIA_ADMIN_USER")
+	authAdminPassword := os.Getenv("HESTIA_ADMIN_PASSWORD")
+	authAdminApi := r.Group("/", gin.BasicAuth(gin.Accounts{
+		authAdminUser: authAdminPassword,
+	}))
+	{
+		authAdminApi.POST("/voucher/filter", vouchersCtrl.AddFilters)
+		authAdminApi.DELETE("/voucher/filter", vouchersCtrl.AddFilters)
+		authAdminApi.GET("/voucher/filter/:dev", vouchersCtrl.AddFilters)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")

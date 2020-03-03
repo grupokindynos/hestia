@@ -33,6 +33,39 @@ type Voucher struct {
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
 	Description	 string			 `firestore:"description" json:"description"`
 	Valid	 int64			 `firestore:"valid" json:"valid"`
+	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
+}
+
+type LightVoucher struct {
+	Name         string          `firestore:"name" json:"name"`
+	ProductID    int             `firestore:"product_id" json:"product_id"`
+	RedeemPlace  RedeemPlace     `firestore:"redeem_place" json:"redeem_place"`
+	Shipping     Shipping        `firestore:"shipping" json:"shipping"`
+	TraderID     int             `firestore:"trader_id" json:"trader_id"`
+	Variants     []Variants      `firestore:"variants" json:"variants"`
+	ProviderID   int             `firestore:"provider_id" json:"provider_id"`
+	ProviderName string          `firestore:"provider_name" json:"provider_name"`
+	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
+	Description	 string			 `firestore:"description" json:"description"`
+	Valid	 int64			 `firestore:"valid" json:"valid"`
+	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
+}
+
+func NewLightVoucher(voucher Voucher) *LightVoucher {
+	lv := new(LightVoucher)
+	lv.Name = voucher.Name
+	lv.ProductID = voucher.ProductID
+	lv.RedeemPlace = voucher.RedeemPlace
+	lv.Shipping = voucher.Shipping
+	lv.TraderID = voucher.TraderID
+	lv.Variants = voucher.Variants
+	lv.ProviderID = voucher.ProviderID
+	lv.ProviderName = voucher.ProviderName
+	lv.Benefits = voucher.Benefits
+	lv.Description = voucher.Description
+	lv.Valid = voucher.Valid
+	lv.SKU = voucher.SKU
+	return lv
 }
 
 type BaseResponse struct {
@@ -42,4 +75,9 @@ type BaseResponse struct {
 
 type MetaData struct {
 	Datetime string `json:"datetime"`
+}
+
+type Provider struct {
+	Id int `json:"provider_id"`
+	Name string `json:"provider_name"`
 }

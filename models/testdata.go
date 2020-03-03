@@ -211,7 +211,7 @@ var TestExchangeData = hestia.AdrestiaOrder{
 	ID:              "TEST-ORDER",
 	DualExchange:    false,
 	CreatedTime:     0000000000,
-	Status:          6,
+	Status:          8,
 	Amount:          10000,
 	BtcRate:         0.001123,
 	FromCoin:        "fake-coin",
