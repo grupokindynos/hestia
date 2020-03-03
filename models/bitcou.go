@@ -3,6 +3,7 @@ package models
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"fmt"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"time"
 )
@@ -61,6 +62,7 @@ func (bm *BitcouModel) GetTestCountry(id string) (country BitcouCountry, err err
 		return country, err
 	}
 	err = doc.DataTo(&country)
+	fmt.Println(doc)
 	if err != nil {
 		return country, err
 	}
