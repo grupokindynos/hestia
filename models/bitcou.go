@@ -5,12 +5,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/grupokindynos/hestia/services/bitcou"
+	"google.golang.org/api/iterator"
 	"time"
 )
 
 type BitcouCountry struct {
 	ID       string           `firestore:"id" json:"id"`
-	Vouchers []bitcou.Voucher `firestore:"vouchers" json:"vouchers"`
+	Vouchers []bitcou.LightVoucher `firestore:"vouchers" json:"vouchers"`
 }
 
 type BitcouFilter struct {
@@ -84,6 +85,30 @@ func (bm *BitcouModel) GetTestCountry(id string) (country BitcouCountry, err err
 		return country, err
 	}
 	return country, nil
+}
+
+// Replaces both implementations of GetCountry
+func (bm *BitcouModel) GetCountries(dev bool) (countries []string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var iter *firestore.DocumentIterator
+	if dev {
+		iter = bm.FirestoreTest.Documents(ctx)
+	} else {
+		iter = bm.Firestore.Documents(ctx)
+	}
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return countries, err
+		}
+		countries = append(countries, doc.Ref.ID)
+		fmt.Println(doc.Data())
+	}
+	return countries, nil
 }
 
 func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers  map[string]bool, err error) {

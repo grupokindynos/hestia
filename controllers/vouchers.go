@@ -36,7 +36,7 @@ const voucherCacheTimeFrame = 24 * 60 * 60 // 24 hours
 
 type CachedVouchersData struct {
 	LastUpdated int64
-	Vouchers    []bitcou.Voucher
+	Vouchers    []bitcou.LightVoucher
 }
 
 type VouchersCache struct {
@@ -46,7 +46,7 @@ type VouchersCache struct {
 	CachedCountriesUpdated int64
 }
 
-func (vc *VouchersCache) AddCountryVouchers(country string, vouchers []bitcou.Voucher) {
+func (vc *VouchersCache) AddCountryVouchers(country string, vouchers []bitcou.LightVoucher) {
 	vc.lock.Lock()
 	vc.Vouchers[country] = CachedVouchersData{
 		LastUpdated: time.Now().Unix(),
@@ -217,17 +217,14 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	return
 }
 
+
 func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
 	if len(vc.CachedVouchers.CachedCountries) > 0 && vc.CachedVouchers.CachedCountriesUpdated+voucherCacheTimeFrame > time.Now().Unix() {
 		return vc.CachedVouchers.CachedCountries, nil
 	} else {
-		usaVoucherData, err := vc.BitcouModel.GetCountry("usa")
+		countries, err := vc.BitcouModel.GetCountries(false)
 		if err != nil {
 			return nil, err
-		}
-		var countries []string
-		for k := range usaVoucherData.Vouchers[0].Countries {
-			countries = append(countries, k)
 		}
 		vc.CachedVouchers.CachedCountries = countries
 		vc.CachedVouchers.CachedCountriesUpdated = time.Now().Unix()
@@ -236,13 +233,9 @@ func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params
 }
 
 func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
-	usaVoucherData, err := vc.BitcouModel.GetTestCountry("mexico")
+	countries, err := vc.BitcouModel.GetCountries(true)
 	if err != nil {
 		return nil, err
-	}
-	var countries []string
-	for k := range usaVoucherData.Vouchers[0].Countries {
-		countries = append(countries, k)
 	}
 	return countries, nil
 }

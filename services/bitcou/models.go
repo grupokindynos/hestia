@@ -51,7 +51,22 @@ type LightVoucher struct {
 	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
 }
 
-
+func NewLightVoucher(voucher Voucher) *LightVoucher {
+	lv := new(LightVoucher)
+	lv.Name = voucher.Name
+	lv.ProductID = voucher.ProductID
+	lv.RedeemPlace = voucher.RedeemPlace
+	lv.Shipping = voucher.Shipping
+	lv.TraderID = voucher.TraderID
+	lv.Variants = voucher.Variants
+	lv.ProviderID = voucher.ProviderID
+	lv.ProviderName = voucher.ProviderName
+	lv.Benefits = voucher.Benefits
+	lv.Description = voucher.Description
+	lv.Valid = voucher.Valid
+	lv.SKU = voucher.SKU
+	return lv
+}
 
 type BaseResponse struct {
 	Data []interface{} `json:"data"`

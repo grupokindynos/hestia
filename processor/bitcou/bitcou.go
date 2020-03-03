@@ -74,21 +74,19 @@ func main() {
 	for _, availableCountry := range availableCountry {
 		newCountryData := models.BitcouCountry{
 			ID:       availableCountry,
-			Vouchers: []bitcou.Voucher{},
+			Vouchers: []bitcou.LightVoucher{},
 		}
 		for _, voucher := range voucherListDev {
 			_, okProv := devProvFilter[voucher.ProviderID]
 			_, okVoucher := devVoucherFilter[voucher.SKU]
-			if !okProv && !okVoucher {
+			available := voucher.Countries[availableCountry]
+			if available && !okProv && !okVoucher {
 				_, ok := devProvidersMap[voucher.ProviderID]
 				if !ok {
 					//fmt.Println("missing provider for: ", voucher.SKU)
 					continue
 				}
-				available := voucher.Countries[availableCountry]
-				if available {
-					newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
-				}
+				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
 			} else {
 				log.Println("succesfully filtered ", voucher.SKU)
 			}
@@ -99,7 +97,7 @@ func main() {
 	for _, availableCountry := range availableCountry {
 		newCountryData := models.BitcouCountry{
 			ID:       availableCountry,
-			Vouchers: []bitcou.Voucher{},
+			Vouchers: []bitcou.LightVoucher{},
 		}
 		for _, voucher := range voucherListProd {
 			_, okProv := prodProvFilter[voucher.ProviderID]
@@ -110,7 +108,7 @@ func main() {
 				if !ok {
 					continue
 				}
-				newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
+				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
 			}
 		}
 		countries = append(countries, newCountryData)
