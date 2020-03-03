@@ -42,10 +42,10 @@ func main() {
 	docFilter := firestore.Collection("bitcou_filters")
 	modelFilter := models.BitcouModel{Firestore: docFilter, FirestoreTest: docFilter}
 
-	prodProvFilter, prodVouchersFilter, err := modelFilter.GetFilters("prod")
+	prodProvFilter, prodVoucherFilter, err := modelFilter.GetFilters("prod")
 	devProvFilter, devVoucherFilter, err := modelFilter.GetFilters("dev")
 
-	fmt.Println(prodProvFilter, prodVouchersFilter)
+	fmt.Println(prodProvFilter, prodVoucherFilter)
 	fmt.Println(devProvFilter, devVoucherFilter)
 
 	service := bitcou.InitService()
@@ -70,57 +70,20 @@ func main() {
 	for key := range voucherListProd[0].Countries {
 		availableCountry = append(availableCountry, key)
 	}
-	fmt.Println("Missing id vouchers")
-	for _, availableCountry := range availableCountry {
-		newCountryData := models.BitcouCountry{
-			ID:       availableCountry,
-			Vouchers: []bitcou.LightVoucher{},
-		}
-		for _, voucher := range voucherListDev {
-			_, okProv := devProvFilter[voucher.ProviderID]
-			_, okVoucher := devVoucherFilter[voucher.SKU]
-			available := voucher.Countries[availableCountry]
-			if available && !okProv && !okVoucher {
-				_, ok := devProvidersMap[voucher.ProviderID]
-				if !ok {
-					//fmt.Println("missing provider for: ", voucher.SKU)
-					continue
-				}
-				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
-			} else {
-				log.Println("succesfully filtered ", voucher.SKU)
-			}
-		}
-		countriesDev = append(countriesDev, newCountryData)
-	}
 
-	for _, availableCountry := range availableCountry {
-		newCountryData := models.BitcouCountry{
-			ID:       availableCountry,
-			Vouchers: []bitcou.LightVoucher{},
-		}
-		for _, voucher := range voucherListProd {
-			_, okProv := prodProvFilter[voucher.ProviderID]
-			_, okVoucher := prodVouchersFilter[voucher.SKU]
-			available := voucher.Countries[availableCountry]
-			if available && !okProv && !okVoucher {
-				_, ok := ProvidersMap[voucher.ProviderID]
-				if !ok {
-					continue
-				}
-				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
-			}
-		}
-		countries = append(countries, newCountryData)
-	}
-	/*for _, bitcouCountry := range countries {
+	countriesDev = filterVouchersByCountry(availableCountry, voucherListDev, devProvFilter, devVoucherFilter, devProvidersMap)
+	countries = filterVouchersByCountry(availableCountry, voucherListProd, prodProvFilter, prodVoucherFilter, ProvidersMap)
+
+	for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
 		if err != nil {
 			panic("unable to store country information")
 		}
-	}*/
+	}
+
 	for _, bitcouTestCountry := range countriesDev {
 		err = model.AddTestCountry(bitcouTestCountry)
+		fmt.Println(bitcouTestCountry)
 		if err != nil {
 			panic("unable to store test country information")
 		}
@@ -133,4 +96,31 @@ func providersToMap(providers []bitcou.Provider) (providerMap map[int]string) {
 		providerMap[provider.Id] = provider.Name
 	}
 	return
+}
+
+func filterVouchersByCountry(availableCountries []string, voucherList []bitcou.Voucher, providerFilter map[int]bool, voucherFilter map[string]bool, providerMap map[int]string) []models.BitcouCountry{
+	var countryInfo []models.BitcouCountry
+	for _, availableCountry := range availableCountries {
+		newCountryData := models.BitcouCountry{
+			ID:       availableCountry,
+			Vouchers: []bitcou.LightVoucher{},
+		}
+		for _, voucher := range voucherList {
+			_, okProv := providerFilter[voucher.ProviderID]
+			_, okVoucher := voucherFilter[voucher.SKU]
+			available := voucher.Countries[availableCountry]
+			if available && !okProv && !okVoucher {
+				_, ok := providerMap[voucher.ProviderID]
+				if !ok {
+					//fmt.Println("missing provider for: ", voucher.SKU)
+					continue
+				}
+				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
+			} else {
+				//log.Println("succesfully filtered ", voucher.SKU)
+			}
+		}
+		countryInfo = append(countryInfo, newCountryData)
+	}
+	return countryInfo
 }
