@@ -70,6 +70,7 @@ func main() {
 	for key := range voucherListProd[0].Countries {
 		availableCountry = append(availableCountry, key)
 	}
+	fmt.Println("Missing id vouchers")
 	for _, availableCountry := range availableCountry {
 		newCountryData := models.BitcouCountry{
 			ID:       availableCountry,
@@ -77,88 +78,39 @@ func main() {
 		}
 		for _, voucher := range voucherListDev {
 			_, okProv := devProvFilter[voucher.ProviderID]
-			_, okVoucher := devVoucherFilter[voucher.ProductID]
+			_, okVoucher := devVoucherFilter[voucher.SKU]
 			if !okProv && !okVoucher {
-				provName, ok := devProvidersMap[voucher.ProviderID]
+				_, ok := devProvidersMap[voucher.ProviderID]
 				if !ok {
+					//fmt.Println("missing provider for: ", voucher.SKU)
 					continue
-				}
-				if voucher.ProviderID == 24 && voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && voucher.Benefits["Data"] {
-					voucher.ProviderName = "Movistar Bundles"
-				} else if voucher.ProductID == 17 {
-					voucher.ProviderName = "PlayStation Live"
-				} else if voucher.ProductID == 361 {
-					voucher.ProviderName = "Battle Net Warcraft"
-				} else if voucher.ProductID == 363 {
-					voucher.ProviderName = "Nintendo Switch"
-				} else {
-					voucher.ProviderName = provName
 				}
 				available := voucher.Countries[availableCountry]
 				if available {
 					newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
 				}
+			} else {
+				log.Println("succesfully filtered ", voucher.SKU)
 			}
 		}
 		countriesDev = append(countriesDev, newCountryData)
 	}
-	fmt.Println("273")
+
 	for _, availableCountry := range availableCountry {
-		fmt.Println(availableCountry)
 		newCountryData := models.BitcouCountry{
 			ID:       availableCountry,
 			Vouchers: []bitcou.Voucher{},
 		}
 		for _, voucher := range voucherListProd {
 			_, okProv := prodProvFilter[voucher.ProviderID]
-			_, okVoucher := prodVouchersFilter[voucher.ProductID]
-			if !okProv && !okVoucher {
-				provName, ok := ProvidersMap[voucher.ProviderID]
+			_, okVoucher := prodVouchersFilter[voucher.SKU]
+			available := voucher.Countries[availableCountry]
+			if available && !okProv && !okVoucher {
+				_, ok := ProvidersMap[voucher.ProviderID]
 				if !ok {
 					continue
 				}
-				if voucher.TraderID == 4 {
-					continue
-				}
-				if availableCountry == "usa" &&
-					voucher.ProviderID == 2 ||
-					voucher.ProviderID == 3 ||
-					voucher.ProviderID == 4 ||
-					voucher.ProviderID == 5 ||
-					voucher.ProviderID == 7 ||
-					voucher.ProviderID == 15 ||
-					voucher.ProviderID == 17 ||
-					voucher.ProviderID == 21 ||
-					voucher.ProviderID == 22 ||
-					voucher.ProviderID == 59 ||
-					voucher.ProviderID == 26 ||
-					voucher.ProviderID == 27 ||
-					voucher.ProviderID == 30 ||
-					voucher.ProviderID == 40 ||
-					voucher.ProviderID == 41 ||
-					voucher.ProviderID == 43 ||
-					voucher.ProviderID == 49 ||
-					voucher.ProviderID == 10 ||
-					voucher.ProviderID == 24 ||
-					voucher.ProviderID == 45 ||
-					voucher.ProviderID == 34 {
-					continue
-				}
-				if voucher.ProviderID == 24 && voucher.Benefits["Mobile"] && voucher.Benefits["Minutes"] && voucher.Benefits["Data"] {
-					voucher.ProviderName = "Movistar Bundles"
-				} else if voucher.ProductID == 17 {
-					voucher.ProviderName = "PlayStation Live"
-				} else if voucher.ProductID == 361 {
-					voucher.ProviderName = "Battle Net Warcraft"
-				} else if voucher.ProductID == 363 {
-					voucher.ProviderName = "Nintendo Switch"
-				} else {
-					voucher.ProviderName = provName
-				}
-				available := voucher.Countries[availableCountry]
-				if available {
-					newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
-				}
+				newCountryData.Vouchers = append(newCountryData.Vouchers, voucher)
 			}
 		}
 		countries = append(countries, newCountryData)

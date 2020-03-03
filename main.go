@@ -187,6 +187,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	}))
 	{
 		authAdminApi.POST("/voucher/filter", vouchersCtrl.AddFilters)
+		authAdminApi.DELETE("/voucher/filter", vouchersCtrl.AddFilters)
+		authAdminApi.GET("/voucher/filter/:dev", vouchersCtrl.AddFilters)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
