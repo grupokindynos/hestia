@@ -86,7 +86,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
 	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
-	bitcouConfModel := &models.BitcouConfModel{Firestore:bitcouConfDoc}
+	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -97,15 +97,15 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	userCtrl := controllers.UsersController{Model: usersModel}
 
 	vouchersCtrl := controllers.VouchersController{
-		Model: vouchersModel,
-		UserModel: usersModel,
-		BitcouModel: bitcouModel,
+		Model:           vouchersModel,
+		UserModel:       usersModel,
+		BitcouModel:     bitcouModel,
 		BitcouConfModel: bitcouConfModel,
 		CachedVouchers: controllers.VouchersCache{
-			Vouchers: make(map[string]controllers.CachedVouchersData),
-			CachedCountries: []string{},
+			Vouchers:               make(map[string]controllers.CachedVouchersData),
+			CachedCountries:        []string{},
 			CachedCountriesUpdated: 0,
-	}}
+		}}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}

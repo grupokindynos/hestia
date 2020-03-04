@@ -31,9 +31,9 @@ type Voucher struct {
 	ProviderID   int             `firestore:"provider_id" json:"provider_id"`
 	ProviderName string          `firestore:"provider_name" json:"provider_name"`
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
-	Description	 string			 `firestore:"description" json:"description"`
-	Valid	 int64			 `firestore:"valid" json:"valid"`
-	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
+	Description  string          `firestore:"description" json:"description"`
+	Valid        int64           `firestore:"valid" json:"valid"`
+	SKU          string          `firestore:"localizationKey" json:"localizationKey"`
 }
 
 type LightVoucher struct {
@@ -46,9 +46,9 @@ type LightVoucher struct {
 	ProviderID   int             `firestore:"provider_id" json:"provider_id"`
 	ProviderName string          `firestore:"provider_name" json:"provider_name"`
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
-	Description	 string			 `firestore:"description" json:"description"`
-	Valid	 int64			 `firestore:"valid" json:"valid"`
-	SKU	 string			 `firestore:"localizationKey" json:"localizationKey"`
+	Description  string          `firestore:"description" json:"description"`
+	Valid        int64           `firestore:"valid" json:"valid"`
+	SKU          string          `firestore:"localizationKey" json:"localizationKey"`
 }
 
 func NewLightVoucher(voucher Voucher) *LightVoucher {
@@ -78,6 +78,6 @@ type MetaData struct {
 }
 
 type Provider struct {
-	Id int `json:"provider_id"`
+	Id   int    `json:"provider_id"`
 	Name string `json:"provider_name"`
 }

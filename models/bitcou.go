@@ -10,20 +10,20 @@ import (
 )
 
 type BitcouCountry struct {
-	ID       string           `firestore:"id" json:"id"`
+	ID       string                `firestore:"id" json:"id"`
 	Vouchers []bitcou.LightVoucher `firestore:"vouchers" json:"vouchers"`
 }
 
 type BitcouFilter struct {
-	ID       string           `firestore:"id" json:"id"`
-	Providers []int `firestore:"providers" json:"providers"`
-	Vouchers []string `firestore:"vouchers" json:"vouchers"`
+	ID        string   `firestore:"id" json:"id"`
+	Providers []int    `firestore:"providers" json:"providers"`
+	Vouchers  []string `firestore:"vouchers" json:"vouchers"`
 }
 
 type ApiBitcouFilter struct {
-	Target string `json:"api"`
-	Vouchers []string `json:"vouchers"`
-	Providers []int `json:"providers"`
+	Target    string   `json:"api"`
+	Vouchers  []string `json:"vouchers"`
+	Providers []int    `json:"providers"`
 }
 
 type BitcouModel struct {
@@ -111,7 +111,7 @@ func (bm *BitcouModel) GetCountries(dev bool) (countries []string, err error) {
 	return countries, nil
 }
 
-func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers  map[string]bool, err error) {
+func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers map[string]bool, err error) {
 	var filter BitcouFilter
 	filterMapProviders = make(map[int]bool)
 	filterMapVouchers = make(map[string]bool)

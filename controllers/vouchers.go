@@ -57,11 +57,11 @@ func (vc *VouchersCache) AddCountryVouchers(country string, vouchers []bitcou.Li
 }
 
 type VouchersController struct {
-	Model          *models.VouchersModel
-	UserModel      *models.UsersModel
-	BitcouModel    *models.BitcouModel
+	Model           *models.VouchersModel
+	UserModel       *models.UsersModel
+	BitcouModel     *models.BitcouModel
 	BitcouConfModel *models.BitcouConfModel
-	CachedVouchers VouchersCache
+	CachedVouchers  VouchersCache
 }
 
 func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
@@ -217,7 +217,6 @@ func (vc *VouchersController) Store(c *gin.Context) {
 	return
 }
 
-
 func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
 	if len(vc.CachedVouchers.CachedCountries) > 0 && vc.CachedVouchers.CachedCountriesUpdated+voucherCacheTimeFrame > time.Now().Unix() {
 		return vc.CachedVouchers.CachedCountries, nil
@@ -270,7 +269,6 @@ func (vc *VouchersController) GetTestVouchers(userData hestia.User, params Param
 	}
 	return countryData.Vouchers, nil
 }
-
 
 func (vc *VouchersController) AddFilters(c *gin.Context) {
 	// Try to unmarshal the information of the payload

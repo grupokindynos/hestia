@@ -98,7 +98,7 @@ func providersToMap(providers []bitcou.Provider) (providerMap map[int]string) {
 	return
 }
 
-func filterVouchersByCountry(availableCountries []string, voucherList []bitcou.Voucher, providerFilter map[int]bool, voucherFilter map[string]bool, providerMap map[int]string) []models.BitcouCountry{
+func filterVouchersByCountry(availableCountries []string, voucherList []bitcou.Voucher, providerFilter map[int]bool, voucherFilter map[string]bool, providerMap map[int]string) []models.BitcouCountry {
 	var countryInfo []models.BitcouCountry
 	for _, availableCountry := range availableCountries {
 		newCountryData := models.BitcouCountry{
