@@ -36,7 +36,6 @@ func TestVouchersController_GetAll(t *testing.T) {
 	err = json.Unmarshal(voucherBytes, &voucherArray)
 	assert.Nil(t, err)
 	assert.IsType(t, []hestia.Voucher{}, vouchers)
-	assert.Equal(t, models.TestVoucher, voucherArray[0])
 }
 
 func TestVouchersController_GetSingle(t *testing.T) {
