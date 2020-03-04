@@ -72,6 +72,12 @@ func main() {
 			continue
 		}
 
+		adrestiaCoin := false
+		// Coins available for adrestia
+		if coin.Info.Tag == "DASH" {
+			adrestiaCoin = true
+		}
+
 		coinLiquidity, err := getLiquidity(coin.Info.Tag)
 		if err != nil {
 			log.Panic(err)
@@ -121,6 +127,7 @@ func main() {
 				Available:     orderAvailable,
 			},
 			Balances: currentCoinInfo.Balances,
+			Adrestia: adrestiaCoin,
 		}
 		newCoinConfigs = append(newCoinConfigs, newConfig)
 	}
