@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
-	"fmt"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"github.com/joho/godotenv"
@@ -45,9 +44,6 @@ func main() {
 	prodProvFilter, prodVoucherFilter, err := modelFilter.GetFilters("prod")
 	devProvFilter, devVoucherFilter, err := modelFilter.GetFilters("dev")
 
-	fmt.Println(prodProvFilter, prodVoucherFilter)
-	fmt.Println(devProvFilter, devVoucherFilter)
-
 	service := bitcou.InitService()
 
 	prodProv, _ := service.GetProviders(false) // Retrieves public API vouchers
@@ -83,7 +79,6 @@ func main() {
 
 	for _, bitcouTestCountry := range countriesDev {
 		err = model.AddTestCountry(bitcouTestCountry)
-		fmt.Println(bitcouTestCountry)
 		if err != nil {
 			panic("unable to store test country information")
 		}
@@ -115,6 +110,7 @@ func filterVouchersByCountry(availableCountries []string, voucherList []bitcou.V
 					//fmt.Println("missing provider for: ", voucher.SKU)
 					continue
 				}
+
 				newCountryData.Vouchers = append(newCountryData.Vouchers, *bitcou.NewLightVoucher(voucher))
 			} else {
 				//log.Println("succesfully filtered ", voucher.SKU)
