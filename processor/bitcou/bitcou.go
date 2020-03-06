@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
+	"fmt"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"github.com/joho/godotenv"
@@ -69,6 +70,8 @@ func main() {
 
 	countriesDev = filterVouchersByCountry(availableCountry, voucherListDev, devProvFilter, devVoucherFilter, devProvidersMap)
 	countries = filterVouchersByCountry(availableCountry, voucherListProd, prodProvFilter, prodVoucherFilter, ProvidersMap)
+
+	fmt.Println(countriesDev)
 
 	for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
