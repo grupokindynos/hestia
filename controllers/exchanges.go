@@ -18,21 +18,18 @@ type ExchangesController struct {
 }
 
 func (ec *ExchangesController) GetExchanges(c *gin.Context) {
-	log.Println("entra")
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		log.Println(err)
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	log.Println("Verificado")
 	orders, err := ec.Model.GetAll()
 	if err != nil {
 		log.Println(err)
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
-	log.Println("sale")
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), orders, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
