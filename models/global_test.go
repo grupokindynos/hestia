@@ -1,9 +1,9 @@
 package models
 
 import (
-	"github.com/grupokindynos/common/hestia"
-	"github.com/stretchr/testify/assert"
-	"testing"
+"github.com/grupokindynos/common/hestia"
+"github.com/stretchr/testify/assert"
+"testing"
 )
 
 func TestConfigModel_UpdateConfigData(t *testing.T) {

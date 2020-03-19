@@ -19,17 +19,25 @@ import (
 	"time"
 )
 
+type Adrestia struct {
+	Balancer  []hestia.Balancer `json:balancer`
+	ExchangeDeposits []hestia.SimpleTx `json:exchange_deposits`
+	Withdrawals []hestia.SimpleTx `json:withdrawals`
+	BalancerOrders []hestia.BalancerOrder `json:balancer_orders`
+}
+
 type HestiaDB struct {
 	Balances  []hestia.CoinBalances  `json:"balances"`
 	Cards     []hestia.Card          `json:"cards"`
 	Coins     []hestia.Coin          `json:"coins"`
 	Config    hestia.Config          `json:"config"`
 	Deposits  []hestia.Deposit       `json:"deposits"`
-	Exchanges []hestia.AdrestiaOrder `json:"exchanges"`
+	Exchanges []hestia.ExchangeInfo `json:"exchanges"`
 	Orders    []hestia.Order         `json:"orders"`
 	Shifts    []hestia.Shift         `json:"shifts"`
 	Users     []hestia.User          `json:"users"`
 	Vouchers  []hestia.Voucher       `json:"vouchers"`
+	Adrestia  Adrestia `json:"adrestia"`
 }
 
 var (
@@ -124,9 +132,9 @@ func main() {
 	}
 	deposits, err := getDeposits()
 	if err != nil {
-		log.Fatal(errors.New("unable to load deposits"))
+		log.Fatal(errors.New("unable to load exchange deposits"))
 	}
-	adrestiaOrders, err := getExchanges()
+	exchanges, err := getExchanges()
 	if err != nil {
 		log.Fatal(errors.New("unable to load adrestia orders"))
 	}
@@ -146,17 +154,41 @@ func main() {
 	if err != nil {
 		log.Fatal(errors.New("unable to load vouchers"))
 	}
+	withdrawals, err := getWithdrawals()
+	if err != nil {
+		log.Fatal(errors.New("unable to load withdrawals"))
+	}
+	exchangeDeposits, err := getExchangeDeposits()
+	if err != nil {
+		log.Fatal(errors.New("unable to load deposits"))
+	}
+	balancerOrders, err := getBalancerOrders()
+	if err != nil {
+		log.Fatal(errors.New("unable to load balancerOrders"))
+	}
+	balancers, err := getBalancers()
+	if err != nil {
+		log.Fatal(errors.New("unable to load balancers"))
+	}
+	adrestia := Adrestia{
+		Withdrawals:withdrawals,
+		ExchangeDeposits:exchangeDeposits,
+		BalancerOrders:balancerOrders,
+		Balancer:balancers,
+	}
+
 	fullDB := HestiaDB{
 		Balances:  balances,
 		Cards:     cards,
 		Coins:     coins,
 		Config:    config,
 		Deposits:  deposits,
-		Exchanges: adrestiaOrders,
+		Exchanges: exchanges,
 		Orders:    orders,
 		Shifts:    shifts,
 		Users:     users,
 		Vouchers:  vouchers,
+		Adrestia:adrestia,
 	}
 	jsonObj, err := json.Marshal(fullDB)
 	if err != nil {
@@ -290,10 +322,10 @@ func getDeposits() ([]hestia.Deposit, error) {
 	return array, nil
 }
 
-func getExchanges() ([]hestia.AdrestiaOrder, error) {
+func getExchanges() ([]hestia.ExchangeInfo, error) {
 	collection := hestiaDoc.Collection("exchanges")
 	docIter := collection.Documents(context.Background())
-	var array []hestia.AdrestiaOrder
+	var array []hestia.ExchangeInfo
 	for {
 		doc, err := docIter.Next()
 		if err == iterator.Done {
@@ -302,7 +334,7 @@ func getExchanges() ([]hestia.AdrestiaOrder, error) {
 		if err != nil {
 			return nil, err
 		}
-		var elem hestia.AdrestiaOrder
+		var elem hestia.ExchangeInfo
 		err = doc.DataTo(&elem)
 		if err != nil {
 			return nil, err
@@ -391,6 +423,94 @@ func getVouchers() ([]hestia.Voucher, error) {
 			return nil, err
 		}
 		var elem hestia.Voucher
+		err = doc.DataTo(&elem)
+		if err != nil {
+			return nil, err
+		}
+		array = append(array, elem)
+	}
+	return array, nil
+}
+
+func getWithdrawals() ([]hestia.SimpleTx, error) {
+	collection := hestiaDoc.Collection("adrestia/withdrawals")
+	docIter := collection.Documents(context.Background())
+	var array []hestia.SimpleTx
+	for {
+		doc, err := docIter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var elem hestia.SimpleTx
+		err = doc.DataTo(&elem)
+		if err != nil {
+			return nil, err
+		}
+		array = append(array, elem)
+	}
+	return array, nil
+}
+
+func getExchangeDeposits() ([]hestia.SimpleTx, error) {
+	collection := hestiaDoc.Collection("adrestia/deposits")
+	docIter := collection.Documents(context.Background())
+	var array []hestia.SimpleTx
+	for {
+		doc, err := docIter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var elem hestia.SimpleTx
+		err = doc.DataTo(&elem)
+		if err != nil {
+			return nil, err
+		}
+		array = append(array, elem)
+	}
+	return array, nil
+}
+
+func getBalancerOrders() ([]hestia.BalancerOrder, error) {
+	collection := hestiaDoc.Collection("adrestia/orders")
+	docIter := collection.Documents(context.Background())
+	var array []hestia.BalancerOrder
+	for {
+		doc, err := docIter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var elem hestia.BalancerOrder
+		err = doc.DataTo(&elem)
+		if err != nil {
+			return nil, err
+		}
+		array = append(array, elem)
+	}
+	return array, nil
+}
+
+func getBalancers() ([]hestia.Balancer, error) {
+	collection := hestiaDoc.Collection("adrestia/balancer")
+	docIter := collection.Documents(context.Background())
+	var array []hestia.Balancer
+	for {
+		doc, err := docIter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var elem hestia.Balancer
 		err = doc.DataTo(&elem)
 		if err != nil {
 			return nil, err

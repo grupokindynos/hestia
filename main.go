@@ -84,6 +84,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
+	AdrestiaModel := models.NewAdrestiaModel(*doc)
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
 	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
 	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
@@ -95,6 +96,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
+	AdrestiaCtrl := controllers.AdrestiaController{Model: &AdrestiaModel}
 
 	vouchersCtrl := controllers.VouchersController{
 		Model:           vouchersModel,
@@ -166,12 +168,22 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 
 		// Adrestia
-		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)
-		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
-		authApi.PUT("/adrestia/update", exchangesCtrl.UpdateOrder)
-		authApi.PUT("/adrestia/update/status", exchangesCtrl.UpdateOrderStatus)
+		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
+		authApi.GET("/adrestia/withdrawals", AdrestiaCtrl.GetWithdrawals)
+		authApi.GET("/adrestia/orders", AdrestiaCtrl.GetBalancerOrders)
+		authApi.GET("/adrestia/balancer", AdrestiaCtrl.GetBalancers)
+		authApi.POST("/adrestia/new/deposit", AdrestiaCtrl.StoreDeposit)
+		authApi.POST("/adrestia/new/withdrawal", AdrestiaCtrl.StoreWithdrawal)
+		authApi.POST("/adrestia/new/order", AdrestiaCtrl.StoreBalancerOrder)
+		authApi.POST("/adrestia/new/balancer", AdrestiaCtrl.StoreBalancer)
+		authApi.PUT("/adrestia/update/deposit", AdrestiaCtrl.UpdateDeposit)
+		authApi.PUT("/adrestia/update/withdrawal", AdrestiaCtrl.UpdateWithdrawal)
+		authApi.PUT("/adrestia/update/order", AdrestiaCtrl.UpdateBalancerOrder)
+		authApi.PUT("/adrestia/update/balancer", AdrestiaCtrl.UpdateBalancer)
 
 		// For all microservices
+		api.GET("/exchanges", exchangesCtrl.GetExchanges)
+		api.POST("/exchanges/update", exchangesCtrl.UpdateExchange)
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
