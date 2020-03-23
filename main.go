@@ -182,6 +182,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.PUT("/adrestia/update/balancer", AdrestiaCtrl.UpdateBalancer)
 
 		// For all microservices
+		api.GET("/exchange", exchangesCtrl.GetExchange)
 		api.GET("/exchanges", exchangesCtrl.GetExchanges)
 		api.POST("/exchanges/update", exchangesCtrl.UpdateExchange)
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)

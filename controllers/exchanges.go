@@ -17,6 +17,29 @@ type ExchangesController struct {
 	Model *models.ExchangesModel
 }
 
+func (ec *ExchangesController) GetExchange(c *gin.Context) {
+	payload, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	// Try to unmarshal the information of the payload
+	var id string
+	err = json.Unmarshal(payload, &id)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
+		return
+	}
+	exchange, err := ec.Model.Get(id)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), exchange, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
+}
+
 func (ec *ExchangesController) GetExchanges(c *gin.Context) {
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
