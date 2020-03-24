@@ -72,10 +72,17 @@ func main() {
 			continue
 		}
 
-		adrestiaCoin := false
+		adrestiaCoin := hestia.AdrestiaInfo{Available: true}
 		// Coins available for adrestia
-		if coin.Info.Tag == "DASH" {
-			adrestiaCoin = true
+		switch coin.Info.Tag {
+		case "USDT":
+			adrestiaCoin.CoinUsage = 10
+		case "TUSD":
+			adrestiaCoin.CoinUsage = 2
+		case "USDC":
+			adrestiaCoin.CoinUsage = 2
+		default:
+			adrestiaCoin.Available = false
 		}
 
 		coinLiquidity, err := getLiquidity(coin.Info.Tag)
