@@ -15,10 +15,10 @@ type AdrestiaModel struct {
 
 func NewAdrestiaModel(doc firestore.DocumentRef) AdrestiaModel {
 	adrestia := AdrestiaModel{Firestore: &doc, Collections: map[string]string{
-		"withdrawals": "adrestia/withdrawals",
-		"deposits": "adrestia/deposits",
-		"orders": "adrestia/orders",
-		"balancer": "adrestia/balancer",
+		"withdrawals": "adrestia_withdrawals",
+		"deposits": "adrestia_deposits",
+		"orders": "adrestia_orders",
+		"balancer": "adrestia_balancer",
 	}}
 	return adrestia
 }
@@ -108,7 +108,7 @@ func (am *AdrestiaModel) GetAllSimpleTx(includeComplete bool, sinceTimestamp int
 		var simpleTx hestia.SimpleTx
 		_ = doc.DataTo(&simpleTx)
 		if sinceTimestamp != 0 {
-			if int(simpleTx.Timestamp) >= sinceTimestamp {
+			if int(simpleTx.CreatedTime) >= sinceTimestamp {
 				if includeComplete {
 					simpleTxs = append(simpleTxs, simpleTx)
 				} else if simpleTx.Status != hestia.SimpleTxStatusCompleted {
@@ -170,7 +170,7 @@ func (am *AdrestiaModel) GetAllBalancer(includeComplete bool, sinceTimestamp int
 		var balancer hestia.Balancer
 		_ = doc.DataTo(&balancer)
 		if sinceTimestamp != 0 {
-			if int(balancer.Timestamp) >= sinceTimestamp {
+			if int(balancer.CreatedTime) >= sinceTimestamp {
 				if includeComplete {
 					balancers = append(balancers, balancer)
 				} else if balancer.Status != hestia.BalancerStatusCompleted {

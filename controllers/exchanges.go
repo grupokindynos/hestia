@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	nError "errors"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/responses"
@@ -18,25 +19,27 @@ type ExchangesController struct {
 }
 
 func (ec *ExchangesController) GetExchange(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
-	if err != nil {
-		responses.GlobalResponseNoAuth(c)
+	id := c.Query("Id")
+	if id == "" {
+		responses.GlobalResponseError(nil, nError.New("Missing exchange id"), c)
 		return
 	}
-	// Try to unmarshal the information of the payload
-	var id string
-	err = json.Unmarshal(payload, &id)
+	log.Println(id)
+	_, err := mvt.VerifyRequest(c)
 	if err != nil {
-		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
+		log.Println("2 " + err.Error())
+		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	exchange, err := ec.Model.Get(id)
 	if err != nil {
+		log.Println("3 " + err.Error())
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), exchange, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
+	log.Println("Sale")
 	return
 }
 

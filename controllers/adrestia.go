@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"os"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -44,13 +45,16 @@ func (ac *AdrestiaController) storeSimpleTx(c *gin.Context, payload []byte, txTy
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
+	log.Println("Pasa primer error")
 	err = ac.Model.UpdateSimpleTx(simpleTx, txType)
 	if err != nil {
+		log.Println(err)
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), simpleTx.Id, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
+	log.Println("Sale de controller")
 	return
 }
 

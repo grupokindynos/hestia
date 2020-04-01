@@ -19,13 +19,6 @@ import (
 	"time"
 )
 
-type Adrestia struct {
-	Balancer  []hestia.Balancer `json:balancer`
-	ExchangeDeposits []hestia.SimpleTx `json:exchange_deposits`
-	Withdrawals []hestia.SimpleTx `json:withdrawals`
-	BalancerOrders []hestia.BalancerOrder `json:balancer_orders`
-}
-
 type HestiaDB struct {
 	Balances  []hestia.CoinBalances  `json:"balances"`
 	Cards     []hestia.Card          `json:"cards"`
@@ -37,7 +30,10 @@ type HestiaDB struct {
 	Shifts    []hestia.Shift         `json:"shifts"`
 	Users     []hestia.User          `json:"users"`
 	Vouchers  []hestia.Voucher       `json:"vouchers"`
-	Adrestia  Adrestia `json:"adrestia"`
+	AdrestiaBalancer  []hestia.Balancer `json:"adrestia_balancer"`
+	AdrestiaDeposits []hestia.SimpleTx `json:"adrestia_deposits"`
+	AdrestiaOrders []hestia.BalancerOrder `json:"adrestia_orders"`
+	AdrestiaWithdrawals []hestia.SimpleTx `json:"adrestia_withdrawals"`
 }
 
 var (
@@ -170,12 +166,6 @@ func main() {
 	if err != nil {
 		log.Fatal(errors.New("unable to load balancers"))
 	}
-	adrestia := Adrestia{
-		Withdrawals:withdrawals,
-		ExchangeDeposits:exchangeDeposits,
-		BalancerOrders:balancerOrders,
-		Balancer:balancers,
-	}
 
 	fullDB := HestiaDB{
 		Balances:  balances,
@@ -188,7 +178,10 @@ func main() {
 		Shifts:    shifts,
 		Users:     users,
 		Vouchers:  vouchers,
-		Adrestia:adrestia,
+		AdrestiaBalancer: balancers,
+		AdrestiaDeposits: exchangeDeposits,
+		AdrestiaOrders: balancerOrders,
+		AdrestiaWithdrawals: withdrawals,
 	}
 	jsonObj, err := json.Marshal(fullDB)
 	if err != nil {

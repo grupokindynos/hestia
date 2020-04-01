@@ -108,7 +108,6 @@ load:
 			// If doesn't exists it means we must create it.
 			newCoinData := hestia.Coin{
 				Ticker:   v.Info.Tag,
-				Adrestia: false,
 				Shift: hestia.Properties{
 					FeePercentage: 10,
 					Available:     false,

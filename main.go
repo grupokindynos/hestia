@@ -184,7 +184,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// For all microservices
 		api.GET("/exchange", exchangesCtrl.GetExchange)
 		api.GET("/exchanges", exchangesCtrl.GetExchanges)
-		api.POST("/exchanges/update", exchangesCtrl.UpdateExchange)
+		api.PUT("/exchanges/update", exchangesCtrl.UpdateExchange)
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
