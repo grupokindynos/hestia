@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	firebase "firebase.google.com/go"
-	"fmt"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"github.com/joho/godotenv"
@@ -50,14 +49,14 @@ func main() {
 	prodProv, _ := service.GetProviders(false) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProviders(true) // Retrieves dev API vouchers
+	devProv, _ := service.GetProviders(false) // Retrieves dev API vouchers
 	var devProvidersMap = providersToMap(devProv)
 
 	voucherListProd, err := service.GetList(false)
 	if err != nil {
-		panic("unable to load bitcou voucher list")
+		panic("unable to load bitcou voucher list: " + err.Error())
 	}
-	voucherListDev, err := service.GetList(true)
+	voucherListDev, err := service.GetList(false)
 	if err != nil {
 		panic("unable to load bitcou voucher list")
 	}
@@ -70,8 +69,6 @@ func main() {
 
 	countriesDev = filterVouchersByCountry(availableCountry, voucherListDev, devProvFilter, devVoucherFilter, devProvidersMap)
 	countries = filterVouchersByCountry(availableCountry, voucherListProd, prodProvFilter, prodVoucherFilter, ProvidersMap)
-
-	fmt.Println(countriesDev)
 
 	for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
