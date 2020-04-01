@@ -29,6 +29,7 @@ func main() {
 
 	// If flag was set, change the polispay database to use testing data.
 	if *localRun {
+		log.Println("Using dev firebase db")
 		polisPayDatabase = "hestia_test"
 	} else {
 		polisPayDatabase = "hestia"
