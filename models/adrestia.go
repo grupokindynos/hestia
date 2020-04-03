@@ -3,9 +3,9 @@ package models
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"errors"
 	"github.com/grupokindynos/common/hestia"
 	"time"
-	"errors"
 )
 
 type AdrestiaModel struct {
@@ -66,6 +66,26 @@ func (am *AdrestiaModel) GetBalancer(id string) (balancer hestia.Balancer, err e
 		return balancer, err
 	}
 	return balancer, nil
+}
+
+
+func (am *AdrestiaModel) GetBalancers(includeComplete bool) (balancers []hestia.Balancer, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := am.Firestore.Collection(am.Collections["balancer"])
+	docIterator := ref.Documents(ctx)
+	docSnap, err := docIterator.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docSnap {
+		var bal hestia.Balancer
+		_ = doc.DataTo(&bal)
+		if bal.Status != hestia.BalancerStatusCompleted {
+			balancers = append(balancers, bal)
+		}
+	}
+	return balancers, nil
 }
 
 func (am *AdrestiaModel) UpdateSimpleTx(simpleTx hestia.SimpleTx, txType string) error {

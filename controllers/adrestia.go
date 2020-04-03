@@ -263,21 +263,20 @@ func (ac *AdrestiaController) GetBalancerOrders(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) GetBalancers(c *gin.Context) {
-	includeComplete := c.Query("include_complete")
-	sinceTimestamp := c.Query("added_since")
+	includeComplete := c.Query("IncludeComplete")
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
 	include, _ := strconv.ParseBool(includeComplete)
-	timestamp, _ := strconv.Atoi(sinceTimestamp)
-	balancers, err := ac.Model.GetAllBalancerOrder(include, timestamp)
+	log.Println(include)
+	balancer, err := ac.Model.GetBalancers(include)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
-	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), balancers, os.Getenv("HESTIA_PRIVATE_KEY"))
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), balancer, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }
