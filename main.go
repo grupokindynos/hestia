@@ -77,6 +77,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
+	shiftsModelV2 := &models.ShiftModelV2{
+		Firestore:  doc,
+		Collection: "shifts2",
+	}
 	cardsModel := &models.CardsModel{Firestore: doc, Collection: "cards"}
 	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
 	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
@@ -96,6 +100,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
+	shiftCtrlV2 := controllers.ShiftsControllerV2{Model: shiftsModelV2, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
 	AdrestiaCtrl := controllers.AdrestiaController{Model: &AdrestiaModel}
 
@@ -132,6 +137,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 
+		api.GET("/user/shift2/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrlV2.GetSingle, false) })
+		api.GET("/user/shift2/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrlV2.GetAll, false) })
+
 		// Vouchers list
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
@@ -161,6 +169,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/shift/single/:shiftid", shiftCtrl.GetSingleTyche)
 		authApi.GET("/shift/all", shiftCtrl.GetAllTyche)
 		authApi.POST("/shift", shiftCtrl.Store)
+
+		// TycheV2
+		authApi.GET("/shift2/single/:shiftid", shiftCtrlV2.GetSingleTyche)
+		authApi.GET("/shift2/all", shiftCtrl.GetAllTyche)
+		authApi.POST("/shift2", shiftCtrl.Store)
 
 		// Ladon
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
