@@ -172,8 +172,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 		// TycheV2
 		authApi.GET("/shift2/single/:shiftid", shiftCtrlV2.GetSingleTyche)
-		authApi.GET("/shift2/all", shiftCtrl.GetAllTyche)
-		authApi.POST("/shift2", shiftCtrl.Store)
+		authApi.GET("/shift2/all", shiftCtrlV2.GetAllTyche)
+		authApi.POST("/shift2", shiftCtrlV2.Store)
 
 		// Ladon
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)

@@ -112,6 +112,8 @@ github.com/grupokindynos/common v0.0.0-20200324175010-c55de8d7068e h1:uXdlU6VbpN
 github.com/grupokindynos/common v0.0.0-20200324175010-c55de8d7068e/go.mod h1:54Nv1EC/vlsMTdys83LQ7jHluB+bY5tXodU1orxqoAA=
 github.com/grupokindynos/common v0.0.0-20200327183545-2c6e7ed4b7e8 h1:rfqO9GaDrLmqnASldTdKZXFT6xmesDKwazDOY80aFec=
 github.com/grupokindynos/common v0.0.0-20200327183545-2c6e7ed4b7e8/go.mod h1:54Nv1EC/vlsMTdys83LQ7jHluB+bY5tXodU1orxqoAA=
+github.com/grupokindynos/common v0.0.0-20200414160901-71d4b1479499 h1:GrOIP0os4al9IE9hm9108rXysJmX2ZPhQdWdmrLghp4=
+github.com/grupokindynos/common v0.0.0-20200414160901-71d4b1479499/go.mod h1:54Nv1EC/vlsMTdys83LQ7jHluB+bY5tXodU1orxqoAA=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
