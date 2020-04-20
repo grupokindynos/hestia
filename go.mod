@@ -10,7 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
-	github.com/grupokindynos/common v0.0.0-20200416150154-3b165a297b39
+	github.com/grupokindynos/common v0.0.0-20200420191014-7515bcdac72b
 	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect

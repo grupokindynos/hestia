@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	firebase "firebase.google.com/go"
-	"fmt"
 	coinfactory "github.com/grupokindynos/common/coin-factory"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
@@ -22,10 +21,10 @@ import (
 var CoinsModel *models.CoinsModel
 
 const (
-	MinVolumeForConversions = 5000
-	MinVolumeForVouchers    = 2000
-	MinVolumeForDeposits    = 10000
-	MinVolumeForOrders      = 10000
+	MinVolumeForConversions = 1000
+	MinVolumeForVouchers    = 500
+	MinVolumeForDeposits    = 5000
+	MinVolumeForOrders      = 5000
 )
 
 func init() {
@@ -89,7 +88,6 @@ func main() {
 		if err != nil {
 			log.Panic(err)
 		}
-		fmt.Println(coinLiquidity, coin.Info.Tag)
 		currentCoinInfo := coinConfigMap[coin.Info.Tag]
 		var orderAvailable, depositAvailable, shiftAvailable, vouchersAvailable bool
 
