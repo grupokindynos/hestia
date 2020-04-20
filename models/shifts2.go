@@ -35,7 +35,7 @@ func (m *ShiftModelV2) Update(shift hestia.ShiftV2) error {
 	return err
 }
 
-func (m *ShiftModelV2) GetAll(filter string, timeFilter string) (shifts []hestia.ShiftV2, err error) {
+func (m *ShiftModelV2) GetAll(filter int32, timeFilter string) (shifts []hestia.ShiftV2, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
@@ -51,7 +51,7 @@ func (m *ShiftModelV2) GetAll(filter string, timeFilter string) (shifts []hestia
 			return nil, err
 		}
 	} else {
-		if filter == "all" {
+		if filter == -1 {
 			docSnap, err = ref.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err

@@ -11,6 +11,7 @@ import (
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
 	"os"
+	"strconv"
 )
 
 /*
@@ -30,8 +31,12 @@ type ShiftsControllerV2 struct {
 }
 
 func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	filterNum, _ := strconv.ParseInt(params.Filter, 10, 32)
+	if params.Filter == "" {
+		filterNum = -1
+	}
 	if params.Admin {
-		return sc.Model.GetAll(params.Filter, "")
+		return sc.Model.GetAll(int32(filterNum), "")
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -89,15 +94,17 @@ func (sc *ShiftsControllerV2) GetSingleTyche(c *gin.Context) {
 
 func (sc *ShiftsControllerV2) GetAllTyche(c *gin.Context) {
 	filter := c.Query("filter")
+	filterNum, _ := strconv.ParseInt(filter, 10, 32)
 	if filter == "" {
-		filter = "all"
+		filterNum = -1
 	}
+
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	shiftList, err := sc.Model.GetAll(filter, "")
+	shiftList, err := sc.Model.GetAll(int32(filterNum), "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
