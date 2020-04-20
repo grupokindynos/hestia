@@ -19,6 +19,7 @@ var (
 	coinsCtrl    CoinsController
 	globalCtrl   GlobalConfigController
 	vouchersCtrl VouchersController
+	adrestiaCtrl AdrestiaController
 )
 
 var TestParams = Params{
@@ -75,6 +76,7 @@ func init() {
 	coinsModel := &models.CoinsModel{Firestore: baseDoc, Collection: "coins"}
 	globalModel := &models.GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
 	vouchersModel := &models.VouchersModel{Firestore: baseDoc, Collection: "vouchers"}
+	adrestiaModel := models.NewAdrestiaModel(*baseDoc)
 
 	// Init Controllers
 	cardsCtrl = CardsController{Model: cardsModel, UserModel: usersModel}
@@ -84,5 +86,5 @@ func init() {
 	coinsCtrl = CoinsController{Model: coinsModel}
 	globalCtrl = GlobalConfigController{Model: globalModel}
 	vouchersCtrl = VouchersController{Model: vouchersModel, UserModel: usersModel}
-
+	adrestiaCtrl = AdrestiaController{Model: &adrestiaModel}
 }

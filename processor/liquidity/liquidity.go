@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	firebase "firebase.google.com/go"
-	"fmt"
 	coinfactory "github.com/grupokindynos/common/coin-factory"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
@@ -22,10 +21,10 @@ import (
 var CoinsModel *models.CoinsModel
 
 const (
-	MinVolumeForConversions = 5000
-	MinVolumeForVouchers    = 2000
-	MinVolumeForDeposits    = 10000
-	MinVolumeForOrders      = 10000
+	MinVolumeForConversions = 1000
+	MinVolumeForVouchers    = 500
+	MinVolumeForDeposits    = 5000
+	MinVolumeForOrders      = 5000
 )
 
 func init() {
@@ -72,17 +71,23 @@ func main() {
 			continue
 		}
 
-		adrestiaCoin := false
+		adrestiaCoin := hestia.AdrestiaInfo{Available: true}
 		// Coins available for adrestia
-		if coin.Info.Tag == "DASH" {
-			adrestiaCoin = true
+		switch coin.Info.Tag {
+		case "USDT":
+			adrestiaCoin.CoinUsage = 10
+		case "TUSD":
+			adrestiaCoin.CoinUsage = 2
+		case "USDC":
+			adrestiaCoin.CoinUsage = 2
+		default:
+			adrestiaCoin.Available = false
 		}
 
 		coinLiquidity, err := getLiquidity(coin.Info.Tag)
 		if err != nil {
 			log.Panic(err)
 		}
-		fmt.Println(coinLiquidity, coin.Info.Tag)
 		currentCoinInfo := coinConfigMap[coin.Info.Tag]
 		var orderAvailable, depositAvailable, shiftAvailable, vouchersAvailable bool
 

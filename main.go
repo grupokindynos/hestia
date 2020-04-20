@@ -29,6 +29,7 @@ func main() {
 
 	// If flag was set, change the polispay database to use testing data.
 	if *localRun {
+		log.Println("Using dev firebase db")
 		polisPayDatabase = "hestia_test"
 	} else {
 		polisPayDatabase = "hestia"
@@ -76,6 +77,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
+	shiftsModelV2 := &models.ShiftModelV2{
+		Firestore:  doc,
+		Collection: "shifts2",
+	}
 	cardsModel := &models.CardsModel{Firestore: doc, Collection: "cards"}
 	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
 	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
@@ -84,6 +89,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
+	AdrestiaModel := models.NewAdrestiaModel(*doc)
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
 	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
 	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
@@ -94,7 +100,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
+	shiftCtrlV2 := controllers.ShiftsControllerV2{Model: shiftsModelV2, UserModel: usersModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
+	AdrestiaCtrl := controllers.AdrestiaController{Model: &AdrestiaModel}
 
 	vouchersCtrl := controllers.VouchersController{
 		Model:           vouchersModel,
@@ -129,6 +137,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/order/single/:orderid", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetSingle, false) })
 		api.GET("/user/order/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, ordersCtrl.GetAll, false) })
 
+		api.GET("/user/shift2/single/:shiftid", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrlV2.GetSingle, false) })
+		api.GET("/user/shift2/all", func(c *gin.Context) { fbCtrl.CheckAuth(c, shiftCtrlV2.GetAll, false) })
+
 		// Vouchers list
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
@@ -159,6 +170,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/shift/all", shiftCtrl.GetAllTyche)
 		authApi.POST("/shift", shiftCtrl.Store)
 
+		// TycheV2
+		authApi.GET("/shift2/single/:shiftid", shiftCtrlV2.GetSingleTyche)
+		authApi.GET("/shift2/all", shiftCtrlV2.GetAllTyche)
+		authApi.POST("/shift2", shiftCtrlV2.Store)
+
 		// Ladon
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
@@ -166,12 +182,23 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
 
 		// Adrestia
-		authApi.GET("/adrestia/orders", exchangesCtrl.GetOrders)
-		authApi.POST("/adrestia/new", exchangesCtrl.StoreOrder)
-		authApi.PUT("/adrestia/update", exchangesCtrl.UpdateOrder)
-		authApi.PUT("/adrestia/update/status", exchangesCtrl.UpdateOrderStatus)
+		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
+		authApi.GET("/adrestia/withdrawals", AdrestiaCtrl.GetWithdrawals)
+		authApi.GET("/adrestia/orders", AdrestiaCtrl.GetBalancerOrders)
+		authApi.GET("/adrestia/balancer", AdrestiaCtrl.GetBalancers)
+		authApi.POST("/adrestia/new/deposit", AdrestiaCtrl.StoreDeposit)
+		authApi.POST("/adrestia/new/withdrawal", AdrestiaCtrl.StoreWithdrawal)
+		authApi.POST("/adrestia/new/order", AdrestiaCtrl.StoreBalancerOrder)
+		authApi.POST("/adrestia/new/balancer", AdrestiaCtrl.StoreBalancer)
+		authApi.PUT("/adrestia/update/deposit", AdrestiaCtrl.UpdateDeposit)
+		authApi.PUT("/adrestia/update/withdrawal", AdrestiaCtrl.UpdateWithdrawal)
+		authApi.PUT("/adrestia/update/order", AdrestiaCtrl.UpdateBalancerOrder)
+		authApi.PUT("/adrestia/update/balancer", AdrestiaCtrl.UpdateBalancer)
 
 		// For all microservices
+		api.GET("/exchange", exchangesCtrl.GetExchange)
+		api.GET("/exchanges", exchangesCtrl.GetExchanges)
+		api.PUT("/exchanges/update", exchangesCtrl.UpdateExchange)
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)

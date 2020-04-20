@@ -21,6 +21,7 @@ var (
 	usersModel     *UsersModel
 	exchangesModel *ExchangesModel
 	balancesModel  *BalancesModel
+	adrestiaModel  AdrestiaModel
 )
 
 func init() {
@@ -55,4 +56,5 @@ func init() {
 	configModel = &GlobalConfigModel{Firestore: baseDoc, Collection: "config"}
 	exchangesModel = &ExchangesModel{Firestore: baseDoc, Collection: "exchanges"}
 	balancesModel = &BalancesModel{Firestore: baseDoc, Collection: "balances"}
+	adrestiaModel = NewAdrestiaModel(*baseDoc)
 }

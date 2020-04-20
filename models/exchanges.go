@@ -12,29 +12,29 @@ type ExchangesModel struct {
 	Collection string
 }
 
-func (m *ExchangesModel) Get(id string) (order hestia.AdrestiaOrder, err error) {
+func (m *ExchangesModel) Get(id string) (exchange hestia.ExchangeInfo, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection).Doc(id)
 	doc, err := ref.Get(ctx)
 	if err != nil {
-		return order, err
+		return exchange, err
 	}
-	err = doc.DataTo(&order)
+	err = doc.DataTo(&exchange)
 	if err != nil {
-		return order, err
+		return exchange, err
 	}
-	return order, nil
+	return exchange, nil
 }
 
-func (m *ExchangesModel) Update(order hestia.AdrestiaOrder) error {
+func (m *ExchangesModel) Update(exchange hestia.ExchangeInfo) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := m.Firestore.Collection(m.Collection).Doc(order.ID).Set(ctx, order)
+	_, err := m.Firestore.Collection(m.Collection).Doc(exchange.Id).Set(ctx, exchange)
 	return err
 }
 
-func (m *ExchangesModel) GetAll(includeComplete bool, sinceTimestamp int) (orders []hestia.AdrestiaOrder, err error) {
+func (m *ExchangesModel) GetAll() (exchanges []hestia.ExchangeInfo, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
@@ -44,27 +44,9 @@ func (m *ExchangesModel) GetAll(includeComplete bool, sinceTimestamp int) (order
 		return nil, err
 	}
 	for _, doc := range docSnap {
-		var order hestia.AdrestiaOrder
-		_ = doc.DataTo(&order)
-		if sinceTimestamp != 0 {
-			if int(order.CreatedTime) >= sinceTimestamp {
-				if includeComplete {
-					orders = append(orders, order)
-				} else {
-					if order.Status != hestia.AdrestiaStatusCompleted {
-						orders = append(orders, order)
-					}
-				}
-			}
-		} else {
-			if includeComplete {
-				orders = append(orders, order)
-			} else {
-				if order.Status != hestia.AdrestiaStatusCompleted {
-					orders = append(orders, order)
-				}
-			}
-		}
+		var exchange hestia.ExchangeInfo
+		_ = doc.DataTo(&exchange)
+		exchanges = append(exchanges, exchange)
 	}
-	return orders, nil
+	return exchanges, nil
 }
