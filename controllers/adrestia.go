@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"log"
-	"os"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
@@ -11,6 +9,8 @@ import (
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/models"
+	"log"
+	"os"
 	"strconv"
 )
 
@@ -124,7 +124,7 @@ func (ac *AdrestiaController) UpdateWithdrawal(c *gin.Context) {
 	return
 }
 
-func (ac *AdrestiaController) updateSimpleTx(c *gin.Context, payload[]byte, txType string) {
+func (ac *AdrestiaController) updateSimpleTx(c *gin.Context, payload []byte, txType string) {
 	// Try to unmarshal the information of the payload
 	var updateData hestia.SimpleTx
 	err := json.Unmarshal(payload, &updateData)
