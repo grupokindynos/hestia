@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -32,7 +33,7 @@ type ShiftsControllerV2 struct {
 
 func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
 	filterNum, _ := strconv.ParseInt(params.Filter, 10, 32)
-	if params.Filter == "" {
+	if params.Filter == "all" {
 		filterNum = -1
 	}
 	if params.Admin {
@@ -42,13 +43,33 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	if err != nil {
 		return nil, errors.ErrorNoUserInformation
 	}
-	var Array []hestia.ShiftV2
-	for _, id := range userInfo.Shifts {
+	var Array []hestia.LightShift
+	for _, id := range userInfo.ShiftV2 {
 		obj, err := sc.Model.Get(id)
 		if err != nil {
 			return nil, errors.ErrorNotFound
 		}
-		Array = append(Array, obj)
+		var newShift = hestia.LightShift{
+			ID:        obj.ID,
+			UID:       obj.UID,
+			Status:    hestia.GetShiftStatusv2String(obj.Status),
+			Timestamp: obj.Timestamp,
+			Payment: hestia.LightPayment{
+				Address: obj.Payment.Address,
+				Coin:    obj.Payment.Coin,
+				Txid:    obj.Payment.Txid,
+				Amount:  obj.Payment.Amount,
+			},
+			RefundAddr:         obj.RefundAddr,
+			ToCoin:             obj.ToCoin,
+			ToAmount:           obj.ToAmount,
+			UserReceivedAmount: obj.UserReceivedAmount,
+			ToAddress:          obj.ToAddress,
+			PaymentProof:       obj.PaymentProof,
+			ProofTimestamp:     obj.ProofTimestamp,
+		}
+		fmt.Println(newShift)
+		Array = append(Array, newShift)
 	}
 	return Array, nil
 }
@@ -134,7 +155,7 @@ func (sc *ShiftsControllerV2) Store(c *gin.Context) {
 		return
 	}
 	// Store ID on user information
-	err = sc.UserModel.AddShift(shiftData.UID, shiftData.ID)
+	err = sc.UserModel.AddShiftV2(shiftData.UID, shiftData.ID)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return

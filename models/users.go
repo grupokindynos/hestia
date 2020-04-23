@@ -61,6 +61,14 @@ func (m *UsersModel) AddShift(uid string, shiftID string) error {
 	return err
 }
 
+// AddShift will add a shift id into the user shifts array.
+func (m *UsersModel) AddShiftV2(uid string, shiftID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "shift2", Value: firestore.ArrayUnion(shiftID)}})
+	return err
+}
+
 // AddCard will add a card code into the user cards array.
 func (m *UsersModel) AddCard(uid string, cardCode string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
