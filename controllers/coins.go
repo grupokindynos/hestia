@@ -107,7 +107,7 @@ load:
 			requireUpdate = true
 			// If doesn't exists it means we must create it.
 			newCoinData := hestia.Coin{
-				Ticker:   v.Info.Tag,
+				Ticker: v.Info.Tag,
 				Shift: hestia.Properties{
 					FeePercentage: 10,
 					Available:     false,

@@ -9,16 +9,16 @@ import (
 )
 
 type AdrestiaModel struct {
-	Firestore  *firestore.DocumentRef
+	Firestore   *firestore.DocumentRef
 	Collections map[string]string
 }
 
 func NewAdrestiaModel(doc firestore.DocumentRef) AdrestiaModel {
 	adrestia := AdrestiaModel{Firestore: &doc, Collections: map[string]string{
 		"withdrawals": "adrestia_withdrawals",
-		"deposits": "adrestia_deposits",
-		"orders": "adrestia_orders",
-		"balancer": "adrestia_balancer",
+		"deposits":    "adrestia_deposits",
+		"orders":      "adrestia_orders",
+		"balancer":    "adrestia_balancer",
 	}}
 	return adrestia
 }
@@ -67,7 +67,6 @@ func (am *AdrestiaModel) GetBalancer(id string) (balancer hestia.Balancer, err e
 	}
 	return balancer, nil
 }
-
 
 func (am *AdrestiaModel) GetBalancers(includeComplete bool) (balancers []hestia.Balancer, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

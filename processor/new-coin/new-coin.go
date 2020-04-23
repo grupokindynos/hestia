@@ -80,6 +80,10 @@ func main() {
 			HotWallet: 0,
 			Exchanges: 0,
 		},
+		Adrestia: hestia.AdrestiaInfo{
+			Available: false,
+			CoinUsage: 0,
+		},
 	}
 	err = CoinsModel.AddCoin(newCoinModel)
 	if err != nil {

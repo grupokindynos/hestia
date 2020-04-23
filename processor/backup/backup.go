@@ -20,20 +20,20 @@ import (
 )
 
 type HestiaDB struct {
-	Balances  []hestia.CoinBalances  `json:"balances"`
-	Cards     []hestia.Card          `json:"cards"`
-	Coins     []hestia.Coin          `json:"coins"`
-	Config    hestia.Config          `json:"config"`
-	Deposits  []hestia.Deposit       `json:"deposits"`
-	Exchanges []hestia.ExchangeInfo `json:"exchanges"`
-	Orders    []hestia.Order         `json:"orders"`
-	Shifts    []hestia.Shift         `json:"shifts"`
-	Users     []hestia.User          `json:"users"`
-	Vouchers  []hestia.Voucher       `json:"vouchers"`
-	AdrestiaBalancer  []hestia.Balancer `json:"adrestia_balancer"`
-	AdrestiaDeposits []hestia.SimpleTx `json:"adrestia_deposits"`
-	AdrestiaOrders []hestia.BalancerOrder `json:"adrestia_orders"`
-	AdrestiaWithdrawals []hestia.SimpleTx `json:"adrestia_withdrawals"`
+	Balances            []hestia.CoinBalances  `json:"balances"`
+	Cards               []hestia.Card          `json:"cards"`
+	Coins               []hestia.Coin          `json:"coins"`
+	Config              hestia.Config          `json:"config"`
+	Deposits            []hestia.Deposit       `json:"deposits"`
+	Exchanges           []hestia.ExchangeInfo  `json:"exchanges"`
+	Orders              []hestia.Order         `json:"orders"`
+	Shifts              []hestia.Shift         `json:"shifts"`
+	Users               []hestia.User          `json:"users"`
+	Vouchers            []hestia.Voucher       `json:"vouchers"`
+	AdrestiaBalancer    []hestia.Balancer      `json:"adrestia_balancer"`
+	AdrestiaDeposits    []hestia.SimpleTx      `json:"adrestia_deposits"`
+	AdrestiaOrders      []hestia.BalancerOrder `json:"adrestia_orders"`
+	AdrestiaWithdrawals []hestia.SimpleTx      `json:"adrestia_withdrawals"`
 }
 
 var (
@@ -168,19 +168,19 @@ func main() {
 	}
 
 	fullDB := HestiaDB{
-		Balances:  balances,
-		Cards:     cards,
-		Coins:     coins,
-		Config:    config,
-		Deposits:  deposits,
-		Exchanges: exchanges,
-		Orders:    orders,
-		Shifts:    shifts,
-		Users:     users,
-		Vouchers:  vouchers,
-		AdrestiaBalancer: balancers,
-		AdrestiaDeposits: exchangeDeposits,
-		AdrestiaOrders: balancerOrders,
+		Balances:            balances,
+		Cards:               cards,
+		Coins:               coins,
+		Config:              config,
+		Deposits:            deposits,
+		Exchanges:           exchanges,
+		Orders:              orders,
+		Shifts:              shifts,
+		Users:               users,
+		Vouchers:            vouchers,
+		AdrestiaBalancer:    balancers,
+		AdrestiaDeposits:    exchangeDeposits,
+		AdrestiaOrders:      balancerOrders,
 		AdrestiaWithdrawals: withdrawals,
 	}
 	jsonObj, err := json.Marshal(fullDB)
