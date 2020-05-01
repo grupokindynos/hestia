@@ -75,11 +75,11 @@ func main() {
 		// Coins available for adrestia
 		switch coin.Info.Tag {
 		case "USDT":
-			adrestiaCoin.CoinUsage = 10
+			adrestiaCoin.CoinUsage = 17.5
 		case "TUSD":
-			adrestiaCoin.CoinUsage = 2
+			adrestiaCoin.CoinUsage = 3
 		case "USDC":
-			adrestiaCoin.CoinUsage = 2
+			adrestiaCoin.CoinUsage = 4
 		default:
 			adrestiaCoin.Available = false
 		}
