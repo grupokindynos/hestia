@@ -52,12 +52,17 @@ func (m *VouchersModel) GetAll(filter string, timefilter string) (vouchers []hes
 		}
 	} else {
 		if filter == "all" {
-			docSnap, err = ref.Documents(ctx).GetAll()
+			query := ref.OrderBy("timestamp", firestore.Asc)
+			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err
 			}
+			/*docSnap, err = ref.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}*/
 		} else {
-			query := ref.Where("status", "==", filter)
+			query := ref.Where("status", "==", filter).OrderBy("timestamp", firestore.Asc)
 			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err

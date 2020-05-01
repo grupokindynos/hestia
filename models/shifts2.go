@@ -52,12 +52,17 @@ func (m *ShiftModelV2) GetAll(filter int32, timeFilter string) (shifts []hestia.
 		}
 	} else {
 		if filter == -1 {
-			docSnap, err = ref.Documents(ctx).GetAll()
+			/*docSnap, err = ref.Documents(ctx).GetAll()
+			if err != nil {
+				return nil, err
+			}*/
+			query := ref.OrderBy("timestamp", firestore.Asc)
+			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			query := ref.Where("status", "==", filter)
+			query := ref.Where("status", "==", filter).OrderBy("timestamp", firestore.Asc)
 			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err
