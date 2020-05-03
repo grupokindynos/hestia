@@ -174,6 +174,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/shift2/single/:shiftid", shiftCtrlV2.GetSingleTyche)
 		authApi.GET("/shift2/all", shiftCtrlV2.GetAllTyche)
 		authApi.POST("/shift2", shiftCtrlV2.Store)
+		authApi.GET("/shift2/all_by_timestamp", shiftCtrlV2.GetShiftsByTimestampTyche)
 
 		// Ladon
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
