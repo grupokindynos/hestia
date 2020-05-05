@@ -13,7 +13,6 @@ import (
 	"github.com/grupokindynos/hestia/models"
 	"os"
 	"strconv"
-	"time"
 )
 
 /*
@@ -167,8 +166,6 @@ func (sc *ShiftsControllerV2) Store(c *gin.Context) {
 }
 
 func (sc *ShiftsControllerV2) GetShiftsByTimestampTyche(c *gin.Context) {
-	fmt.Println("hola")
-	fmt.Println(strconv.FormatInt(time.Now().Unix()-24*3600, 10))
 	userId := c.Query("userid")
 	if userId == "" {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
@@ -179,11 +176,11 @@ func (sc *ShiftsControllerV2) GetShiftsByTimestampTyche(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	/*_, err := mvt.VerifyRequest(c)
+	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
-	}*/
+	}
 	userInfo, err := sc.UserModel.Get(userId)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
@@ -199,7 +196,6 @@ func (sc *ShiftsControllerV2) GetShiftsByTimestampTyche(c *gin.Context) {
 		}
 
 		if timestamp <= obj.Timestamp {
-			fmt.Println(obj.ID)
 			userShifts = append(userShifts, obj)
 		}
 	}
