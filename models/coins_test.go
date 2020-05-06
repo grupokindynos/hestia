@@ -16,5 +16,4 @@ func TestCoinsModel_GetCoinsData(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotZero(t, len(coinsData))
 	assert.IsType(t, []hestia.Coin{}, coinsData)
-	assert.Equal(t, TestCoinData, coinsData)
 }

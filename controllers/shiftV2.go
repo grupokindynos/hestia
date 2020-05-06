@@ -164,3 +164,45 @@ func (sc *ShiftsControllerV2) Store(c *gin.Context) {
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }
+
+func (sc *ShiftsControllerV2) GetShiftsByTimestampTyche(c *gin.Context) {
+	userId := c.Query("userid")
+	if userId == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	ts := c.Query("timestamp")
+	if ts == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	userInfo, err := sc.UserModel.Get(userId)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
+		return
+	}
+	var userShifts []hestia.ShiftV2
+	timestamp, _ := strconv.ParseInt(ts, 10, 64)
+
+	for _, id := range userInfo.ShiftV2 {
+		obj, err := sc.Model.Get(id)
+		if err != nil {
+			continue
+		}
+
+		if timestamp <= obj.Timestamp {
+			userShifts = append(userShifts, obj)
+		}
+	}
+
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userShifts, os.Getenv("HESTIA_PRIVATE_KEY"))
+
+	responses.GlobalResponseMRT(header, body, c)
+	return
+
+}
