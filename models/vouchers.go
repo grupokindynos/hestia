@@ -62,7 +62,7 @@ func (m *VouchersModel) GetAll(filter string, timefilter string) (vouchers []hes
 				return nil, err
 			}*/
 		} else {
-			query := ref.Where("status", "==", filter).OrderBy("timestamp", firestore.Asc)
+			query := ref.Where("status", "==", filter)
 			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err
