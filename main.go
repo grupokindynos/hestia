@@ -100,7 +100,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
 	ordersCtrl := controllers.OrdersController{Model: ordersModel, UserModel: usersModel}
 	shiftCtrl := controllers.ShiftsController{Model: shiftsModel, UserModel: usersModel}
-	shiftCtrlV2 := controllers.ShiftsControllerV2{Model: shiftsModelV2, UserModel: usersModel}
+	shiftCtrlV2 := controllers.ShiftsControllerV2{Model: shiftsModelV2, UserModel: usersModel, LegacyModel: shiftsModel}
 	userCtrl := controllers.UsersController{Model: usersModel}
 	AdrestiaCtrl := controllers.AdrestiaController{Model: &AdrestiaModel}
 
