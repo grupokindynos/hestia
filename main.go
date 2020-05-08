@@ -85,6 +85,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
 	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
 	vouchersModel := &models.VouchersModel{Firestore: doc, Collection: "vouchers"}
+	vouchersModelV2 := &models.VouchersModelV2{Firestore: doc, Collection: "vouchers2"}
 	usersModel := &models.UsersModel{Firestore: doc, Collection: "users"}
 	coinsModel := &models.CoinsModel{Firestore: doc, Collection: "coins"}
 	globalConfigModel := &models.GlobalConfigModel{Firestore: doc, Collection: "config"}
@@ -114,6 +115,17 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 			CachedCountries:        []string{},
 			CachedCountriesUpdated: 0,
 		}}
+	vouchersCtrl2 := controllers.VouchersControllerV2{
+		Model:           vouchersModelV2,
+		UserModel:       usersModel,
+		BitcouModel:     bitcouModel,
+		BitcouConfModel: bitcouConfModel,
+		CachedVouchers: controllers.VouchersCache{
+			Vouchers:               make(map[string]controllers.CachedVouchersData),
+			CachedCountries:        []string{},
+			CachedCountriesUpdated: 0,
+		},
+	}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
@@ -181,6 +193,12 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher/all", vouchersCtrl.GetAllLadon)
 		authApi.POST("/voucher", vouchersCtrl.Store)
 		authApi.GET("/voucher/all_by_timestamp", vouchersCtrl.GetVouchersByTimestampLadon)
+
+		// LadonV2
+		authApi.GET("/voucher2/single/:voucherid", vouchersCtrl2.GetSingleLadon)
+		authApi.GET("/voucher2/all", vouchersCtrl2.GetAllLadon)
+		authApi.POST("/voucher2", vouchersCtrl2.Store)
+		authApi.GET("/voucher2/all_by_timestamp", vouchersCtrl2.GetVouchersByTimestampLadon)
 
 		// Adrestia
 		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
