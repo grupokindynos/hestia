@@ -65,14 +65,16 @@ func (uc *UsersController) Store(userData hestia.User, c *gin.Context) (interfac
 		return nil, err
 	}
 	updateUserData := hestia.User{
-		ID:       oldUserData.ID,
-		Email:    oldUserData.Email,
-		KYCData:  userData.KYCData,
-		Role:     userData.Role,
-		Shifts:   oldUserData.Shifts,
-		Vouchers: oldUserData.Vouchers,
-		Deposits: oldUserData.Deposits,
-		Cards:    oldUserData.Cards,
+		ID:         oldUserData.ID,
+		Email:      oldUserData.Email,
+		KYCData:    userData.KYCData,
+		Role:       userData.Role,
+		Shifts:     oldUserData.Shifts,
+		Vouchers:   oldUserData.Vouchers,
+		Deposits:   oldUserData.Deposits,
+		Cards:      oldUserData.Cards,
+		ShiftV2:    oldUserData.ShiftV2,
+		VouchersV2: oldUserData.VouchersV2,
 	}
 	err = uc.Model.Update(updateUserData)
 	if err != nil {

@@ -1,11 +1,11 @@
 package models
 
 import (
-"cloud.google.com/go/firestore"
-"context"
-"github.com/grupokindynos/common/hestia"
-"strconv"
-"time"
+	"cloud.google.com/go/firestore"
+	"context"
+	"github.com/grupokindynos/common/hestia"
+	"strconv"
+	"time"
 )
 
 type VouchersModelV2 struct {
@@ -35,7 +35,7 @@ func (m *VouchersModelV2) Update(voucher hestia.VoucherV2) error {
 	return err
 }
 
-func (m *VouchersModelV2) GetAll(filter string, timefilter string) (vouchers []hestia.VoucherV2, err error) {
+func (m *VouchersModelV2) GetAll(filter int, timefilter string) (vouchers []hestia.VoucherV2, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := m.Firestore.Collection(m.Collection)
@@ -51,7 +51,7 @@ func (m *VouchersModelV2) GetAll(filter string, timefilter string) (vouchers []h
 			return nil, err
 		}
 	} else {
-		if filter == "all" {
+		if filter == -1 {
 			query := ref.OrderBy("timestamp", firestore.Asc)
 			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {

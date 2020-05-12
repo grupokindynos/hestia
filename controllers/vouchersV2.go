@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -40,7 +39,8 @@ type VouchersControllerV2 struct {
 
 func (vc *VouchersControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
 	if params.Admin {
-		return vc.Model.GetAll(params.Filter, "")
+		f, _ := strconv.Atoi(params.Filter)
+		return vc.Model.GetAll(f, "")
 	}
 	userInfo, err := vc.UserModel.Get(userData.ID)
 	if err != nil {
@@ -151,7 +151,8 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	vouchersList, err := vc.Model.GetAll(filter, "")
+	f, _ := strconv.Atoi(filter)
+	vouchersList, err := vc.Model.GetAll(f, "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
@@ -181,7 +182,7 @@ func (vc *VouchersControllerV2) Store(c *gin.Context) {
 		return
 	}
 	// Store ID on user information
-	err = vc.UserModel.AddVoucher(voucherData.UserId, voucherData.Id)
+	err = vc.UserModel.AddVoucherV2(voucherData.UserId, voucherData.Id)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
@@ -253,7 +254,6 @@ func (vc *VouchersControllerV2) AddFilters(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
-	log.Println(filterData)
 	if filterData.Target != "dev" && filterData.Target != "prod" {
 		responses.GlobalResponseError(nil, e.New("api can only have one of the following values (dev | prod)"), c)
 		return
