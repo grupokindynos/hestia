@@ -11,7 +11,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"github.com/olympus-protocol/ogen/utils/amount"
 	"os"
 	"strconv"
 )
@@ -47,10 +46,6 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	var Array []hestia.LightShift
 	for _, id := range userInfo.ShiftV2 {
 		obj, err := sc.Model.Get(id)
-		receivedAmount := obj.ToAmount
-		if obj.Status >= hestia.ShiftStatusV2SentToUser && obj.Status != hestia.ShiftStatusV2Error{
-			receivedAmount = GetLastAmount(obj)
-		}
 		if err != nil {
 			return nil, errors.ErrorNotFound
 		}
@@ -67,7 +62,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 			},
 			RefundAddr:         obj.RefundAddr,
 			ToCoin:             obj.ToCoin,
-			ToAmount:           receivedAmount,
+			ToAmount:           obj.ToAmount,
 			UserReceivedAmount: obj.UserReceivedAmount,
 			ToAddress:          obj.ToAddress,
 			PaymentProof:       obj.PaymentProof,
@@ -77,16 +72,6 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		Array = append(Array, newShift)
 	}
 	return Array, nil
-}
-
-func GetLastAmount(v2 hestia.ShiftV2) int64 {
-	if len(v2.OutboundTrade.Conversions) == 0 {
-		return int64(amount.AmountType(v2.OutboundTrade.WithdrawAmount).ToUnit(amount.AmountSats))
-	} else if len(v2.OutboundTrade.Conversions) == 1 {
-		return int64(amount.AmountType(v2.OutboundTrade.Conversions[0].ReceivedAmount).ToUnit(amount.AmountSats))
-	} else {
-		return int64(amount.AmountType(v2.OutboundTrade.Conversions[1].ReceivedAmount).ToUnit(amount.AmountSats))
-	}
 }
 
 func (sc *ShiftsControllerV2) GetSingle(userData hestia.User, params Params) (interface{}, error) {
