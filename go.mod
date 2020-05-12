@@ -15,6 +15,7 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/olympus-protocol/ogen v0.0.0-20200122020117-3da99bac25aa
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/sys v0.0.0-20200202164722-d101bd2416d5 // indirect
 	google.golang.org/api v0.14.0
