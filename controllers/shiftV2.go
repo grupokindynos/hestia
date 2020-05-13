@@ -20,7 +20,7 @@ import (
 	ShiftController is a safe-access query for shifts on Firestore Database
 	Database Structure:
 
-	shift/
+	shifts2/
 		ShiftID/
 			shiftData
 
