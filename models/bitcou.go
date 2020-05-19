@@ -14,7 +14,7 @@ type BitcouCountry struct {
 }
 
 type BitcouCountryV2 struct {
-	ID       string                `firestore:"id" json:"id"`
+	ID       string                  `firestore:"id" json:"id"`
 	Vouchers []bitcou.LightVoucherV2 `firestore:"vouchers" json:"vouchers"`
 }
 
@@ -31,8 +31,10 @@ type ApiBitcouFilter struct {
 }
 
 type BitcouModel struct {
-	Firestore     *firestore.CollectionRef
-	FirestoreTest *firestore.CollectionRef
+	Firestore       *firestore.CollectionRef
+	FirestoreTest   *firestore.CollectionRef
+	FirestoreV2     *firestore.CollectionRef
+	FirestoreTestV2 *firestore.CollectionRef
 }
 
 type BitcouConfModel struct {
@@ -78,6 +80,21 @@ func (bm *BitcouModel) GetCountry(id string) (country BitcouCountry, err error) 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := bm.Firestore.Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return country, err
+	}
+	err = doc.DataTo(&country)
+	if err != nil {
+		return country, err
+	}
+	return country, nil
+}
+
+func (bm *BitcouModel) GetCountryV2(id string) (country BitcouCountryV2, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := bm.FirestoreV2.Doc(id)
 	doc, err := ref.Get(ctx)
 	if err != nil {
 		return country, err

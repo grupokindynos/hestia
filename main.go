@@ -74,6 +74,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
 	bitcouConfDoc := firestore.Collection("bitcou_filters")
+	bitcouDoc2 := firestore.Collection("bitcou2")
+	bitcouTestDoc2 := firestore.Collection("bitcou_test2")
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
@@ -92,7 +94,12 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	exchangesModel := &models.ExchangesModel{Firestore: doc, Collection: "exchanges"}
 	AdrestiaModel := models.NewAdrestiaModel(*doc)
 	balancesModel := &models.BalancesModel{Firestore: doc, Collection: "balances"}
-	bitcouModel := &models.BitcouModel{Firestore: bitcouDoc, FirestoreTest: bitcouTestDoc}
+	bitcouModel := &models.BitcouModel{
+		Firestore:       bitcouDoc,
+		FirestoreTest:   bitcouTestDoc,
+		FirestoreV2:     bitcouDoc2,
+		FirestoreTestV2: bitcouTestDoc2,
+	}
 	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
 
 	// Init Controllers
@@ -114,7 +121,13 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 			Vouchers:               make(map[string]controllers.CachedVouchersData),
 			CachedCountries:        []string{},
 			CachedCountriesUpdated: 0,
-		}}
+		},
+		CachedVouchersV2: controllers.VouchersCacheV2{
+			Vouchers:               make(map[string]controllers.CachedVouchersDataV2),
+			CachedCountries:        []string{},
+			CachedCountriesUpdated: 0,
+		},
+	}
 	vouchersCtrl2 := controllers.VouchersControllerV2{
 		Model:           vouchersModelV2,
 		UserModel:       usersModel,
@@ -155,7 +168,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Vouchers list
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
-		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
+		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchersV2, false) })
 		// Voucher routes for development environment
 		api.GET("/user/voucher/dev/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestAvailableCountries, false) })
 		api.GET("/user/voucher/dev/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestVouchers, false) })
