@@ -84,7 +84,6 @@ type VouchersController struct {
 	BitcouModel     *models.BitcouModel
 	BitcouConfModel *models.BitcouConfModel
 	CachedVouchers  VouchersCache
-	CachedVouchersV2 VouchersCacheV2
 }
 
 func (vc *VouchersController) GetAll(userData hestia.User, params Params) (interface{}, error) {
@@ -280,28 +279,6 @@ func (vc *VouchersController) GetVouchers(_ hestia.User, params Params) (interfa
 			return nil, err
 		}
 		vc.CachedVouchers.AddCountryVouchers(params.Country, countryData.Vouchers)
-		return countryData.Vouchers, nil
-	}
-}
-
-func (vc *VouchersController) GetVouchersV2(_ hestia.User, params Params) (interface{}, error) {
-	cachedData, ok := vc.CachedVouchersV2.Vouchers[params.Country]
-	if !ok {
-		countryData, err := vc.BitcouModel.GetCountryV2(params.Country)
-		if err != nil {
-			return nil, err
-		}
-		vc.CachedVouchersV2.AddCountryVouchersV2(params.Country, countryData.Vouchers)
-		return countryData.Vouchers, nil
-	}
-	if cachedData.LastUpdated+voucherCacheTimeFrame > time.Now().Unix() {
-		return vc.CachedVouchersV2.Vouchers[params.Country].Vouchers, nil
-	} else {
-		countryData, err := vc.BitcouModel.GetCountryV2(params.Country)
-		if err != nil {
-			return nil, err
-		}
-		vc.CachedVouchersV2.AddCountryVouchersV2(params.Country, countryData.Vouchers)
 		return countryData.Vouchers, nil
 	}
 }

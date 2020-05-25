@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -34,7 +35,7 @@ type VouchersControllerV2 struct {
 	UserModel       *models.UsersModel
 	BitcouModel     *models.BitcouModel
 	BitcouConfModel *models.BitcouConfModel
-	CachedVouchers  VouchersCache
+	CachedVouchers  VouchersCacheV2
 }
 
 func (vc *VouchersControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
@@ -47,7 +48,7 @@ func (vc *VouchersControllerV2) GetAll(userData hestia.User, params Params) (int
 		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.VoucherV2
-	for _, id := range userInfo.Vouchers {
+	for _, id := range userInfo.VouchersV2 {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
 			continue
@@ -105,8 +106,6 @@ func (vc *VouchersControllerV2) GetVouchersByTimestampLadon(c *gin.Context) {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
 			continue
-			/* responses.GlobalResponseError(nil, errors.ErrorNotFound, c)
-			return*/
 		}
 
 		if timestamp <= obj.CreatedTime {
@@ -139,6 +138,42 @@ func (vc *VouchersControllerV2) GetSingleLadon(c *gin.Context) {
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), voucher, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
+}
+
+func (vc *VouchersControllerV2) GetVoucherInfo(c *gin.Context) {
+	// Check if the user has an id
+	id, ok := c.Params.Get("product_id")
+	country, okCountry := c.Params.Get("country")
+	fmt.Println(country)
+	if !ok || !okCountry {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	_, err = mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	vouchers, err := vc.BitcouModel.GetCountryV2(country)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+	}
+	for _, v := range vouchers.Vouchers {
+		if v.ProductID == idInt {
+			header, body, _ := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), v, os.Getenv("HESTIA_PRIVATE_KEY"))
+			responses.GlobalResponseMRT(header, body, c)
+			return
+		}
+	}
+	if err != nil {
+		responses.GlobalResponseError(nil, e.New("voucher id not found"), c)
+		return
+	}
 }
 
 func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
@@ -214,27 +249,28 @@ func (vc *VouchersControllerV2) GetTestAvailableCountries(userData hestia.User, 
 	return countries, nil
 }
 
-func (vc *VouchersControllerV2) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersControllerV2) GetVouchersV2(_ hestia.User, params Params) (interface{}, error) {
 	cachedData, ok := vc.CachedVouchers.Vouchers[params.Country]
 	if !ok {
-		countryData, err := vc.BitcouModel.GetCountry(params.Country)
+		countryData, err := vc.BitcouModel.GetCountryV2(params.Country)
 		if err != nil {
 			return nil, err
 		}
-		vc.CachedVouchers.AddCountryVouchers(params.Country, countryData.Vouchers)
+		vc.CachedVouchers.AddCountryVouchersV2(params.Country, countryData.Vouchers)
 		return countryData.Vouchers, nil
 	}
 	if cachedData.LastUpdated+voucherCacheTimeFrame > time.Now().Unix() {
 		return vc.CachedVouchers.Vouchers[params.Country].Vouchers, nil
 	} else {
-		countryData, err := vc.BitcouModel.GetCountry(params.Country)
+		countryData, err := vc.BitcouModel.GetCountryV2(params.Country)
 		if err != nil {
 			return nil, err
 		}
-		vc.CachedVouchers.AddCountryVouchers(params.Country, countryData.Vouchers)
+		vc.CachedVouchers.AddCountryVouchersV2(params.Country, countryData.Vouchers)
 		return countryData.Vouchers, nil
 	}
 }
+
 
 func (vc *VouchersControllerV2) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
