@@ -213,6 +213,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher2/all", vouchersCtrl2.GetAllLadon)
 		authApi.POST("/voucher2", vouchersCtrl2.Store)
 		authApi.GET("/voucher2/all_by_timestamp", vouchersCtrl2.GetVouchersByTimestampLadon)
+		authApi.GET("/voucher2/user/info", vouchersCtrl2.GetUserInfo)
 
 		// Adrestia
 		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
