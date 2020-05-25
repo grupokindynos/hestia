@@ -134,6 +134,11 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 			CachedCountriesUpdated: 0,
 		},
 	}
+	vouchersAllCtrl := controllers.VouchersAllController{
+		UserModel:       usersModel,
+		VouchersModel:   vouchersModel,
+		VouchersV2Model: vouchersModelV2,
+	}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
 	exchangesCtrl := controllers.ExchangesController{Model: exchangesModel}
@@ -164,6 +169,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
 		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetVouchersV2, false) })
+		api.GET("/user/voucher/history", func(c *gin.Context) {fbCtrl.CheckAuth(c, vouchersAllCtrl.GetVouchersHistory, false)})
+
 		// Voucher routes for development environment
 		api.GET("/user/voucher/dev/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestAvailableCountries, false) })
 		api.GET("/user/voucher/dev/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestVouchers, false) })

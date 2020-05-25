@@ -48,7 +48,7 @@ func (vc *VouchersControllerV2) GetAll(userData hestia.User, params Params) (int
 		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.VoucherV2
-	for _, id := range userInfo.Vouchers {
+	for _, id := range userInfo.VouchersV2 {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
 			continue
