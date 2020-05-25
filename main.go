@@ -122,19 +122,14 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 			CachedCountries:        []string{},
 			CachedCountriesUpdated: 0,
 		},
-		CachedVouchersV2: controllers.VouchersCacheV2{
-			Vouchers:               make(map[string]controllers.CachedVouchersDataV2),
-			CachedCountries:        []string{},
-			CachedCountriesUpdated: 0,
-		},
 	}
 	vouchersCtrl2 := controllers.VouchersControllerV2{
 		Model:           vouchersModelV2,
 		UserModel:       usersModel,
 		BitcouModel:     bitcouModel,
 		BitcouConfModel: bitcouConfModel,
-		CachedVouchers: controllers.VouchersCache{
-			Vouchers:               make(map[string]controllers.CachedVouchersData),
+		CachedVouchers: controllers.VouchersCacheV2{
+			Vouchers:               make(map[string]controllers.CachedVouchersDataV2),
 			CachedCountries:        []string{},
 			CachedCountriesUpdated: 0,
 		},
@@ -168,7 +163,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		// Vouchers list
 		api.GET("/user/voucher/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetAvailableCountries, false) })
 		api.GET("/user/voucher/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchers, false) })
-		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetVouchersV2, false) })
+		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetVouchersV2, false) })
 		// Voucher routes for development environment
 		api.GET("/user/voucher/dev/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestAvailableCountries, false) })
 		api.GET("/user/voucher/dev/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl.GetTestVouchers, false) })
@@ -213,6 +208,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher2/all", vouchersCtrl2.GetAllLadon)
 		authApi.POST("/voucher2", vouchersCtrl2.Store)
 		authApi.GET("/voucher2/all_by_timestamp", vouchersCtrl2.GetVouchersByTimestampLadon)
+		authApi.GET("/voucher2/getVoucherInfo/:country/product_id", vouchersCtrl2.GetVoucherInfo)
 
 		// Adrestia
 		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)

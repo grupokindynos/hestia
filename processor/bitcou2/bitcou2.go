@@ -78,14 +78,17 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 	var countryInfo []models.BitcouCountryV2
 	countryMap := make(map[string]models.BitcouCountryV2)
 	for _, voucher := range voucherList {
+		if voucher.ProductID == 1243 {
+			fmt.Println("found rossman!")
+		}
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
 		_, okVoucher := voucherFilter[strId]
 		if !okProv && !okVoucher {
 			_, ok := providerMap[voucher.ProviderID]
 			if !ok {
-				//fmt.Println("missing provider for: ", voucher.SKU)
-				continue
+				fmt.Println("missing provider for: ", voucher.ProductID)
+				//continue
 			}
 			for _, country := range voucher.Countries {
 				countryData, ok := countryMap[country]
@@ -115,7 +118,6 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 
 func GetFirebaseData() (models.BitcouModel, models.BitcouFilterWrapper, models.BitcouFilterWrapper) {
 	fbCredStr := os.Getenv("FIREBASE_CRED")
-	fmt.Println("FBCRED: ", os.Getenv("FIREBASE_CRED"))
 	fbCred, err := base64.StdEncoding.DecodeString(fbCredStr)
 	if err != nil {
 		log.Fatal("unable to decode firebase credential string:")
