@@ -309,3 +309,25 @@ func (vc *VouchersControllerV2) AddFilters(c *gin.Context) {
 	return
 }
 
+func (vc *VouchersControllerV2) GetUserInfo(c *gin.Context) {
+	// Check if the user has an id
+	userId := c.Query("userid")
+	if userId == "" {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	_, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseNoAuth(c)
+		return
+	}
+	userInfo, err := vc.UserModel.Get(userId)
+	if err != nil {
+		responses.GlobalResponseError(nil, errors.ErrorNoUserInformation, c)
+		return
+	}
+
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userInfo.Email, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
+}
