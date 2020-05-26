@@ -27,8 +27,9 @@ import (
 */
 
 type ShiftsControllerV2 struct {
-	Model     *models.ShiftModelV2
-	UserModel *models.UsersModel
+	Model       *models.ShiftModelV2
+	LegacyModel *models.ShiftModel
+	UserModel   *models.UsersModel
 }
 
 func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
@@ -44,6 +45,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.LightShift
+	// shifts from v2
 	for _, id := range userInfo.ShiftV2 {
 		obj, err := sc.Model.Get(id)
 		if err != nil {
@@ -64,6 +66,35 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 			ToCoin:             obj.ToCoin,
 			ToAmount:           obj.ToAmount,
 			UserReceivedAmount: obj.UserReceivedAmount,
+			ToAddress:          obj.ToAddress,
+			PaymentProof:       obj.PaymentProof,
+			ProofTimestamp:     obj.ProofTimestamp,
+		}
+		fmt.Println(newShift)
+		Array = append(Array, newShift)
+
+	}
+	// shifts from v1
+	for _, id := range userInfo.Shifts {
+		obj, err := sc.LegacyModel.Get(id)
+		if err != nil {
+			return nil, errors.ErrorNotFound
+		}
+		var newShift = hestia.LightShift{
+			ID:        obj.ID,
+			UID:       obj.UID,
+			Status:    obj.Status,
+			Timestamp: obj.Timestamp,
+			Payment: hestia.LightPayment{
+				Address: obj.Payment.Address,
+				Coin:    obj.Payment.Coin,
+				Txid:    obj.Payment.Txid,
+				Amount:  obj.Payment.Amount,
+			},
+			RefundAddr:         obj.RefundAddr,
+			ToCoin:             obj.ToCoin,
+			ToAmount:           obj.ToAmount,
+			UserReceivedAmount: float64(obj.ToAmount) * 1e-8,
 			ToAddress:          obj.ToAddress,
 			PaymentProof:       obj.PaymentProof,
 			ProofTimestamp:     obj.ProofTimestamp,
