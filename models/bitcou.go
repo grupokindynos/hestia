@@ -144,6 +144,29 @@ func (bm *BitcouModel) GetCountries(dev bool) (countries []string, err error) {
 	return countries, nil
 }
 
+// Replaces both implementations of GetCountry
+func (bm *BitcouModel) GetCountriesV2(dev bool) (countries []string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var iter *firestore.DocumentIterator
+	if dev {
+		iter = bm.FirestoreTestV2.Documents(ctx)
+	} else {
+		iter = bm.FirestoreV2.Documents(ctx)
+	}
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return countries, err
+		}
+		countries = append(countries, doc.Ref.ID)
+	}
+	return countries, nil
+}
+
 type BitcouFilterWrapper struct {
 	ProviderFilter map[int]bool
 	VoucherFilter  map[string]bool

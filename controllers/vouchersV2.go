@@ -227,16 +227,17 @@ func (vc *VouchersControllerV2) Store(c *gin.Context) {
 	return
 }
 
-func (vc *VouchersControllerV2) GetAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersControllerV2) GetAvailableCountriesV2(_ hestia.User, _ Params) (interface{}, error) {
 	if len(vc.CachedVouchers.CachedCountries) > 0 && vc.CachedVouchers.CachedCountriesUpdated+voucherCacheTimeFrame > time.Now().Unix() {
 		return vc.CachedVouchers.CachedCountries, nil
 	} else {
-		countries, err := vc.BitcouModel.GetCountries(false)
+		countries, err := vc.BitcouModel.GetCountriesV2(false)
 		if err != nil {
 			return nil, err
 		}
 		vc.CachedVouchers.CachedCountries = countries
 		vc.CachedVouchers.CachedCountriesUpdated = time.Now().Unix()
+		fmt.Println(countries)
 		return countries, nil
 	}
 }
