@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
@@ -25,6 +26,8 @@ func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
 		PaymentTxId: voucher.PaymentData.Txid,
 		PaymentCoin: voucher.PaymentData.Coin,
 		RefundTxId:  "", // VouchersV1 don't have refund info.
+		Status: voucher.Status,
+		ProviderId: fmt.Sprintf("%d", voucher.ProviderId),
 	}
 }
 
@@ -40,6 +43,8 @@ func voucherV2toLightVoucher(voucher hestia.VoucherV2) hestia.LightVoucher {
 		PaymentTxId: voucher.UserPayment.Txid,
 		PaymentCoin: voucher.UserPayment.Coin,
 		RefundTxId:  voucher.RefundTxId,
+		Status: hestia.GetVoucherStatusV2String(voucher.Status),
+		ProviderId: voucher.ProviderId,
 	}
 }
 
