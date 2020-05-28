@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/shopspring/decimal"
+	"strconv"
 )
 
 type VouchersAllController struct {
@@ -16,6 +18,7 @@ type VouchersAllController struct {
 func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
 	dec := decimal.NewFromInt(voucher.PaymentData.Amount).Div(decimal.NewFromInt(1e8))
 	amount, _ := dec.Float64()
+	variantId, _ := strconv.Atoi(voucher.VariantID)
 	return hestia.LightVoucher{
 		Id:          voucher.ID,
 		VoucherId:   voucher.VoucherID,
@@ -25,6 +28,10 @@ func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
 		PaymentTxId: voucher.PaymentData.Txid,
 		PaymentCoin: voucher.PaymentData.Coin,
 		RefundTxId:  "", // VouchersV1 don't have refund info.
+		Status: voucher.Status,
+		ProviderId: fmt.Sprintf("%d", voucher.ProviderId),
+		ShippingMethod: hestia.VoucherShippingMethodApi, // vouchersv1 don't have other option.
+		VariantId: variantId,
 	}
 }
 
@@ -40,6 +47,10 @@ func voucherV2toLightVoucher(voucher hestia.VoucherV2) hestia.LightVoucher {
 		PaymentTxId: voucher.UserPayment.Txid,
 		PaymentCoin: voucher.UserPayment.Coin,
 		RefundTxId:  voucher.RefundTxId,
+		Status: hestia.GetVoucherStatusV2String(voucher.Status),
+		ProviderId: voucher.ProviderId,
+		ShippingMethod: voucher.ShippingMethod,
+		VariantId: voucher.VariantId,
 	}
 }
 
