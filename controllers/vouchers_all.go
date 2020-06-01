@@ -32,6 +32,7 @@ func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
 		ProviderId: fmt.Sprintf("%d", voucher.ProviderId),
 		ShippingMethod: hestia.VoucherShippingMethodApi, // vouchersv1 don't have other option.
 		VariantId: variantId,
+		RedeemCode: voucher.RedeemCode,
 	}
 }
 
@@ -51,6 +52,7 @@ func voucherV2toLightVoucher(voucher hestia.VoucherV2) hestia.LightVoucher {
 		ProviderId: voucher.ProviderId,
 		ShippingMethod: voucher.ShippingMethod,
 		VariantId: voucher.VariantId,
+		RedeemCode: voucher.RedeemCode,
 	}
 }
 
