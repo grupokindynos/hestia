@@ -39,6 +39,11 @@ type CachedVouchersData struct {
 	Vouchers    []bitcou.LightVoucher
 }
 
+type CachedVouchersDataV2 struct {
+	LastUpdated int64
+	Vouchers    []bitcou.LightVoucherV2
+}
+
 type VouchersCache struct {
 	lock                   sync.RWMutex
 	Vouchers               map[string]CachedVouchersData
@@ -46,9 +51,26 @@ type VouchersCache struct {
 	CachedCountriesUpdated int64
 }
 
+type VouchersCacheV2 struct {
+	lock                   sync.RWMutex
+	Vouchers               map[string]CachedVouchersDataV2
+	CachedCountries        []string
+	CachedCountriesUpdated int64
+}
+
 func (vc *VouchersCache) AddCountryVouchers(country string, vouchers []bitcou.LightVoucher) {
 	vc.lock.Lock()
 	vc.Vouchers[country] = CachedVouchersData{
+		LastUpdated: time.Now().Unix(),
+		Vouchers:    vouchers,
+	}
+	vc.lock.Unlock()
+	return
+}
+
+func (vc *VouchersCacheV2) AddCountryVouchersV2(country string, vouchers []bitcou.LightVoucherV2) {
+	vc.lock.Lock()
+	vc.Vouchers[country] = CachedVouchersDataV2{
 		LastUpdated: time.Now().Unix(),
 		Vouchers:    vouchers,
 	}
@@ -231,7 +253,7 @@ func (vc *VouchersController) GetAvailableCountries(userData hestia.User, params
 	}
 }
 
-func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersController) GetTestAvailableCountries(_ hestia.User, _ Params) (interface{}, error) {
 	countries, err := vc.BitcouModel.GetCountries(true)
 	if err != nil {
 		return nil, err
@@ -239,7 +261,7 @@ func (vc *VouchersController) GetTestAvailableCountries(userData hestia.User, pa
 	return countries, nil
 }
 
-func (vc *VouchersController) GetVouchers(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersController) GetVouchers(_ hestia.User, params Params) (interface{}, error) {
 	cachedData, ok := vc.CachedVouchers.Vouchers[params.Country]
 	if !ok {
 		countryData, err := vc.BitcouModel.GetCountry(params.Country)

@@ -13,6 +13,11 @@ type BitcouCountry struct {
 	Vouchers []bitcou.LightVoucher `firestore:"vouchers" json:"vouchers"`
 }
 
+type BitcouCountryV2 struct {
+	ID       string                  `firestore:"id" json:"id"`
+	Vouchers []bitcou.LightVoucherV2 `firestore:"vouchers" json:"vouchers"`
+}
+
 type BitcouFilter struct {
 	ID        string   `firestore:"id" json:"id"`
 	Providers []int    `firestore:"providers" json:"providers"`
@@ -26,8 +31,10 @@ type ApiBitcouFilter struct {
 }
 
 type BitcouModel struct {
-	Firestore     *firestore.CollectionRef
-	FirestoreTest *firestore.CollectionRef
+	Firestore       *firestore.CollectionRef
+	FirestoreTest   *firestore.CollectionRef
+	FirestoreV2     *firestore.CollectionRef
+	FirestoreTestV2 *firestore.CollectionRef
 }
 
 type BitcouConfModel struct {
@@ -48,7 +55,21 @@ func (bm *BitcouModel) AddTestCountry(country BitcouCountry) error {
 	return err
 }
 
+func (bm *BitcouModel) AddTestCountryV2(country BitcouCountryV2) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	_, err := bm.FirestoreTest.Doc(country.ID).Set(ctx, country)
+	return err
+}
+
 func (bm *BitcouModel) AddCountry(country BitcouCountry) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	_, err := bm.Firestore.Doc(country.ID).Set(ctx, country)
+	return err
+}
+
+func (bm *BitcouModel) AddCountryV2(country BitcouCountryV2) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	_, err := bm.Firestore.Doc(country.ID).Set(ctx, country)
@@ -59,6 +80,21 @@ func (bm *BitcouModel) GetCountry(id string) (country BitcouCountry, err error) 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := bm.Firestore.Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return country, err
+	}
+	err = doc.DataTo(&country)
+	if err != nil {
+		return country, err
+	}
+	return country, nil
+}
+
+func (bm *BitcouModel) GetCountryV2(id string) (country BitcouCountryV2, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := bm.FirestoreV2.Doc(id)
 	doc, err := ref.Get(ctx)
 	if err != nil {
 		return country, err
@@ -108,21 +144,49 @@ func (bm *BitcouModel) GetCountries(dev bool) (countries []string, err error) {
 	return countries, nil
 }
 
-func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, filterMapVouchers map[string]bool, err error) {
+// Replaces both implementations of GetCountry
+func (bm *BitcouModel) GetCountriesV2(dev bool) (countries []string, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var iter *firestore.DocumentIterator
+	if dev {
+		iter = bm.FirestoreTestV2.Documents(ctx)
+	} else {
+		iter = bm.FirestoreV2.Documents(ctx)
+	}
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return countries, err
+		}
+		countries = append(countries, doc.Ref.ID)
+	}
+	return countries, nil
+}
+
+type BitcouFilterWrapper struct {
+	ProviderFilter map[int]bool
+	VoucherFilter  map[string]bool
+}
+
+func (bm *BitcouModel) GetFilters(db string) (filterResponse BitcouFilterWrapper, err error) {
 	var filter BitcouFilter
-	filterMapProviders = make(map[int]bool)
-	filterMapVouchers = make(map[string]bool)
+	filterMapProviders := make(map[int]bool)
+	filterMapVouchers := make(map[string]bool)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := bm.Firestore.Doc(db)
 	doc, err := ref.Get(ctx)
 	if err != nil {
-		return filterMapProviders, filterMapVouchers, err
+		return filterResponse, err
 	}
 	err = doc.DataTo(&filter)
 	if err != nil {
-		return filterMapProviders, filterMapVouchers, err
+		return filterResponse, err
 	}
 
 	for _, provider := range filter.Providers {
@@ -132,6 +196,7 @@ func (bm *BitcouModel) GetFilters(db string) (filterMapProviders map[int]bool, f
 	for _, voucher := range filter.Vouchers {
 		filterMapVouchers[voucher] = false
 	}
-
-	return filterMapProviders, filterMapVouchers, err
+	filterResponse.ProviderFilter = filterMapProviders
+	filterResponse.VoucherFilter = filterMapVouchers
+	return filterResponse, err
 }
