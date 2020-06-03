@@ -41,8 +41,8 @@ func main() {
 	docFilter := firestore.Collection("bitcou_filters")
 	modelFilter := models.BitcouModel{Firestore: docFilter, FirestoreTest: docFilter}
 
-	prodProvFilter, prodVoucherFilter, err := modelFilter.GetFilters("prod")
-	devProvFilter, devVoucherFilter, err := modelFilter.GetFilters("dev")
+	prodFilters, err := modelFilter.GetFilters("prod")
+	devFilters, err := modelFilter.GetFilters("dev")
 
 	service := bitcou.InitService()
 
@@ -67,8 +67,8 @@ func main() {
 		availableCountry = append(availableCountry, key)
 	}
 
-	countriesDev = filterVouchersByCountry(availableCountry, voucherListDev, devProvFilter, devVoucherFilter, devProvidersMap)
-	countries = filterVouchersByCountry(availableCountry, voucherListProd, prodProvFilter, prodVoucherFilter, ProvidersMap)
+	countriesDev = filterVouchersByCountry(availableCountry, voucherListDev, devFilters.ProviderFilter, devFilters.VoucherFilter, devProvidersMap)
+	countries = filterVouchersByCountry(availableCountry, voucherListProd, prodFilters.ProviderFilter, devFilters.VoucherFilter, ProvidersMap)
 
 	for _, bitcouCountry := range countries {
 		err = model.AddCountry(bitcouCountry)
