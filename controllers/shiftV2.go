@@ -3,6 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -11,9 +15,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"log"
-	"os"
-	"strconv"
 )
 
 /*
@@ -52,7 +53,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	for _, id := range userInfo.ShiftV2 {
 		obj, err := sc.Model.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			continue
 		}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
@@ -81,7 +82,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	for _, id := range userInfo.Shifts {
 		obj, err := sc.LegacyModel.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			continue
 		}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
