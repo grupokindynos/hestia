@@ -272,7 +272,6 @@ func (vc *VouchersControllerV2) GetVouchersV2(_ hestia.User, params Params) (int
 	}
 }
 
-
 func (vc *VouchersControllerV2) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
 	countryData, err := vc.BitcouModel.GetTestCountry(country)

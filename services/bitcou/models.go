@@ -37,17 +37,17 @@ type Voucher struct {
 }
 
 type VoucherV2 struct {
-	ProductID     int        `json:"product_id"`
-	Name          string     `json:"name"`
-	Description   string     `json:"description"`
-	ProviderID    int        `json:"provider_id"`
-	ProviderName  string     `json:"provider_name"`
-	Variants      []Variants `json:"variants"`
-	KindReceiving ShippingV2 `json:"kind_receiving"`
-	Valid     int64           `json:"valid"`
-	IsKYC     bool            `json:"isKYC"`
-	Benefits  map[string]bool `firestore:"benefits" json:"benefits"`
-	Countries []string        `json:"countries"`
+	ProductID     int             `json:"product_id"`
+	Name          string          `json:"name"`
+	Description   string          `json:"description"`
+	ProviderID    int             `json:"provider_id"`
+	ProviderName  string          `json:"provider_name"`
+	Variants      []Variants      `json:"variants"`
+	KindReceiving ShippingV2      `json:"kind_receiving"`
+	Valid         int64           `json:"valid"`
+	IsKYC         bool            `json:"isKYC"`
+	Benefits      map[string]bool `firestore:"benefits" json:"benefits"`
+	Countries     []string        `json:"countries"`
 }
 
 type ShippingV2 struct {
@@ -88,12 +88,11 @@ func NewLightVoucher(voucher Voucher) *LightVoucher {
 	return lv
 }
 
-
 type LightVoucherV2 struct {
-	Name         string          `firestore:"name" json:"name"`
-	ProductID    int             `firestore:"product_id" json:"product_id"`
+	Name      string `firestore:"name" json:"name"`
+	ProductID int    `firestore:"product_id" json:"product_id"`
 	//RedeemPlace  RedeemPlace     `firestore:"redeem_place" json:"redeem_place"`
-	Shipping     ShippingV2        `firestore:"shipping" json:"shipping"`
+	Shipping     ShippingV2      `firestore:"shipping" json:"shipping"`
 	TraderID     int             `firestore:"trader_id" json:"trader_id"`
 	Variants     []Variants      `firestore:"variants" json:"variants"`
 	ProviderID   int             `firestore:"provider_id" json:"provider_id"`

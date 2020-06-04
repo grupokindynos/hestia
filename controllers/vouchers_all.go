@@ -10,8 +10,8 @@ import (
 )
 
 type VouchersAllController struct {
-	UserModel *models.UsersModel
-	VouchersModel *models.VouchersModel
+	UserModel       *models.UsersModel
+	VouchersModel   *models.VouchersModel
 	VouchersV2Model *models.VouchersModelV2
 }
 
@@ -20,19 +20,19 @@ func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
 	amount, _ := dec.Float64()
 	variantId, _ := strconv.Atoi(voucher.VariantID)
 	return hestia.LightVoucher{
-		Id:          voucher.ID,
-		VoucherId:   voucher.VoucherID,
-		Name:        voucher.Name,
-		Timestamp:   voucher.Timestamp,
-		Amount:      amount,
-		PaymentTxId: voucher.PaymentData.Txid,
-		PaymentCoin: voucher.PaymentData.Coin,
-		RefundTxId:  "", // VouchersV1 don't have refund info.
-		Status: voucher.Status,
-		ProviderId: fmt.Sprintf("%d", voucher.ProviderId),
+		Id:             voucher.ID,
+		VoucherId:      voucher.VoucherID,
+		Name:           voucher.Name,
+		Timestamp:      voucher.Timestamp,
+		Amount:         amount,
+		PaymentTxId:    voucher.PaymentData.Txid,
+		PaymentCoin:    voucher.PaymentData.Coin,
+		RefundTxId:     "", // VouchersV1 don't have refund info.
+		Status:         voucher.Status,
+		ProviderId:     fmt.Sprintf("%d", voucher.ProviderId),
 		ShippingMethod: hestia.VoucherShippingMethodApi, // vouchersv1 don't have other option.
-		VariantId: variantId,
-		RedeemCode: voucher.RedeemCode,
+		VariantId:      variantId,
+		RedeemCode:     voucher.RedeemCode,
 	}
 }
 
@@ -40,23 +40,23 @@ func voucherV2toLightVoucher(voucher hestia.VoucherV2) hestia.LightVoucher {
 	dec := decimal.NewFromInt(voucher.UserPayment.Amount).Div(decimal.NewFromInt(1e8))
 	amount, _ := dec.Float64()
 	return hestia.LightVoucher{
-		Id:          voucher.Id,
-		VoucherId:   voucher.VoucherId,
-		Name:        voucher.VoucherName,
-		Timestamp:   voucher.CreatedTime,
-		Amount:      amount,
-		PaymentTxId: voucher.UserPayment.Txid,
-		PaymentCoin: voucher.UserPayment.Coin,
-		RefundTxId:  voucher.RefundTxId,
-		Status: hestia.GetVoucherStatusV2String(voucher.Status),
-		ProviderId: voucher.ProviderId,
+		Id:             voucher.Id,
+		VoucherId:      voucher.VoucherId,
+		Name:           voucher.VoucherName,
+		Timestamp:      voucher.CreatedTime,
+		Amount:         amount,
+		PaymentTxId:    voucher.UserPayment.Txid,
+		PaymentCoin:    voucher.UserPayment.Coin,
+		RefundTxId:     voucher.RefundTxId,
+		Status:         hestia.GetVoucherStatusV2String(voucher.Status),
+		ProviderId:     voucher.ProviderId,
 		ShippingMethod: voucher.ShippingMethod,
-		VariantId: voucher.VariantId,
-		RedeemCode: voucher.RedeemCode,
+		VariantId:      voucher.VariantId,
+		RedeemCode:     voucher.RedeemCode,
 	}
 }
 
-func (va *VouchersAllController) GetVouchersHistory(userData hestia.User, _ Params) (interface{}, error){
+func (va *VouchersAllController) GetVouchersHistory(userData hestia.User, _ Params) (interface{}, error) {
 	userInfo, err := va.UserModel.Get(userData.ID)
 	if err != nil {
 		return nil, errors.ErrorNoUserInformation
