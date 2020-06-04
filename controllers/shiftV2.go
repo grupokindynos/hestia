@@ -34,6 +34,7 @@ type ShiftsControllerV2 struct {
 }
 
 func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	log.Println("retrieving shift data for ", userData.ID)
 	filterNum, _ := strconv.ParseInt(params.Filter, 10, 32)
 	if params.Filter == "all" {
 		filterNum = -1
