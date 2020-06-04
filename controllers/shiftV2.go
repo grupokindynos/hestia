@@ -11,6 +11,7 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
+	"log"
 	"os"
 	"strconv"
 )
@@ -42,6 +43,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
+		log.Println("ShiftV2::GetAll::NOUSERINFO::", userData.ID)
 		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.LightShift
