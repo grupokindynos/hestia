@@ -25,10 +25,10 @@ func main() {
 
 	service := bitcou.InitService()
 
-	prodProv, _ := service.GetProviders(false) // Retrieves public API vouchers
+	prodProv, _ := service.GetProvidersV2(true) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProviders(false) // Retrieves dev API vouchers
+	devProv, _ := service.GetProvidersV2(true) // Retrieves dev API vouchers
 	var devProvidersMap = providersToMap(devProv)
 
 	voucherListProd, err := service.GetListV2(true)
@@ -78,9 +78,6 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 	var countryInfo []models.BitcouCountryV2
 	countryMap := make(map[string]models.BitcouCountryV2)
 	for _, voucher := range voucherList {
-		if voucher.ProductID == 1243 {
-			fmt.Println("found rossman!")
-		}
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
 		_, okVoucher := voucherFilter[strId]
@@ -88,7 +85,7 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 			_, ok := providerMap[voucher.ProviderID]
 			if !ok {
 				fmt.Println("missing provider for: ", voucher.ProductID)
-				//continue
+				continue
 			}
 			for _, country := range voucher.Countries {
 				countryData, ok := countryMap[country]
