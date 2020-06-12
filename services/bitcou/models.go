@@ -100,6 +100,7 @@ type LightVoucherV2 struct {
 	Benefits     map[string]bool `firestore:"benefits" json:"benefits"`
 	Description  string          `firestore:"description" json:"description"`
 	Valid        int64           `firestore:"valid" json:"valid"`
+	IsKYC        bool            `firestore:"is_kyc" json:"is_kyc"`
 	//SKU          string          `firestore:"localizationKey" json:"localizationKey"`
 }
 
@@ -116,6 +117,7 @@ func NewLightVoucherV2(voucher VoucherV2) *LightVoucherV2 {
 	lv.Benefits = voucher.Benefits
 	lv.Description = voucher.Description
 	lv.Valid = voucher.Valid
+	lv.IsKYC = voucher.IsKYC
 	//lv.SKU = voucher.SKU // TODO Replace or Remove with SKU info
 	return lv
 }
