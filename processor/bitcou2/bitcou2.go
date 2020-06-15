@@ -16,6 +16,10 @@ import (
 	"strconv"
 )
 
+var (
+	service = bitcou.InitServiceV2()
+)
+
 // This tool must be run every 12 hours to index the bitcou vouchers list.
 func main() {
 	_ = godotenv.Load()
@@ -23,7 +27,6 @@ func main() {
 	// TODO Firebase Shit
 	model, prodFilter, devFilter := GetFirebaseData() // DB model, and voucher filters
 
-	service := bitcou.InitService()
 
 	prodProv, _ := service.GetProvidersV2(true) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
@@ -77,6 +80,9 @@ func providersToMap(providers []bitcou.Provider) (providerMap map[int]string) {
 func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[int]bool, voucherFilter map[string]bool, providerMap map[int]string) []models.BitcouCountryV2 {
 	var countryInfo []models.BitcouCountryV2
 	countryMap := make(map[string]models.BitcouCountryV2)
+
+
+
 	for _, voucher := range voucherList {
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
@@ -87,6 +93,17 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 				fmt.Println("missing provider for: ", voucher.ProductID)
 				continue
 			}
+			imageInfo, err := service.GetProviderImage(voucher.ProviderID, true)
+			var imageStr string
+			if err != nil {
+				imageStr = "unknown"
+			} else {
+				if imageInfo.Image == "" {
+					imageStr = "unknown"
+				} else {
+					imageStr = imageInfo.Image
+				}
+			}
 			for _, country := range voucher.Countries {
 				countryData, ok := countryMap[country]
 				if !ok {
@@ -94,10 +111,10 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 						ID:       country,
 						Vouchers: []bitcou.LightVoucherV2{},
 					}
-					newCountry.Vouchers = append(newCountry.Vouchers, *bitcou.NewLightVoucherV2(voucher))
+					newCountry.Vouchers = append(newCountry.Vouchers, *bitcou.NewLightVoucherV2(voucher, imageStr))
 					countryMap[country] = newCountry
 				} else {
-					countryData.Vouchers = append(countryData.Vouchers, *bitcou.NewLightVoucherV2(voucher))
+					countryData.Vouchers = append(countryData.Vouchers, *bitcou.NewLightVoucherV2(voucher, imageStr))
 					countryMap[country] = countryData
 				}
 			}

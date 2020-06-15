@@ -101,14 +101,14 @@ type LightVoucherV2 struct {
 	Description  string          `firestore:"description" json:"description"`
 	Valid        int64           `firestore:"valid" json:"valid"`
 	IsKYC        bool            `firestore:"is_kyc" json:"is_kyc"`
+	Image        string          `firestore:"image" json:"image"`
 	//SKU          string          `firestore:"localizationKey" json:"localizationKey"`
 }
 
-func NewLightVoucherV2(voucher VoucherV2) *LightVoucherV2 {
+func NewLightVoucherV2(voucher VoucherV2, img string) *LightVoucherV2 {
 	lv := new(LightVoucherV2)
 	lv.Name = voucher.Name
 	lv.ProductID = voucher.ProductID
-	//lv.RedeemPlace = voucher.RedeemPlace
 	lv.Shipping = voucher.KindReceiving
 	lv.TraderID = 1
 	lv.Variants = voucher.Variants
@@ -118,7 +118,7 @@ func NewLightVoucherV2(voucher VoucherV2) *LightVoucherV2 {
 	lv.Description = voucher.Description
 	lv.Valid = voucher.Valid
 	lv.IsKYC = voucher.IsKYC
-	//lv.SKU = voucher.SKU // TODO Replace or Remove with SKU info
+	lv.Image = img
 	return lv
 }
 
@@ -134,4 +134,9 @@ type MetaData struct {
 type Provider struct {
 	Id   int    `json:"provider_id"`
 	Name string `json:"provider_name"`
+}
+
+type ProviderImage struct {
+	ImageId int    `json:"image_id"`
+	Image   string `json:"image"`
 }
