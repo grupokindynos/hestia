@@ -108,7 +108,7 @@ func (bs *ServiceV2) GetProvidersV2(dev bool) ([]Provider, error) {
 
 func (bs *ServiceV2) GetProviderImage(providerId int, dev bool) (imageInfo ProviderImage, err error) {
 	if val, ok := bs.ImageMap[providerId]; ok {
-		log.Println("using cached image for ", providerId)
+		//log.Println("using cached image for ", providerId)
 		return val, nil
 	}
 	var url string
@@ -151,5 +151,4 @@ func (bs *ServiceV2) GetProviderImage(providerId int, dev bool) (imageInfo Provi
 	} else {
 		return imageInfo, errors.New("image unavailable")
 	}
-
 }
