@@ -2,6 +2,7 @@ package bitcou
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -32,6 +33,7 @@ func (bs *ServiceV2) GetListV2(dev bool) ([]VoucherV2, error) {
 	} else {
 		url = os.Getenv("BITCOU_URL_PROD_V2") + "voucher/availableVouchers/"
 	}
+	log.Println("Getting products using url: ", url)
 	token := "Bearer " + os.Getenv("BITCOU_TOKEN_V2")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -71,8 +73,8 @@ func (bs *ServiceV2) GetProvidersV2(dev bool) ([]Provider, error) {
 	} else {
 		url = os.Getenv("BITCOU_URL_PROD_V2") + "voucher/providers"
 	}
+	log.Println("Getting providers using url: ", url)
 	token := "Bearer " + os.Getenv("BITCOU_TOKEN_V2")
-	log.Println("url:: ", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -106,6 +108,7 @@ func (bs *ServiceV2) GetProvidersV2(dev bool) ([]Provider, error) {
 
 func (bs *ServiceV2) GetProviderImage(providerId int, dev bool) (imageInfo ProviderImage, err error) {
 	if val, ok := bs.ImageMap[providerId]; ok {
+		log.Println("using cached image for ", providerId)
 		return val, nil
 	}
 	var url string
@@ -134,14 +137,19 @@ func (bs *ServiceV2) GetProviderImage(providerId int, dev bool) (imageInfo Provi
 	if err != nil {
 		return imageInfo, err
 	}
-	dataBytes, err := json.Marshal(response.Data)
-	if err != nil {
-		return imageInfo, err
+	if len(response.Data) > 0 {
+		dataBytes, err := json.Marshal(response.Data[0])
+		if err != nil {
+			return imageInfo, err
+		}
+		err = json.Unmarshal(dataBytes, &imageInfo)
+		if err != nil {
+			return imageInfo, err
+		}
+		bs.ImageMap[providerId] = imageInfo
+		return imageInfo, nil
+	} else {
+		return imageInfo, errors.New("image unavailable")
 	}
-	err = json.Unmarshal(dataBytes, &imageInfo)
-	if err != nil {
-		return imageInfo, err
-	}
-	bs.ImageMap[providerId] = imageInfo
-	return imageInfo, nil
+
 }

@@ -31,17 +31,18 @@ func main() {
 	prodProv, _ := service.GetProvidersV2(true) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProvidersV2(true) // Retrieves dev API vouchers
+	devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
 	var devProvidersMap = providersToMap(devProv)
 
-	voucherListProd, err := service.GetListV2(true)
+	voucherListProd, err := service.GetListV2(false)
 	if err != nil {
 		panic("unable to load bitcou voucher list: " + err.Error())
 	}
-	voucherListDev := voucherListProd
-	/*if err != nil {
-		panic("unable to load bitcou voucher list")
-	}*/
+	voucherListDev, err := service.GetListV2(true)
+	if err != nil {
+		panic("unable to load bitcou voucher list: " + err.Error())
+	}
+
 	file, _ := json.MarshalIndent(voucherListDev, "", " ")
 	err = ioutil.WriteFile("vouchers.json", file, 0644)
 	if err != nil {
@@ -51,8 +52,9 @@ func main() {
 	var countriesDev []models.BitcouCountryV2
 
 	// Voucher Filter
-	countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
 	countries = filterVouchersByCountry(voucherListProd, prodFilter.ProviderFilter, prodFilter.VoucherFilter, ProvidersMap)
+	countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
+
 
 	for _, bitcouCountry := range countries {
 		err = model.AddCountryV2(bitcouCountry)
@@ -81,8 +83,6 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 	var countryInfo []models.BitcouCountryV2
 	countryMap := make(map[string]models.BitcouCountryV2)
 
-
-
 	for _, voucher := range voucherList {
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
@@ -93,7 +93,7 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 				fmt.Println("missing provider for: ", voucher.ProductID)
 				continue
 			}
-			imageInfo, err := service.GetProviderImage(voucher.ProviderID, true)
+			imageInfo, err := service.GetProviderImage(voucher.ProviderID, false)
 			var imageStr string
 			if err != nil {
 				imageStr = "unknown"

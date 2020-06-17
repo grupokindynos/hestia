@@ -137,6 +137,6 @@ type Provider struct {
 }
 
 type ProviderImage struct {
-	ImageId int    `json:"image_id"`
+	ImageId string `json:"image_id"`
 	Image   string `json:"image"`
 }
