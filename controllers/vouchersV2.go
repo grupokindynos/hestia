@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -179,7 +180,7 @@ func (vc *VouchersControllerV2) GetVoucherInfo(c *gin.Context) {
 func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 	filter := c.Query("filter")
 	if filter == "" {
-		filter = "all"
+		filter = "-1"
 	}
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
@@ -192,6 +193,7 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
+	log.Println("Voucher List", vouchersList)
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), vouchersList, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
