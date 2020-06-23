@@ -111,7 +111,7 @@ func NewLightVoucherV2(voucher VoucherV2, img string) *LightVoucherV2 {
 	lv.ProductID = voucher.ProductID
 	lv.Shipping = voucher.KindReceiving
 	lv.TraderID = 1
-	lv.Variants = voucher.Variants
+	lv.Variants =getVariantArray(voucher.Variants)
 	lv.ProviderID = voucher.ProviderID
 	lv.ProviderName = voucher.ProviderName
 	lv.Benefits = voucher.Benefits
@@ -120,6 +120,17 @@ func NewLightVoucherV2(voucher VoucherV2, img string) *LightVoucherV2 {
 	lv.IsKYC = voucher.IsKYC
 	lv.Image = img
 	return lv
+}
+
+func getVariantArray(variants []Variants) []Variants{
+	// Removes sub 10 EUR products
+	var newVariants []Variants
+	for _, v := range variants {
+		if v.Price > 950 {
+			newVariants = append(newVariants, v)
+		}
+	}
+	return newVariants
 }
 
 type BaseResponse struct {
