@@ -28,7 +28,7 @@ func main() {
 	model, prodFilter, devFilter := GetFirebaseData() // DB model, and voucher filters
 
 
-	prodProv, _ := service.GetProvidersV2(true) // Retrieves public API vouchers
+	prodProv, _ := service.GetProvidersV2(false) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
 	devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
@@ -57,9 +57,13 @@ func main() {
 
 
 	for _, bitcouCountry := range countries {
-		err = model.AddCountryV2(bitcouCountry)
-		if err != nil {
-			panic("unable to store country information")
+		if bitcouCountry.ID == "AR" || bitcouCountry.ID == "BR" || bitcouCountry.ID == "AU" || bitcouCountry.ID == "CN"{
+			log.Println("Ignoring country ", bitcouCountry.ID)
+		} else {
+			err = model.AddCountryV2(bitcouCountry)
+			if err != nil {
+				panic("unable to store country information")
+			}
 		}
 	}
 
@@ -87,6 +91,9 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
 		_, okVoucher := voucherFilter[strId]
+		if voucher.ProductID == 55 {
+			log.Println(voucher.ProviderName, "!")
+		}
 		if !okProv && !okVoucher {
 			_, ok := providerMap[voucher.ProviderID]
 			if !ok {
