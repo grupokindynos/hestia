@@ -67,7 +67,7 @@ func main() {
 		}
 	}
 
-	for _, bitcouTestCountry := range countriesDev {
+	for _, bitcouTestCountry := range countriesDev { 
 		err = model.AddTestCountryV2(bitcouTestCountry)
 		if err != nil {
 			panic("unable to store test country information")
