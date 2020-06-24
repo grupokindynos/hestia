@@ -118,11 +118,21 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 						ID:       country,
 						Vouchers: []bitcou.LightVoucherV2{},
 					}
-					newCountry.Vouchers = append(newCountry.Vouchers, *bitcou.NewLightVoucherV2(voucher, imageStr))
-					countryMap[country] = newCountry
+					newVoucherV2 := bitcou.NewLightVoucherV2(voucher, imageStr)
+					if len(newVoucherV2.Variants) > 0 {
+						newCountry.Vouchers = append(newCountry.Vouchers, *newVoucherV2)
+						countryMap[country] = newCountry
+					} else {
+						log.Println(voucher.ProviderName, " has no variants left")
+					}
 				} else {
-					countryData.Vouchers = append(countryData.Vouchers, *bitcou.NewLightVoucherV2(voucher, imageStr))
-					countryMap[country] = countryData
+					newVoucherV2 := bitcou.NewLightVoucherV2(voucher, imageStr)
+					if len(newVoucherV2.Variants) > 0 {
+						countryData.Vouchers = append(countryData.Vouchers, *newVoucherV2)
+						countryMap[country] = countryData
+					} else {
+						log.Println(voucher.ProviderName, " has no variants left")
+					}
 				}
 			}
 		} else {
