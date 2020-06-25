@@ -3,6 +3,7 @@ package models
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"github.com/grupokindynos/common/herodotus"
 	"github.com/grupokindynos/common/hestia"
 	"strconv"
 	"time"
@@ -75,4 +76,37 @@ func (m *VouchersModelV2) GetAll(filter int, timefilter string) (vouchers []hest
 		vouchers = append(vouchers, voucher)
 	}
 	return vouchers, nil
+}
+
+func (m *VouchersModelV2) GetWithComposedQuery(filters herodotus.VoucherV2Filters) (vouchers []hestia.VoucherV2, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+	ref := m.Firestore.Collection(m.Collection)
+	var docSnap []*firestore.DocumentSnapshot
+	query := ref.Where("created_time", ">=", filters.FromTimestamp).Where("created_time", "<=", filters.ToTimestamp)
+
+	docSnap, err = query.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, doc := range docSnap {
+		var voucher hestia.VoucherV2
+		_ = doc.DataTo(&voucher)
+		if checkVoucherWithFilters(voucher, filters) {
+			vouchers = append(vouchers, voucher)
+		}
+	}
+
+	return vouchers, nil
+}
+
+func checkVoucherWithFilters(voucher hestia.VoucherV2, filters herodotus.VoucherV2Filters) bool {
+	if len(filters.VoucherId) > 0 && !filters.VoucherId[voucher.VoucherId] {return false}
+	if len(filters.UserId) > 0 && !filters.UserId[voucher.UserId] {return false}
+	if len(filters.ProviderId) > 0 && !filters.ProviderId[voucher.ProviderId] {return false}
+	if len(filters.Status) > 0 && !filters.Status[voucher.Status] {return false}
+	if len(filters.Coin) > 0 && !filters.Coin[voucher.UserPayment.Coin] {return false}
+
+	return true
 }

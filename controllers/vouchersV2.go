@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/grupokindynos/common/herodotus"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -329,6 +330,24 @@ func (vc *VouchersControllerV2) GetUserInfo(c *gin.Context) {
 	}
 
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), userInfo.Email, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
+}
+
+func (vc *VouchersControllerV2) GetWithComposedQuery(c *gin.Context) {
+	var filters herodotus.VoucherV2Filters
+	filtersStr := c.Query("voucherV2Filters")
+	err := json.Unmarshal([]byte(filtersStr), &filters)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	vouchers, err := vc.Model.GetWithComposedQuery(filters)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), vouchers, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }
