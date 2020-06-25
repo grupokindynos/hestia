@@ -126,7 +126,7 @@ func getVariantArray(variants []Variants) []Variants{
 	// Removes sub 10 EUR products
 	var newVariants []Variants
 	for _, v := range variants {
-		if v.Price > 950 {
+		if v.Price > 950 || v.VariantID == "13281" {
 			newVariants = append(newVariants, v)
 		}
 	}
