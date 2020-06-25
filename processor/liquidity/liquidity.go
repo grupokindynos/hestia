@@ -97,7 +97,11 @@ func main() {
 			depositAvailable = false
 		}
 		if coinLiquidity > MinVolumeForVouchers {
-			vouchersAvailable = true
+			if coin.Info.Tag != "CRW" {
+				vouchersAvailable = true
+			} else {
+				vouchersAvailable = false
+			}
 		} else {
 			vouchersAvailable = false
 		}

@@ -121,6 +121,21 @@ func (bm *BitcouModel) GetTestCountry(id string) (country BitcouCountry, err err
 	return country, nil
 }
 
+func (bm *BitcouModel) GetTestCountryV2(id string) (country BitcouCountryV2, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := bm.FirestoreTestV2.Doc(id)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return country, err
+	}
+	err = doc.DataTo(&country)
+	if err != nil {
+		return country, err
+	}
+	return country, nil
+}
+
 // Replaces both implementations of GetCountry
 func (bm *BitcouModel) GetCountries(dev bool) (countries []string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -32,7 +32,7 @@ import (
 
 */
 
-const voucherCacheTimeFrame = 24 * 60 * 60 // 24 hours
+const voucherCacheTimeFrame = 2 * 60 * 60 // 24 hours
 
 type CachedVouchersData struct {
 	LastUpdated int64

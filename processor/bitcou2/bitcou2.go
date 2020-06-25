@@ -16,6 +16,10 @@ import (
 	"strconv"
 )
 
+var (
+	service = bitcou.InitServiceV2()
+)
+
 // This tool must be run every 12 hours to index the bitcou vouchers list.
 func main() {
 	_ = godotenv.Load()
@@ -23,22 +27,22 @@ func main() {
 	// TODO Firebase Shit
 	model, prodFilter, devFilter := GetFirebaseData() // DB model, and voucher filters
 
-	service := bitcou.InitService()
 
-	prodProv, _ := service.GetProviders(false) // Retrieves public API vouchers
+	prodProv, _ := service.GetProvidersV2(false) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProviders(false) // Retrieves dev API vouchers
+	devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
 	var devProvidersMap = providersToMap(devProv)
 
-	voucherListProd, err := service.GetListV2(true)
+	voucherListProd, err := service.GetListV2(false)
 	if err != nil {
 		panic("unable to load bitcou voucher list: " + err.Error())
 	}
-	voucherListDev := voucherListProd
-	/*if err != nil {
-		panic("unable to load bitcou voucher list")
-	}*/
+	voucherListDev, err := service.GetListV2(true)
+	if err != nil {
+		panic("unable to load bitcou voucher list: " + err.Error())
+	}
+
 	file, _ := json.MarshalIndent(voucherListDev, "", " ")
 	err = ioutil.WriteFile("vouchers.json", file, 0644)
 	if err != nil {
@@ -48,17 +52,22 @@ func main() {
 	var countriesDev []models.BitcouCountryV2
 
 	// Voucher Filter
-	countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
 	countries = filterVouchersByCountry(voucherListProd, prodFilter.ProviderFilter, prodFilter.VoucherFilter, ProvidersMap)
+	countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
+
 
 	for _, bitcouCountry := range countries {
-		err = model.AddCountryV2(bitcouCountry)
-		if err != nil {
-			panic("unable to store country information")
+		if bitcouCountry.ID == "AR" || bitcouCountry.ID == "BR" || bitcouCountry.ID == "AU" || bitcouCountry.ID == "CN"{
+			log.Println("Ignoring country ", bitcouCountry.ID)
+		} else {
+			err = model.AddCountryV2(bitcouCountry)
+			if err != nil {
+				panic("unable to store country information")
+			}
 		}
 	}
 
-	for _, bitcouTestCountry := range countriesDev {
+	for _, bitcouTestCountry := range countriesDev { 
 		err = model.AddTestCountryV2(bitcouTestCountry)
 		if err != nil {
 			panic("unable to store test country information")
@@ -77,18 +86,30 @@ func providersToMap(providers []bitcou.Provider) (providerMap map[int]string) {
 func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[int]bool, voucherFilter map[string]bool, providerMap map[int]string) []models.BitcouCountryV2 {
 	var countryInfo []models.BitcouCountryV2
 	countryMap := make(map[string]models.BitcouCountryV2)
+
 	for _, voucher := range voucherList {
-		if voucher.ProductID == 1243 {
-			fmt.Println("found rossman!")
-		}
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
 		_, okVoucher := voucherFilter[strId]
+		if voucher.ProductID == 55 {
+			log.Println(voucher.ProviderName, "!")
+		}
 		if !okProv && !okVoucher {
 			_, ok := providerMap[voucher.ProviderID]
 			if !ok {
 				fmt.Println("missing provider for: ", voucher.ProductID)
-				//continue
+				continue
+			}
+			imageInfo, err := service.GetProviderImage(voucher.ProviderID, false)
+			var imageStr string
+			if err != nil {
+				imageStr = "unknown"
+			} else {
+				if imageInfo.Image == "" {
+					imageStr = "unknown"
+				} else {
+					imageStr = imageInfo.Image
+				}
 			}
 			for _, country := range voucher.Countries {
 				countryData, ok := countryMap[country]
@@ -97,11 +118,21 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 						ID:       country,
 						Vouchers: []bitcou.LightVoucherV2{},
 					}
-					newCountry.Vouchers = append(newCountry.Vouchers, *bitcou.NewLightVoucherV2(voucher))
-					countryMap[country] = newCountry
+					newVoucherV2 := bitcou.NewLightVoucherV2(voucher, imageStr)
+					if len(newVoucherV2.Variants) > 0 {
+						newCountry.Vouchers = append(newCountry.Vouchers, *newVoucherV2)
+						countryMap[country] = newCountry
+					} else {
+						log.Println(voucher.ProviderName, " has no variants left")
+					}
 				} else {
-					countryData.Vouchers = append(countryData.Vouchers, *bitcou.NewLightVoucherV2(voucher))
-					countryMap[country] = countryData
+					newVoucherV2 := bitcou.NewLightVoucherV2(voucher, imageStr)
+					if len(newVoucherV2.Variants) > 0 {
+						countryData.Vouchers = append(countryData.Vouchers, *newVoucherV2)
+						countryMap[country] = countryData
+					} else {
+						log.Println(voucher.ProviderName, " has no variants left")
+					}
 				}
 			}
 		} else {

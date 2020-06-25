@@ -87,7 +87,7 @@ func (m *UsersModel) AddVoucher(uid string, voucherID string) error {
 
 // AddVoucher will add a voucher id into the user vouchers array.
 func (m *UsersModel) AddVoucherV2(uid string, voucherId string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_, err := m.Firestore.Collection(m.Collection).Doc(uid).Update(ctx, []firestore.Update{{Path: "vouchers2", Value: firestore.ArrayUnion(voucherId)}})
 	return err

@@ -3,6 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
@@ -11,8 +15,6 @@ import (
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/common/utils"
 	"github.com/grupokindynos/hestia/models"
-	"os"
-	"strconv"
 )
 
 /*
@@ -33,6 +35,7 @@ type ShiftsControllerV2 struct {
 }
 
 func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (interface{}, error) {
+	log.Println("retrieving shift data for ", userData.ID)
 	filterNum, _ := strconv.ParseInt(params.Filter, 10, 32)
 	if params.Filter == "all" {
 		filterNum = -1
@@ -42,6 +45,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	}
 	userInfo, err := sc.UserModel.Get(userData.ID)
 	if err != nil {
+		log.Println("ShiftV2::GetAll::NOUSERINFO::", userData.ID)
 		return nil, errors.ErrorNoUserInformation
 	}
 	var Array []hestia.LightShift
@@ -49,7 +53,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	for _, id := range userInfo.ShiftV2 {
 		obj, err := sc.Model.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			continue
 		}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
@@ -78,7 +82,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 	for _, id := range userInfo.Shifts {
 		obj, err := sc.LegacyModel.Get(id)
 		if err != nil {
-			return nil, errors.ErrorNotFound
+			continue
 		}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,

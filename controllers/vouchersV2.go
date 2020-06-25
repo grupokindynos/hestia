@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/grupokindynos/common/herodotus"
 	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -180,7 +181,7 @@ func (vc *VouchersControllerV2) GetVoucherInfo(c *gin.Context) {
 func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 	filter := c.Query("filter")
 	if filter == "" {
-		filter = "all"
+		filter = "-1"
 	}
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
@@ -193,6 +194,7 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
+	log.Println("Voucher List", vouchersList)
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), vouchersList, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
@@ -273,10 +275,9 @@ func (vc *VouchersControllerV2) GetVouchersV2(_ hestia.User, params Params) (int
 	}
 }
 
-
-func (vc *VouchersControllerV2) GetTestVouchers(userData hestia.User, params Params) (interface{}, error) {
+func (vc *VouchersControllerV2) GetTestVouchersV2(userData hestia.User, params Params) (interface{}, error) {
 	country := params.Country
-	countryData, err := vc.BitcouModel.GetTestCountry(country)
+	countryData, err := vc.BitcouModel.GetTestCountryV2(country)
 	if err != nil {
 		return nil, err
 	}

@@ -53,7 +53,7 @@ func (m *VouchersModelV2) GetAll(filter int, timefilter string) (vouchers []hest
 		}
 	} else {
 		if filter == -1 {
-			query := ref.OrderBy("timestamp", firestore.Asc)
+			query := ref.OrderBy("created_time", firestore.Asc)
 			docSnap, err = query.Documents(ctx).GetAll()
 			if err != nil {
 				return nil, err
