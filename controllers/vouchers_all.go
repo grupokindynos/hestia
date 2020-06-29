@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
+	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/shopspring/decimal"
 	"strconv"
@@ -13,6 +15,7 @@ type VouchersAllController struct {
 	UserModel       *models.UsersModel
 	VouchersModel   *models.VouchersModel
 	VouchersV2Model *models.VouchersModelV2
+	VouchersV2TestModel *models.VouchersModelV2
 }
 
 func voucherToLightVoucher(voucher hestia.Voucher) hestia.LightVoucher {
@@ -81,4 +84,20 @@ func (va *VouchersAllController) GetVouchersHistory(userData hestia.User, _ Para
 		lightVouchers = append(lightVouchers, voucher)
 	}
 	return lightVouchers, nil
+}
+
+func (va *VouchersAllController) CopyVoucherV2ToTesting(c *gin.Context) {
+	id, ok := c.Params.Get("voucherid")
+	if !ok {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	voucher, err := va.VouchersV2Model.Get(id)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+
+	err = va.VouchersV2TestModel.Update(voucher)
+	return
 }

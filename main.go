@@ -70,6 +70,9 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// testing db
+	testDoc := firestore.Collection("polispay").Doc("hestia_test")
+
 	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
@@ -101,6 +104,12 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		FirestoreTestV2: bitcouTestDoc2,
 	}
 	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
+
+	// Models for test db
+	vouchersTestModelV2 := &models.VouchersModelV2{
+		Firestore:  testDoc,
+		Collection: "vouchers2",
+	}
 
 	// Init Controllers
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
@@ -138,6 +147,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		UserModel:       usersModel,
 		VouchersModel:   vouchersModel,
 		VouchersV2Model: vouchersModelV2,
+		VouchersV2TestModel: vouchersTestModelV2,
 	}
 	coinsCtrl := controllers.CoinsController{Model: coinsModel, BalancesModel: balancesModel}
 	globalConfigCtrl := controllers.GlobalConfigController{Model: globalConfigModel}
@@ -223,6 +233,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher2/getVoucherInfo/:country/:product_id", vouchersCtrl2.GetVoucherInfo)
 		authApi.GET("/voucher2/user/info", vouchersCtrl2.GetUserInfo)
 		authApi.GET("/voucher2/composedQuery", vouchersCtrl2.GetWithComposedQuery)
+
+		api.GET("voucher2/copyVoucher/:voucherid", vouchersAllCtrl.CopyVoucherV2ToTesting)
 
 		// Adrestia
 		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
