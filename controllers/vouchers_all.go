@@ -101,3 +101,19 @@ func (va *VouchersAllController) CopyVoucherV2ToTesting(c *gin.Context) {
 	err = va.VouchersV2TestModel.Update(voucher)
 	return
 }
+
+func (va *VouchersAllController) CopyTestingVoucherV2toProduction(c *gin.Context) {
+	id, ok := c.Params.Get("voucherid")
+	if !ok {
+		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
+		return
+	}
+	voucher, err := va.VouchersV2TestModel.Get(id)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+
+	err = va.VouchersV2Model.Update(voucher)
+	return
+}

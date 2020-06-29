@@ -234,7 +234,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/voucher2/user/info", vouchersCtrl2.GetUserInfo)
 		authApi.GET("/voucher2/composedQuery", vouchersCtrl2.GetWithComposedQuery)
 
-		api.GET("voucher2/copyVoucher/:voucherid", vouchersAllCtrl.CopyVoucherV2ToTesting)
+		api.GET("/voucher2/copyProdToTestVoucher/:voucherid", vouchersAllCtrl.CopyVoucherV2ToTesting)
+		api.GET("/voucher2/copyTestToProdVoucher/:voucherid", vouchersAllCtrl.CopyTestingVoucherV2toProduction)
 
 		// Adrestia
 		authApi.GET("/adrestia/deposits", AdrestiaCtrl.GetDeposits)
