@@ -88,10 +88,6 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 	countryMap := make(map[string]models.BitcouCountryV2)
 
 	for _, voucher := range voucherList {
-		if voucher.ProductID == 365 {
-			log.Println("Ignoring epay")
-			continue
-		}
 		strId := strconv.Itoa(voucher.ProductID)
 		_, okProv := providerFilter[voucher.ProviderID]
 		_, okVoucher := voucherFilter[strId]
