@@ -97,7 +97,7 @@ func main() {
 			depositAvailable = false
 		}
 		if coinLiquidity > MinVolumeForVouchers {
-			if coin.Info.Tag != "CRW" {
+			if coin.Info.Tag != "TELOS" {
 				vouchersAvailable = true
 			} else {
 				vouchersAvailable = false
