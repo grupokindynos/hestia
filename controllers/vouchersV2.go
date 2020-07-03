@@ -104,7 +104,7 @@ func (vc *VouchersControllerV2) GetVouchersByTimestampLadon(c *gin.Context) {
 	var userVouchers []hestia.VoucherV2
 	timestamp, _ := strconv.ParseInt(ts, 10, 64)
 
-	for _, id := range userInfo.Vouchers {
+	for _, id := range userInfo.VouchersV2 {
 		obj, err := vc.Model.Get(id)
 		if err != nil {
 			continue
