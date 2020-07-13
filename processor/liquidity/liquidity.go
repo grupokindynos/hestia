@@ -96,11 +96,12 @@ func main() {
 		} else {
 			depositAvailable = false
 		}
+
 		if coinLiquidity > MinVolumeForVouchers {
-			if coin.Info.Tag != "TELOS" {
-				vouchersAvailable = true
-			} else {
+			if coin.Info.Tag == "TELOS" || coin.Info.Tag == "POLIS" {
 				vouchersAvailable = false
+			} else {
+				vouchersAvailable = true
 			}
 		} else {
 			vouchersAvailable = false
