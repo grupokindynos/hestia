@@ -114,7 +114,7 @@ func (am *AdrestiaModel) UpdateBalancer(balancer hestia.Balancer) error {
 	return err
 }
 
-func (am *AdrestiaModel) GetAllSimpleTx(includeComplete bool, sinceTimestamp int, txType string) (simpleTxs []hestia.SimpleTx, err error) {
+func (am *AdrestiaModel) GetAllSimpleTx(includeComplete bool, sinceTimestamp int, txType string, balancerId string) (simpleTxs []hestia.SimpleTx, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ref := am.Firestore.Collection(am.Collections[txType])
@@ -126,6 +126,9 @@ func (am *AdrestiaModel) GetAllSimpleTx(includeComplete bool, sinceTimestamp int
 	for _, doc := range docSnap {
 		var simpleTx hestia.SimpleTx
 		_ = doc.DataTo(&simpleTx)
+
+		if balancerId != "" && simpleTx.BalancerId != balancerId {continue}
+
 		if sinceTimestamp != 0 {
 			if int(simpleTx.CreatedTime) >= sinceTimestamp {
 				if includeComplete {

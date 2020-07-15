@@ -213,13 +213,14 @@ func (ac *AdrestiaController) GetDeposits(c *gin.Context) {
 	}
 	include, _ := strconv.ParseBool(includeComplete)
 	timestamp, _ := strconv.Atoi(sinceTimestamp)
-	ac.getSimpleTx(c, "deposits", include, timestamp)
+	ac.getSimpleTx(c, "deposits", include, timestamp, "")
 	return
 }
 
 func (ac *AdrestiaController) GetWithdrawals(c *gin.Context) {
 	includeComplete := c.Query("include_complete")
 	sinceTimestamp := c.Query("added_since")
+	balancerId := c.Query("balancer_id")
 	_, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
@@ -227,12 +228,12 @@ func (ac *AdrestiaController) GetWithdrawals(c *gin.Context) {
 	}
 	include, _ := strconv.ParseBool(includeComplete)
 	timestamp, _ := strconv.Atoi(sinceTimestamp)
-	ac.getSimpleTx(c, "withdrawals", include, timestamp)
+	ac.getSimpleTx(c, "withdrawals", include, timestamp, balancerId)
 	return
 }
 
-func (ac *AdrestiaController) getSimpleTx(c *gin.Context, txType string, includeComplete bool, timestamp int) {
-	simpleTxs, err := ac.Model.GetAllSimpleTx(includeComplete, timestamp, txType)
+func (ac *AdrestiaController) getSimpleTx(c *gin.Context, txType string, includeComplete bool, timestamp int, balancerId string) {
+	simpleTxs, err := ac.Model.GetAllSimpleTx(includeComplete, timestamp, txType, balancerId)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
