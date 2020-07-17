@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	firebase "firebase.google.com/go"
 	"fmt"
+	"github.com/grupokindynos/common/ladon"
 	"github.com/grupokindynos/hestia/models"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"github.com/joho/godotenv"
@@ -18,6 +19,7 @@ import (
 
 var (
 	service = bitcou.InitServiceV2()
+	providerImages = make(map[int]ladon.ProviderImageApp)
 )
 
 // This tool must be run every 12 hours to index the bitcou vouchers list.
@@ -63,6 +65,22 @@ func main() {
 			err = model.AddCountryV2(bitcouCountry)
 			if err != nil {
 				panic("unable to store country information")
+			}
+		}
+		for _, product := range bitcouCountry.Vouchers {
+			if _, ok := providerImages[product.ProviderID]; !ok {
+				imageBase64, err := service.GetProviderImageBase64(product.Image, product.ProviderID)
+				if err != nil {
+					continue
+				}
+				providerImages[product.ProviderID] = imageBase64
+			}
+		}
+
+		for _, imageInfo := range providerImages {
+			err := model.AddProviderImage(imageInfo)
+			if err != nil {
+				log.Println(err)
 			}
 		}
 	}
@@ -167,7 +185,8 @@ func GetFirebaseData() (models.BitcouModel, models.BitcouFilterWrapper, models.B
 	// Voucher Info by Countries
 	doc := firestore.Collection("bitcou2")
 	docTest := firestore.Collection("bitcou_test2")
-	model := models.BitcouModel{Firestore: doc, FirestoreTest: docTest}
+	docImages := firestore.Collection("bitcou_images")
+	model := models.BitcouModel{Firestore: doc, FirestoreTest: docTest, ProductImages: docImages}
 
 	// Bitcou Filtering System
 	docFilter := firestore.Collection("bitcou_filters")

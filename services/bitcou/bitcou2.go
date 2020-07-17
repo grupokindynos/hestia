@@ -1,8 +1,11 @@
 package bitcou
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/grupokindynos/common/ladon"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -151,4 +154,27 @@ func (bs *ServiceV2) GetProviderImage(providerId int, dev bool) (imageInfo Provi
 	} else {
 		return imageInfo, errors.New("image unavailable")
 	}
+}
+
+func (bs *ServiceV2) GetProviderImageBase64(imageUrl string, providerId int) (imageInfo ladon.ProviderImageApp, err error) {
+	token := "Bearer " + os.Getenv("BITCOU_TOKEN_V2")
+	req, err := http.NewRequest("GET", imageUrl, nil)
+	if err != nil {
+		return imageInfo, err
+	}
+	req.Header.Add("Authorization", token)
+	client := &http.Client{Timeout: 20 * time.Second}
+	res, err := client.Do(req)
+	if err != nil {
+		return imageInfo, err
+	}
+	contents, _ := ioutil.ReadAll(res.Body)
+	_ = res.Body.Close()
+	fmt.Println(string(contents))
+	uEnc := b64.URLEncoding.EncodeToString([]byte (contents))
+	fmt.Println(uEnc)
+	imageInfo.Image = uEnc
+	imageInfo.ProviderId = providerId
+	imageInfo.Url = imageUrl
+	return
 }

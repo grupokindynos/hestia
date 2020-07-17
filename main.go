@@ -74,11 +74,14 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	testDoc := firestore.Collection("polispay").Doc("hestia_test")
 
 	doc := firestore.Collection("polispay").Doc(polisPayDatabase)
+
+	// Bitcou
 	bitcouDoc := firestore.Collection("bitcou")
 	bitcouTestDoc := firestore.Collection("bitcou_test")
 	bitcouConfDoc := firestore.Collection("bitcou_filters")
 	bitcouDoc2 := firestore.Collection("bitcou2")
 	bitcouTestDoc2 := firestore.Collection("bitcou_test2")
+	productImages := firestore.Collection("bitcou_images")
 
 	// Init DB models
 	shiftsModel := &models.ShiftModel{Firestore: doc, Collection: "shifts"}
@@ -102,6 +105,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		FirestoreTest:   bitcouTestDoc,
 		FirestoreV2:     bitcouDoc2,
 		FirestoreTestV2: bitcouTestDoc2,
+		ProductImages: productImages,
 	}
 	bitcouConfModel := &models.BitcouConfModel{Firestore: bitcouConfDoc}
 
