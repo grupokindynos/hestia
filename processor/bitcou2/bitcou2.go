@@ -76,12 +76,11 @@ func main() {
 				providerImages[product.ProviderID] = imageBase64
 			}
 		}
-
-		for _, imageInfo := range providerImages {
-			err := model.AddProviderImage(imageInfo)
-			if err != nil {
-				log.Println(err)
-			}
+	}
+	for _, imageInfo := range providerImages {
+		err := model.AddProviderImage(imageInfo)
+		if err != nil {
+			log.Println(err)
 		}
 	}
 
