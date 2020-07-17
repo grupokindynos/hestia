@@ -4,7 +4,6 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/grupokindynos/common/ladon"
 	"io/ioutil"
 	"log"
@@ -170,9 +169,7 @@ func (bs *ServiceV2) GetProviderImageBase64(imageUrl string, providerId int) (im
 	}
 	contents, _ := ioutil.ReadAll(res.Body)
 	_ = res.Body.Close()
-	fmt.Println(string(contents))
-	uEnc := b64.URLEncoding.EncodeToString([]byte (contents))
-	fmt.Println(uEnc)
+	uEnc := b64.StdEncoding.EncodeToString(contents)
 	imageInfo.Image = uEnc
 	imageInfo.ProviderId = providerId
 	imageInfo.Url = imageUrl

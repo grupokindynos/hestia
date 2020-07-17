@@ -82,7 +82,7 @@ func (bm *BitcouModel) AddCountryV2(country BitcouCountryV2) error {
 func (bm *BitcouModel) AddProviderImage(imageInfo ladon.ProviderImageApp) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	_, err := bm.Firestore.Doc(strconv.FormatInt(int64(imageInfo.ProviderId), 10)).Set(ctx, imageInfo)
+	_, err := bm.ProductImages.Doc(strconv.FormatInt(int64(imageInfo.ProviderId), 10)).Set(ctx, imageInfo)
 	return err
 }
 
