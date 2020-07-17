@@ -229,7 +229,7 @@ func (bm *BitcouModel) GetFilters(db string) (filterResponse BitcouFilterWrapper
 func (bm *BitcouModel) GetProviderImage(providerId string) (imageInfo ladon.ProviderImageApp, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	ref := bm.Firestore.Doc(providerId)
+	ref := bm.ProductImages.Doc(providerId)
 	doc, err := ref.Get(ctx)
 	if err != nil {
 		return

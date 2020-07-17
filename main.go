@@ -186,7 +186,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 		api.GET("/user/voucher/v2/list/:country", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetVouchersV2, false) })
 		api.GET("/user/voucher/v2/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetAvailableCountriesV2, false) })
-		api.GET("/user/voucher/v2/list", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetProviderImage, false) })
+		api.GET("/user/voucher/v2/provider/image/:providerId", func(c *gin.Context) { fbCtrl.CheckAuth(c, vouchersCtrl2.GetProviderImage, false) })
 		// Product Images
 
 		// Voucher routes for development environment
@@ -278,7 +278,6 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authAdminApi.POST("/voucher/filter", vouchersCtrl.AddFilters)
 		authAdminApi.DELETE("/voucher/filter", vouchersCtrl.AddFilters)
 		authAdminApi.GET("/voucher/filter/:dev", vouchersCtrl.AddFilters)
-		authAdminApi.GET("/voucher/provider/image/:providerId", vouchersCtrl.GetProviderImage)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
