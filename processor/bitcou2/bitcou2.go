@@ -77,6 +77,7 @@ func main() {
 			}
 		}
 	}
+
 	for _, imageInfo := range providerImages {
 		err := model.AddProviderImage(imageInfo)
 		if err != nil {
