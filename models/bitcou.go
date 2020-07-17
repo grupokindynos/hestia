@@ -3,8 +3,10 @@ package models
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"github.com/grupokindynos/common/ladon"
 	"github.com/grupokindynos/hestia/services/bitcou"
 	"google.golang.org/api/iterator"
+	"strconv"
 	"time"
 )
 
@@ -35,6 +37,7 @@ type BitcouModel struct {
 	FirestoreTest   *firestore.CollectionRef
 	FirestoreV2     *firestore.CollectionRef
 	FirestoreTestV2 *firestore.CollectionRef
+	ProductImages   *firestore.CollectionRef
 }
 
 type BitcouConfModel struct {
@@ -73,6 +76,13 @@ func (bm *BitcouModel) AddCountryV2(country BitcouCountryV2) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	_, err := bm.Firestore.Doc(country.ID).Set(ctx, country)
+	return err
+}
+
+func (bm *BitcouModel) AddProviderImage(imageInfo ladon.ProviderImageApp) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	_, err := bm.ProductImages.Doc(strconv.FormatInt(int64(imageInfo.ProviderId), 10)).Set(ctx, imageInfo)
 	return err
 }
 
@@ -214,4 +224,19 @@ func (bm *BitcouModel) GetFilters(db string) (filterResponse BitcouFilterWrapper
 	filterResponse.ProviderFilter = filterMapProviders
 	filterResponse.VoucherFilter = filterMapVouchers
 	return filterResponse, err
+}
+
+func (bm *BitcouModel) GetProviderImage(providerId string) (imageInfo ladon.ProviderImageApp, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := bm.ProductImages.Doc(providerId)
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return
+	}
+	err = doc.DataTo(&imageInfo)
+	if err != nil {
+		return
+	}
+	return
 }
