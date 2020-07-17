@@ -28,6 +28,7 @@ type Params struct {
 	Timestamp string
 	Country   string
 	Category  string
+	ProviderId string
 }
 
 type FirebaseController struct {
@@ -119,6 +120,7 @@ user:
 		Category:  c.Param("category"),
 		Body:      bodyBytes,
 		Timestamp: c.Query("from"),
+		ProviderId: c.Param("providerId"),
 	}
 	res, err := method(userData, params)
 	if err != nil {
