@@ -16,7 +16,7 @@ func TestAdrestiaModel_GetBalancers(t *testing.T) {
 }
 
 func TestAdrestiaModel_GetWithdrawals(t *testing.T) {
-	withdrawals, err := adrestiaModel.GetAllSimpleTx(false, 0, "withdrawals")
+	withdrawals, err := adrestiaModel.GetAllSimpleTx(false, 0, "withdrawals", "")
 	if err != nil {
 		log.Println(err)
 		return
