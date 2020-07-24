@@ -352,3 +352,10 @@ func (vc *VouchersControllerV2) GetWithComposedQuery(c *gin.Context) {
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }
+func (vc *VouchersControllerV2) GetProviderImage(_ hestia.User, params Params) (interface{}, error){
+	imageInfo, err := vc.BitcouModel.GetProviderImage(params.ProviderId)
+	if err != nil {
+		return nil, err
+	}
+	return imageInfo, nil
+}
