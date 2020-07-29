@@ -25,7 +25,7 @@ func (ec *ExchangesController) GetExchange(c *gin.Context) {
 		return
 	}
 	log.Println(id)
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		log.Println("2 " + err.Error())
 		responses.GlobalResponseNoAuth(c)
@@ -44,7 +44,7 @@ func (ec *ExchangesController) GetExchange(c *gin.Context) {
 }
 
 func (ec *ExchangesController) GetExchanges(c *gin.Context) {
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		log.Println(err)
 		responses.GlobalResponseNoAuth(c)
@@ -62,7 +62,7 @@ func (ec *ExchangesController) GetExchanges(c *gin.Context) {
 }
 
 func (ec *ExchangesController) UpdateExchange(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return

@@ -19,7 +19,7 @@ type AdrestiaController struct {
 }
 
 func (ac *AdrestiaController) StoreDeposit(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -28,7 +28,7 @@ func (ac *AdrestiaController) StoreDeposit(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) StoreWithdrawal(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -59,7 +59,7 @@ func (ac *AdrestiaController) storeSimpleTx(c *gin.Context, payload []byte, txTy
 }
 
 func (ac *AdrestiaController) StoreBalancerOrder(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -82,7 +82,7 @@ func (ac *AdrestiaController) StoreBalancerOrder(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) StoreBalancer(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -105,7 +105,7 @@ func (ac *AdrestiaController) StoreBalancer(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) UpdateDeposit(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -115,7 +115,7 @@ func (ac *AdrestiaController) UpdateDeposit(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) UpdateWithdrawal(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -148,7 +148,7 @@ func (ac *AdrestiaController) updateSimpleTx(c *gin.Context, payload []byte, txT
 }
 
 func (ac *AdrestiaController) UpdateBalancerOrder(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -176,7 +176,7 @@ func (ac *AdrestiaController) UpdateBalancerOrder(c *gin.Context) {
 }
 
 func (ac *AdrestiaController) UpdateBalancer(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -206,7 +206,7 @@ func (ac *AdrestiaController) UpdateBalancer(c *gin.Context) {
 func (ac *AdrestiaController) GetDeposits(c *gin.Context) {
 	includeComplete := c.Query("include_complete")
 	sinceTimestamp := c.Query("added_since")
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -221,7 +221,7 @@ func (ac *AdrestiaController) GetWithdrawals(c *gin.Context) {
 	includeComplete := c.Query("include_complete")
 	sinceTimestamp := c.Query("added_since")
 	balancerId := c.Query("balancer_id")
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -246,7 +246,7 @@ func (ac *AdrestiaController) getSimpleTx(c *gin.Context, txType string, include
 func (ac *AdrestiaController) GetBalancerOrders(c *gin.Context) {
 	includeComplete := c.Query("include_complete")
 	sinceTimestamp := c.Query("added_since")
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -265,7 +265,7 @@ func (ac *AdrestiaController) GetBalancerOrders(c *gin.Context) {
 
 func (ac *AdrestiaController) GetBalancers(c *gin.Context) {
 	includeComplete := c.Query("IncludeComplete")
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return

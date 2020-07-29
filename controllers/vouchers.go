@@ -135,7 +135,7 @@ func (vc *VouchersController) GetVouchersByTimestampLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -174,7 +174,7 @@ func (vc *VouchersController) GetSingleLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -194,7 +194,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -210,7 +210,7 @@ func (vc *VouchersController) GetAllLadon(c *gin.Context) {
 }
 
 func (vc *VouchersController) Store(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
