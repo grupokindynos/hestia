@@ -39,7 +39,7 @@ func (gc *GlobalConfigController) GetConfig(userData hestia.User, params Params)
 }
 
 func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return

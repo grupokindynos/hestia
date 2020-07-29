@@ -140,7 +140,7 @@ user:
 }
 
 func (fb *FirebaseController) CheckToken(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return

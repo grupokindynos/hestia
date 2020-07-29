@@ -72,7 +72,7 @@ func (sc *ShiftsController) GetSingleTyche(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -92,7 +92,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 	if filter == "" {
 		filter = "all"
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -108,7 +108,7 @@ func (sc *ShiftsController) GetAllTyche(c *gin.Context) {
 }
 
 func (sc *ShiftsController) Store(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
