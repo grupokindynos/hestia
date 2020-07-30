@@ -98,7 +98,11 @@ func main() {
 		}
 
 		if coinLiquidity > MinVolumeForVouchers {
-			vouchersAvailable = true
+			if coin.Info.Tag == "RPD" {
+				vouchersAvailable = false
+			} else {
+				vouchersAvailable = true
+			}
 		} else {
 			vouchersAvailable = false
 		}
