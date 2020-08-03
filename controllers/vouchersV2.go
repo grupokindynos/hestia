@@ -366,6 +366,8 @@ func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
 	imageInfo, err := vc.BitcouModel.GetProviderImage(providerId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(200, imageInfo)
+	return
 }
