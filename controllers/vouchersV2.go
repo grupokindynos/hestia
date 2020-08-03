@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/grupokindynos/common/herodotus"
+	"github.com/grupokindynos/common/ladon"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -365,9 +365,11 @@ func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
 	providerId := c.Param("providerId")
 	imageInfo, err := vc.BitcouModel.GetProviderImage(providerId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		imageInfo = ladon.ProviderImageApp{
+			Image:      "image not found",
+			ProviderId: -1,
+			Url:        "unknown",
+		}
 	}
 	c.JSON(200, imageInfo)
-	return
 }
