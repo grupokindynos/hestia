@@ -365,9 +365,10 @@ func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
 	providerId := c.Param("providerId")
 	imageInfo, err := vc.BitcouModel.GetProviderImage(providerId)
 	if err != nil {
+		id, _ := strconv.Atoi(providerId)
 		imageInfo = ladon.ProviderImageApp{
 			Image:      "image not found",
-			ProviderId: -1,
+			ProviderId: id,
 			Url:        "unknown",
 		}
 	}
