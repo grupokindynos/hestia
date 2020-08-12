@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grupokindynos/common/errors"
@@ -166,6 +167,29 @@ func (sc *ShiftsControllerV2) GetAllTyche(c *gin.Context) {
 		return
 	}
 	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shiftList, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
+}
+
+func (sc *ShiftsControllerV2) GetOpenShifts(c *gin.Context) {
+	timestamp, err := strconv.ParseInt(c.Query("timestamp"), 10, 64)
+	if err != nil {
+		ysd := time.Now()
+		ysd.AddDate(0, 0, -1)
+		timestamp = time.Now().AddDate(0, 0, -1).Unix()
+	}
+
+	_, err = mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	shifts, err := sc.Model.GetOpenShifts(timestamp)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), shifts, os.Getenv("HESTIA_PRIVATE_KEY"))
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }

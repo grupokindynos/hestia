@@ -76,3 +76,28 @@ func (m *ShiftModelV2) GetAll(filter int32, timeFilter string) (shifts []hestia.
 	}
 	return shifts, nil
 }
+
+func (m *ShiftModelV2) GetOpenShifts(timestamp int64) (shifts []hestia.ShiftV2, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := m.Firestore.Collection(m.Collection)
+	var docSnap []*firestore.DocumentSnapshot
+
+	query := ref.Where("timestamp", ">=", timestamp).Where("status", "in", []string{
+		strconv.Itoa(int(hestia.ShiftStatusV2Created)),
+		strconv.Itoa(int(hestia.ShiftStatusV2ProcessingOrders)),
+		strconv.Itoa(int(hestia.ShiftStatusV2SentToUser)),
+	})
+
+	docSnap, err = query.Documents(ctx).GetAll()
+	if err != nil {
+		return
+	}
+
+	for _, doc := range docSnap {
+		var shift hestia.ShiftV2
+		_ = doc.DataTo(&shift)
+		shifts = append(shifts, shift)
+	}
+	return shifts, nil
+}

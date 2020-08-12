@@ -224,6 +224,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authApi.GET("/shift2/all", shiftCtrlV2.GetAllTyche)
 		authApi.POST("/shift2", shiftCtrlV2.Store)
 		authApi.GET("/shift2/all_by_timestamp", shiftCtrlV2.GetShiftsByTimestampTyche)
+		authApi.GET("/shift2/open/all", shiftCtrlV2.GetOpenShifts)
 
 		// Ladon
 		authApi.GET("/voucher/single/:voucherid", vouchersCtrl.GetSingleLadon)
@@ -263,6 +264,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		api.PUT("/exchanges/update", exchangesCtrl.UpdateExchange)
 		api.GET("/coins", coinsCtrl.GetCoinsAvailabilityMicroService)
 		api.GET("/config", globalConfigCtrl.GetConfigMicroservice)
+		api.POST("/config/update", globalConfigCtrl.UpdateConfig)
 		authApi.POST("/validate/token", fbCtrl.CheckToken)
 	}
 	r.NoRoute(func(c *gin.Context) {

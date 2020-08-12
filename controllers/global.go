@@ -2,15 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	"os"
-
 	"github.com/gin-gonic/gin"
-	"github.com/grupokindynos/common/errors"
+	cerrors "github.com/grupokindynos/common/errors"
 	"github.com/grupokindynos/common/hestia"
 	"github.com/grupokindynos/common/responses"
 	"github.com/grupokindynos/common/tokens/mrt"
 	"github.com/grupokindynos/common/tokens/mvt"
 	"github.com/grupokindynos/hestia/models"
+	"os"
 )
 
 /*
@@ -33,7 +32,7 @@ type GlobalConfigController struct {
 func (gc *GlobalConfigController) GetConfig(userData hestia.User, params Params) (interface{}, error) {
 	configData, err := gc.Model.GetConfigData()
 	if err != nil {
-		return nil, errors.ErrorCoinDataGet
+		return nil, cerrors.ErrorCoinDataGet
 	}
 	return configData, nil
 }
@@ -58,11 +57,35 @@ func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, params 
 	var newConfig hestia.Config
 	err := json.Unmarshal(params.Body, &newConfig)
 	if err != nil {
-		return nil, errors.ErrorUnmarshal
+		return nil, cerrors.ErrorUnmarshal
 	}
 	err = gc.Model.UpdateConfigData(newConfig)
 	if err != nil {
-		return nil, errors.ErrorDBStore
+		return nil, cerrors.ErrorDBStore
 	}
 	return true, nil
+}
+
+func (gc *GlobalConfigController) UpdateConfig(c *gin.Context) {
+	var newConfig hestia.Config
+	payload, err := mvt.VerifyRequest(c)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+
+	err = json.Unmarshal(payload, &newConfig)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+
+	err = gc.Model.UpdateConfigData(newConfig)
+	if err != nil {
+		responses.GlobalResponseError(nil, err, c)
+		return
+	}
+	header, body, err := mrt.CreateMRTToken("hestia", os.Getenv("MASTER_PASSWORD"), nil, os.Getenv("HESTIA_PRIVATE_KEY"))
+	responses.GlobalResponseMRT(header, body, c)
+	return
 }
