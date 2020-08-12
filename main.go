@@ -284,4 +284,12 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
 	})
+
+	openApi:= r.Group("/open")
+	{
+		openApi.GET("/voucher/provider/image/:providerId", vouchersCtrl2.GetProviderImageOpen)
+	}
+	r.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "Not Found")
+	})
 }

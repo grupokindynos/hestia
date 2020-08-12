@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/grupokindynos/common/herodotus"
+	"github.com/grupokindynos/common/ladon"
 	"io/ioutil"
 	"log"
 	"os"
@@ -90,7 +91,7 @@ func (vc *VouchersControllerV2) GetVouchersByTimestampLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -127,7 +128,7 @@ func (vc *VouchersControllerV2) GetSingleLadon(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -156,7 +157,7 @@ func (vc *VouchersControllerV2) GetVoucherInfo(c *gin.Context) {
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
-	_, err = mvt.VerifyRequest(c)
+	_, _, err = mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -183,7 +184,7 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 	if filter == "" {
 		filter = "-1"
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -201,7 +202,7 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 }
 
 func (vc *VouchersControllerV2) Store(c *gin.Context) {
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -319,7 +320,7 @@ func (vc *VouchersControllerV2) GetUserInfo(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorMissingID, c)
 		return
 	}
-	_, err := mvt.VerifyRequest(c)
+	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseNoAuth(c)
 		return
@@ -358,4 +359,18 @@ func (vc *VouchersControllerV2) GetProviderImage(_ hestia.User, params Params) (
 		return nil, err
 	}
 	return imageInfo, nil
+}
+
+func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
+	providerId := c.Param("providerId")
+	imageInfo, err := vc.BitcouModel.GetProviderImage(providerId)
+	if err != nil {
+		id, _ := strconv.Atoi(providerId)
+		imageInfo = ladon.ProviderImageApp{
+			Image:      "image not found",
+			ProviderId: id,
+			Url:        "unknown",
+		}
+	}
+	c.JSON(200, imageInfo)
 }
