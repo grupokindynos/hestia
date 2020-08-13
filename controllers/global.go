@@ -68,7 +68,7 @@ func (gc *GlobalConfigController) UpdateConfigData(userData hestia.User, params 
 
 func (gc *GlobalConfigController) UpdateConfig(c *gin.Context) {
 	var newConfig hestia.Config
-	payload, err := mvt.VerifyRequest(c)
+	payload, _, err := mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return

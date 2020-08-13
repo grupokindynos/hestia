@@ -179,7 +179,7 @@ func (sc *ShiftsControllerV2) GetOpenShifts(c *gin.Context) {
 		timestamp = time.Now().AddDate(0, 0, -1).Unix()
 	}
 
-	_, err = mvt.VerifyRequest(c)
+	_, _, err = mvt.VerifyRequest(c)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
