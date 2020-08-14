@@ -138,6 +138,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	}
 	vouchersCtrl2 := controllers.VouchersControllerV2{
 		Model:           vouchersModelV2,
+		TestModel:       vouchersTestModelV2,
 		UserModel:       usersModel,
 		BitcouModel:     bitcouModel,
 		BitcouConfModel: bitcouConfModel,

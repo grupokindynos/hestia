@@ -35,6 +35,7 @@ import (
 
 type VouchersControllerV2 struct {
 	Model           *models.VouchersModelV2
+	TestModel       *models.VouchersModelV2
 	UserModel       *models.UsersModel
 	BitcouModel     *models.BitcouModel
 	BitcouConfModel *models.BitcouConfModel
@@ -96,6 +97,7 @@ func (vc *VouchersControllerV2) GetVouchersByTimestampLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
+	vModel := vc.getModel(c)
 
 	userInfo, err := vc.UserModel.Get(userId)
 	if err != nil {
@@ -106,7 +108,7 @@ func (vc *VouchersControllerV2) GetVouchersByTimestampLadon(c *gin.Context) {
 	timestamp, _ := strconv.ParseInt(ts, 10, 64)
 
 	for _, id := range userInfo.VouchersV2 {
-		obj, err := vc.Model.Get(id)
+		obj, err := vModel.Get(id)
 		if err != nil {
 			continue
 		}
@@ -133,7 +135,10 @@ func (vc *VouchersControllerV2) GetSingleLadon(c *gin.Context) {
 		responses.GlobalResponseNoAuth(c)
 		return
 	}
-	voucher, err := vc.Model.Get(id)
+
+	vModel := vc.getModel(c)
+
+	voucher, err := vModel.Get(id)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
@@ -190,7 +195,9 @@ func (vc *VouchersControllerV2) GetAllLadon(c *gin.Context) {
 		return
 	}
 	f, _ := strconv.Atoi(filter)
-	vouchersList, err := vc.Model.GetAll(f, "")
+	vModel := vc.getModel(c)
+
+	vouchersList, err := vModel.GetAll(f, "")
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
@@ -214,8 +221,10 @@ func (vc *VouchersControllerV2) Store(c *gin.Context) {
 		responses.GlobalResponseError(nil, errors.ErrorUnmarshal, c)
 		return
 	}
+
+	vModel := vc.getModel(c)
 	// Store voucher data to process
-	err = vc.Model.Update(voucherData)
+	err = vModel.Update(voucherData)
 	if err != nil {
 		responses.GlobalResponseError(nil, errors.ErrorDBStore, c)
 		return
@@ -344,7 +353,8 @@ func (vc *VouchersControllerV2) GetWithComposedQuery(c *gin.Context) {
 		responses.GlobalResponseError(nil, err, c)
 		return
 	}
-	vouchers, err := vc.Model.GetWithComposedQuery(filters)
+	vModel := vc.getModel(c)
+	vouchers, err := vModel.GetWithComposedQuery(filters)
 	if err != nil {
 		responses.GlobalResponseError(nil, err, c)
 		return
@@ -353,6 +363,7 @@ func (vc *VouchersControllerV2) GetWithComposedQuery(c *gin.Context) {
 	responses.GlobalResponseMRT(header, body, c)
 	return
 }
+
 func (vc *VouchersControllerV2) GetProviderImage(_ hestia.User, params Params) (interface{}, error){
 	imageInfo, err := vc.BitcouModel.GetProviderImage(params.ProviderId)
 	if err != nil {
@@ -373,4 +384,13 @@ func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
 		}
 	}
 	c.JSON(200, imageInfo)
+}
+
+func (vc *VouchersControllerV2) getModel(c *gin.Context) *models.VouchersModelV2{
+	p := c.Query("test")
+	if p == "1" {
+		return vc.TestModel
+	}
+
+	return vc.Model
 }
