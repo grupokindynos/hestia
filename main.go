@@ -39,6 +39,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+
 	App := GetApp()
 	_ = App.Run(":" + port)
 }
@@ -89,6 +90,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		Firestore:  doc,
 		Collection: "shifts2",
 	}
+	backupModel := &models.BackupModel{Firestore: firestore.Collection("polispay").Doc("hestia_backup")}
 	cardsModel := &models.CardsModel{Firestore: doc, Collection: "cards"}
 	ordersModel := &models.OrdersModel{Firestore: doc, Collection: "orders"}
 	depositsModel := &models.DepositsModel{Firestore: doc, Collection: "deposits"}
@@ -116,6 +118,10 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	}
 
 	// Init Controllers
+	backupCtrl := controllers.BackupController{
+		Model:  backupModel,
+		Bucket: "polispay-backups_hourly",
+	}
 	fbCtrl := controllers.FirebaseController{App: fbApp, UsersModel: usersModel}
 	cardsCtrl := controllers.CardsController{Model: cardsModel, UserModel: usersModel}
 	depositsCtrl := controllers.DepositsController{Model: depositsModel, UserModel: usersModel}
@@ -277,6 +283,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		authAdminUser: authAdminPassword,
 	}))
 	{
+		authAdminApi.POST("/backup", backupCtrl.CreateBackup)
 		authAdminApi.POST("/voucher/filter", vouchersCtrl.AddFilters)
 		authAdminApi.DELETE("/voucher/filter", vouchersCtrl.AddFilters)
 		authAdminApi.GET("/voucher/filter/:dev", vouchersCtrl.AddFilters)
@@ -288,6 +295,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 	openApi:= r.Group("/open")
 	{
 		openApi.GET("/voucher/provider/image/:providerId", vouchersCtrl2.GetProviderImageOpen)
+		openApi.POST("/backup", backupCtrl.CreateBackup)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")

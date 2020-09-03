@@ -19,23 +19,6 @@ import (
 	"time"
 )
 
-type HestiaDB struct {
-	Balances            []hestia.CoinBalances  `json:"balances"`
-	Cards               []hestia.Card          `json:"cards"`
-	Coins               []hestia.Coin          `json:"coins"`
-	Config              hestia.Config          `json:"config"`
-	Deposits            []hestia.Deposit       `json:"deposits"`
-	Exchanges           []hestia.ExchangeInfo  `json:"exchanges"`
-	Orders              []hestia.Order         `json:"orders"`
-	Shifts              []hestia.Shift         `json:"shifts"`
-	Users               []hestia.User          `json:"users"`
-	Vouchers            []hestia.Voucher       `json:"vouchers"`
-	AdrestiaBalancer    []hestia.Balancer      `json:"adrestia_balancer"`
-	AdrestiaDeposits    []hestia.SimpleTx      `json:"adrestia_deposits"`
-	AdrestiaOrders      []hestia.BalancerOrder `json:"adrestia_orders"`
-	AdrestiaWithdrawals []hestia.SimpleTx      `json:"adrestia_withdrawals"`
-}
-
 var (
 	hestiaDoc        *firestore.DocumentRef
 	storageBuck      *storage.BucketHandle
@@ -109,6 +92,7 @@ func init() {
     vouchers -> VoucherID / hestia.Voucher | []hestia.Voucher
 
 */
+
 func main() {
 	balances, err := getBalances()
 	if err != nil {
@@ -167,7 +151,7 @@ func main() {
 		log.Fatal(errors.New("unable to load balancers"))
 	}
 
-	fullDB := HestiaDB{
+	fullDB := hestia.HestiaDB{
 		Balances:            balances,
 		Cards:               cards,
 		Coins:               coins,
@@ -426,7 +410,7 @@ func getVouchers() ([]hestia.Voucher, error) {
 }
 
 func getWithdrawals() ([]hestia.SimpleTx, error) {
-	collection := hestiaDoc.Collection("adrestia/withdrawals")
+	collection := hestiaDoc.Collection("adrestia_withdrawals")
 	docIter := collection.Documents(context.Background())
 	var array []hestia.SimpleTx
 	for {
@@ -448,7 +432,7 @@ func getWithdrawals() ([]hestia.SimpleTx, error) {
 }
 
 func getExchangeDeposits() ([]hestia.SimpleTx, error) {
-	collection := hestiaDoc.Collection("adrestia/deposits")
+	collection := hestiaDoc.Collection("adrestia_deposits")
 	docIter := collection.Documents(context.Background())
 	var array []hestia.SimpleTx
 	for {
@@ -470,7 +454,7 @@ func getExchangeDeposits() ([]hestia.SimpleTx, error) {
 }
 
 func getBalancerOrders() ([]hestia.BalancerOrder, error) {
-	collection := hestiaDoc.Collection("adrestia/orders")
+	collection := hestiaDoc.Collection("adrestia_orders")
 	docIter := collection.Documents(context.Background())
 	var array []hestia.BalancerOrder
 	for {
@@ -492,7 +476,7 @@ func getBalancerOrders() ([]hestia.BalancerOrder, error) {
 }
 
 func getBalancers() ([]hestia.Balancer, error) {
-	collection := hestiaDoc.Collection("adrestia/balancer")
+	collection := hestiaDoc.Collection("adrestia_balancer")
 	docIter := collection.Documents(context.Background())
 	var array []hestia.Balancer
 	for {
