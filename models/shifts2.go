@@ -29,6 +29,9 @@ func (m *ShiftModelV2) Get(id string) (shift hestia.ShiftV2, err error) {
 }
 
 func (m *ShiftModelV2) Update(shift hestia.ShiftV2) error {
+	// keep track of last time shift was updated
+	shift.LastUpdated = time.Now().Unix()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_, err := m.Firestore.Collection(m.Collection).Doc(shift.ID).Set(ctx, shift)

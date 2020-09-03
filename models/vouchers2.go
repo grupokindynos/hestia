@@ -30,6 +30,9 @@ func (m *VouchersModelV2) Get(id string) (voucher hestia.VoucherV2, err error) {
 }
 
 func (m *VouchersModelV2) Update(voucher hestia.VoucherV2) error {
+	// keep track last time the voucher was updated
+	voucher.LastUpdated = time.Now().Unix()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_, err := m.Firestore.Collection(m.Collection).Doc(voucher.Id).Set(ctx, voucher)
