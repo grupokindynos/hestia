@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -49,6 +48,11 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		log.Println("ShiftV2::GetAll::NOUSERINFO::", userData.ID)
 		return nil, errors.ErrorNoUserInformation
 	}
+	timestamp, err := strconv.ParseInt(params.Timestamp, 10, 64)
+	if err != nil {
+		timestamp = 0
+	}
+
 	var Array []hestia.LightShift
 	// shifts from v2
 	for _, id := range userInfo.ShiftV2 {
@@ -56,6 +60,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		if err != nil {
 			continue
 		}
+		if obj.LastUpdated < timestamp {continue}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
 			UID:       obj.UID,
@@ -75,9 +80,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 			PaymentProof:       obj.PaymentProof,
 			ProofTimestamp:     obj.ProofTimestamp,
 		}
-		fmt.Println(newShift)
 		Array = append(Array, newShift)
-
 	}
 	// shifts from v1
 	for _, id := range userInfo.Shifts {
@@ -85,6 +88,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		if err != nil {
 			continue
 		}
+		if obj.Timestamp < timestamp {continue}
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
 			UID:       obj.UID,
@@ -104,7 +108,6 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 			PaymentProof:       obj.PaymentProof,
 			ProofTimestamp:     obj.ProofTimestamp,
 		}
-		fmt.Println(newShift)
 		Array = append(Array, newShift)
 	}
 	return Array, nil
