@@ -60,7 +60,10 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		if err != nil {
 			continue
 		}
-		if obj.LastUpdated < timestamp {continue}
+		if obj.LastUpdated == 0 {
+			_ = sc.Model.Update(obj)
+		} else if obj.LastUpdated < timestamp {continue}
+
 		var newShift = hestia.LightShift{
 			ID:        obj.ID,
 			UID:       obj.UID,
