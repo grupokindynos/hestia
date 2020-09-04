@@ -53,6 +53,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		timestamp = 0
 	}
 
+	var lastTimestamp int64
 	var Array []hestia.LightShift
 	// shifts from v2
 	for _, id := range userInfo.ShiftV2 {
@@ -85,6 +86,8 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		}
 		Array = append(Array, newShift)
 	}
+
+	lastTimestamp = time.Now().Unix()
 	// shifts from v1
 	for _, id := range userInfo.Shifts {
 		obj, err := sc.LegacyModel.Get(id)
@@ -113,7 +116,14 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 		}
 		Array = append(Array, newShift)
 	}
-	return Array, nil
+	if timestamp == 0 {
+		return Array, nil
+	} else {
+		return hestia.ShiftHistoryResponse{
+			Shifts:    Array,
+			Timestamp: lastTimestamp,
+		}, nil
+	}
 }
 
 func (sc *ShiftsControllerV2) GetSingle(userData hestia.User, params Params) (interface{}, error) {
