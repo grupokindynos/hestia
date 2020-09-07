@@ -287,6 +287,8 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 
 	openApi:= r.Group("/open")
 	{
+		openApi.GET("/voucher/list/products/:country", vouchersCtrl2.GetProductsByCountry)
+		openApi.GET("/voucher/list/countries", vouchersCtrl2.GetOpenCountries)
 		openApi.GET("/voucher/provider/image/:providerId", vouchersCtrl2.GetProviderImageOpen)
 	}
 	r.NoRoute(func(c *gin.Context) {

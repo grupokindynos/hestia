@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/grupokindynos/common/herodotus"
 	"github.com/grupokindynos/common/ladon"
+	"github.com/grupokindynos/hestia/services/bitcou"
 	"io/ioutil"
 	"log"
 	"os"
@@ -373,4 +374,77 @@ func (vc *VouchersControllerV2) GetProviderImageOpen(c *gin.Context) {
 		}
 	}
 	c.JSON(200, imageInfo)
+}
+
+func (vc *VouchersControllerV2) GetProductsByCountry(c *gin.Context) {
+	country := c.Param("country")
+	cachedData, ok := vc.CachedVouchers.Vouchers[country]
+	if !ok {
+		countryData, err := vc.BitcouModel.GetCountryV2(country)
+		if err != nil {
+			responses.GlobalResponseError(nil, err, c)
+			return
+		}
+		vc.CachedVouchers.AddCountryVouchersV2(country, countryData.Vouchers)
+		c.JSON(200, lightToOpenVoucher(countryData.Vouchers))
+		return
+	}
+	if cachedData.LastUpdated+voucherCacheTimeFrame > time.Now().Unix() {
+		c.JSON(200, lightToOpenVoucher(vc.CachedVouchers.Vouchers[country].Vouchers))
+		return
+	} else {
+		countryData, err := vc.BitcouModel.GetCountryV2(country)
+		if err != nil {
+			responses.GlobalResponseError(nil, err, c)
+			return
+		}
+		vc.CachedVouchers.AddCountryVouchersV2(country, countryData.Vouchers)
+		c.JSON(200, lightToOpenVoucher(countryData.Vouchers))
+		return
+	}
+}
+
+func lightToOpenVoucher(vouchers []bitcou.LightVoucherV2) []bitcou.OpenVoucher {
+	var openVouchers []bitcou.OpenVoucher
+	for _, v := range vouchers {
+		wrapper := bitcou.OpenVoucher{
+			Name:         v.Name,
+			ProductID:    v.ProductID,
+			Shipping:     v.Shipping,
+			TraderID:     v.TraderID,
+			ProviderID:   v.ProviderID,
+			ProviderName: v.ProviderName,
+			Benefits:     v.Benefits,
+			Description:  v.Description,
+			Valid:        v.Valid,
+			IsKYC:        v.IsKYC,
+			Image:        v.Image,
+		}
+
+		for _, variant := range v.Variants {
+			variant := bitcou.OpenVariants{
+				Currency:  variant.Currency,
+				Value:     variant.Value,
+				VariantID: variant.VariantID,
+			}
+			wrapper.Variants = append(wrapper.Variants, variant)
+		}
+		openVouchers = append(openVouchers, wrapper)
+	}
+	return openVouchers
+}
+
+func (vc *VouchersControllerV2) GetOpenCountries(c *gin.Context) {
+	if len(vc.CachedVouchers.CachedCountries) > 0 && vc.CachedVouchers.CachedCountriesUpdated+voucherCacheTimeFrame > time.Now().Unix() {
+		c.JSON(200, vc.CachedVouchers.CachedCountries)
+	} else {
+		countries, err := vc.BitcouModel.GetCountriesV2(false)
+		if err != nil {
+			responses.GlobalResponseError(nil, err, c)
+			return
+		}
+		vc.CachedVouchers.CachedCountries = countries
+		vc.CachedVouchers.CachedCountriesUpdated = time.Now().Unix()
+		c.JSON(200, countries)
+	}
 }
