@@ -35,12 +35,14 @@ func (m *GlobalConfigModel) GetConfigData() (hestia.Config, error) {
 	if err != nil {
 		return hestia.Config{}, errors.ErrorConfigDataGet
 	}
+	customParams, err := m.getCustomParams()
 	configData := hestia.Config{
 		Shift:    shiftAvailable,
 		Deposits: depositAvailable,
 		Vouchers: voucherAvailable,
 		Orders:   ordersAvailable,
 		Adrestia: adrestiaAvailable,
+		Params: customParams,
 	}
 	return configData, nil
 }
@@ -58,6 +60,21 @@ func (m *GlobalConfigModel) getAvailable(id string) (available hestia.Available,
 		return available, err
 	}
 	return available, nil
+}
+
+func (m *GlobalConfigModel) getCustomParams() (params hestia.CustomParams, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	ref := m.Firestore.Collection(m.Collection).Doc("params")
+	doc, err := ref.Get(ctx)
+	if err != nil {
+		return params, err
+	}
+	err = doc.DataTo(&params)
+	if err != nil {
+		return params, err
+	}
+	return params, nil
 }
 
 func (m *GlobalConfigModel) UpdateConfigData(config hestia.Config) error {

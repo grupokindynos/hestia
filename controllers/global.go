@@ -37,6 +37,16 @@ func (gc *GlobalConfigController) GetConfig(userData hestia.User, params Params)
 	return configData, nil
 }
 
+func (gc *GlobalConfigController) GetEthGasPrice(c  *gin.Context) {
+	configData, err := gc.Model.GetConfigData()
+	if err != nil {
+		responses.GlobalResponseError(nil, cerrors.ErrorCoinDataGet, c)
+		return
+	}
+	responses.GlobalResponse(configData.Params.EthGasPrice, c)
+	return
+}
+
 func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {

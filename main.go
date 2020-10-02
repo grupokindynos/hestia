@@ -290,6 +290,7 @@ func ApplyRoutes(r *gin.Engine, fbApp *firebase.App) {
 		openApi.GET("/voucher/list/products/:country", vouchersCtrl2.GetProductsByCountry)
 		openApi.GET("/voucher/list/countries", vouchersCtrl2.GetOpenCountries)
 		openApi.GET("/voucher/provider/image/:providerId", vouchersCtrl2.GetProviderImageOpen)
+		openApi.GET("/eth/gas", globalConfigCtrl.GetEthGasPrice)
 	}
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
