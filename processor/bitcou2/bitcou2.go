@@ -27,14 +27,14 @@ func main() {
 	_ = godotenv.Load()
 
 	// TODO Firebase Shit
-	model, prodFilter, devFilter := GetFirebaseData() // DB model, and voucher filters
+	model, prodFilter, _ := GetFirebaseData() // DB model, and voucher filters
 
 
 	prodProv, _ := service.GetProvidersV2(false) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
-	var devProvidersMap = providersToMap(devProv)
+	// devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
+	// var devProvidersMap = providersToMap(devProv)
 
 	voucherListProd, err := service.GetListV2(false)
 	if err != nil {
@@ -51,11 +51,11 @@ func main() {
 		fmt.Println(err)
 	}
 	var countries []models.BitcouCountryV2
-	var countriesDev []models.BitcouCountryV2
+	// var countriesDev []models.BitcouCountryV2
 
 	// Voucher Filter
 	countries = filterVouchersByCountry(voucherListProd, prodFilter.ProviderFilter, prodFilter.VoucherFilter, ProvidersMap)
-	countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
+	// countriesDev = filterVouchersByCountry(voucherListDev, devFilter.ProviderFilter, devFilter.VoucherFilter, devProvidersMap)
 
 
 	for _, bitcouCountry := range countries {
@@ -85,7 +85,7 @@ func main() {
 		}
 	}
 
-	for _, bitcouTestCountry := range countriesDev { 
+	for _, bitcouTestCountry := range countries {
 		err = model.AddTestCountryV2(bitcouTestCountry)
 		if err != nil {
 			panic("unable to store test country information")
@@ -141,7 +141,7 @@ func filterVouchersByCountry(voucherList []bitcou.VoucherV2, providerFilter map[
 						newCountry.Vouchers = append(newCountry.Vouchers, *newVoucherV2)
 						countryMap[country] = newCountry
 					} else {
-						log.Println(voucher.ProviderName, " has no variants left")
+						log.Println(fmt.Sprintf("%s - %s - %s has no variants left", country, voucher.ProviderName, voucher.Name))
 					}
 				} else {
 					newVoucherV2 := bitcou.NewLightVoucherV2(voucher, imageStr)
