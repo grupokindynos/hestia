@@ -59,7 +59,7 @@ func main() {
 
 
 	for _, bitcouCountry := range countries {
-		if bitcouCountry.ID == "DO" {
+		if bitcouCountry.ID == "All Deployed" {
 			log.Println("Ignoring country ", bitcouCountry.ID)
 		} else {
 			err = model.AddCountryV2(bitcouCountry)
