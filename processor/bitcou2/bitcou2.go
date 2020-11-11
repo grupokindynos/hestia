@@ -33,7 +33,7 @@ func main() {
 	prodProv, _ := service.GetProvidersV2(false) // Retrieves public API vouchers
 	var ProvidersMap = providersToMap(prodProv)
 
-	devProv, _ := service.GetProvidersV2(false) // Retrieves dev API vouchers
+	devProv, _ := service.GetProvidersV2(true) // Retrieves dev API vouchers
 	var devProvidersMap = providersToMap(devProv)
 
 	voucherListProd, err := service.GetListV2(false)
