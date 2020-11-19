@@ -78,7 +78,7 @@ func (sc *ShiftsControllerV2) GetAll(userData hestia.User, params Params) (inter
 			},
 			RefundAddr:         obj.RefundAddr,
 			ToCoin:             obj.ToCoin,
-			ToAmount:           obj.ToAmount,
+			ToAmount:           int64(obj.UserReceivedAmount * 10e8),
 			UserReceivedAmount: obj.UserReceivedAmount,
 			ToAddress:          obj.ToAddress,
 			PaymentProof:       obj.PaymentProof,

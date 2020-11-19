@@ -42,7 +42,7 @@ func (bs *ServiceV2) GetListV2(dev bool) ([]VoucherV2, error) {
 		return nil, err
 	}
 	req.Header.Add("Authorization", token)
-	client := &http.Client{Timeout: 300 * time.Second}
+	client := &http.Client{Timeout: 500 * time.Second}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
