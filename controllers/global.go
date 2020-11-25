@@ -47,6 +47,16 @@ func (gc *GlobalConfigController) GetEthGasPrice(c  *gin.Context) {
 	return
 }
 
+func (gc *GlobalConfigController) GetPolisRelayFee(c  *gin.Context) {
+	configData, err := gc.Model.GetConfigData()
+	if err != nil {
+		responses.GlobalResponseError(nil, cerrors.ErrorCoinDataGet, c)
+		return
+	}
+	responses.GlobalResponse(configData.Params.PolisRelayFee, c)
+	return
+}
+
 func (gc *GlobalConfigController) GetConfigMicroservice(c *gin.Context) {
 	_, _, err := mvt.VerifyRequest(c)
 	if err != nil {

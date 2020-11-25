@@ -9,7 +9,7 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
-	github.com/grupokindynos/common v0.0.0-20201002172422-33cc9fd2e9f8
+	github.com/grupokindynos/common v0.0.0-20201125160013-48832231b92a
 	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/shopspring/decimal v1.2.0
