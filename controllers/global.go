@@ -63,7 +63,7 @@ func (gc *GlobalConfigController) GetMaxAmountNoKYC(c  *gin.Context) {
 		responses.GlobalResponseError(nil, cerrors.ErrorCoinDataGet, c)
 		return
 	}
-	responses.GlobalResponse(configData.Params.PolisRelayFee, c)
+	responses.GlobalResponse(configData.Params.MaxAmountNoKYC, c)
 	return
 }
 
